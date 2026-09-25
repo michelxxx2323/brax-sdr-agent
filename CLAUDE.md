@@ -70,7 +70,7 @@ Texto completo: `cerebro/regras/guardrails.md`.
 
 ## Fases
 
-1. **Fundação**: estrutura, documentação e cérebro. ✅ aguardando revisão
+1. **Fundação**: estrutura, documentação e cérebro. ✅ concluída e aprovada
 2. Agente no terminal
 3. Canal e-mail
 4. Canal WhatsApp (número de teste da Meta)

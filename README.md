@@ -3,7 +3,7 @@
 > Um agente de IA que faz pré-vendas (SDR) inbound por WhatsApp e e-mail para uma fintech B2B,
 > qualificando leads, roteando para o canal certo e registrando tudo no CRM.
 
-**Status:** 🟡 Fase 1 (Fundação) concluída, em revisão. Ainda não há código executável.
+**Status:** 🟢 Fase 1 (Fundação) concluída. Próxima: Fase 2 (agente no terminal).
 
 > ⚠️ **A BRAX é uma empresa fictícia**, criada para este case e **inspirada na [Brex](https://www.brex.com/)**.
 > Nome, planos, preços e funcionalidades são inventados. Não há relação com a Brex nem com nenhuma empresa real.
@@ -74,7 +74,7 @@ e, na dúvida, passa para um humano. Ver [cerebro/regras/guardrails.md](cerebro/
 
 | # | Fase | Entrega | Status |
 |---|---|---|---|
-| 1 | Fundação | Estrutura, documentação e cérebro | 🟡 Em revisão |
+| 1 | Fundação | Estrutura, documentação e cérebro | ✅ Concluída |
 | 2 | Agente no terminal | Conversar com o P.H. no terminal como se fosse um lead | ⚪ |
 | 3 | Canal e-mail | Gmail API | ⚪ |
 | 4 | Canal WhatsApp | Meta Cloud API (número de teste) | ⚪ |

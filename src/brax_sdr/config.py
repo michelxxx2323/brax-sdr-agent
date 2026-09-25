@@ -23,6 +23,26 @@ MAX_TOKENS_CONVERSA = 4096
 # Segurança contra laços infinitos de ferramentas numa única resposta.
 MAX_RODADAS_FERRAMENTAS = 8
 
+# Preço em US$ por milhão de tokens (entrada, saída), conferido em 2026-09-24.
+# Só para ESTIMAR custo no terminal e nos evals; a fatura oficial está no Console da Anthropic.
+PRECOS_USD_POR_MILHAO = {
+    "claude-haiku-4-5": (1.00, 5.00),
+    "claude-sonnet-5": (2.00, 10.00),
+    "claude-opus-5-5": (4.00, 20.00),
+}
+
+
+def custo_estimado_usd(modelo: str, uso: dict) -> float:
+    """Estimativa: escrita no cache custa 1,25x a entrada; leitura do cache, 0,1x."""
+    entrada, saida = PRECOS_USD_POR_MILHAO.get(modelo, (0.0, 0.0))
+    tokens_entrada = (
+        uso.get("input_tokens", 0)
+        + 1.25 * uso.get("cache_creation_input_tokens", 0)
+        + 0.1 * uso.get("cache_read_input_tokens", 0)
+    )
+    return (tokens_entrada * entrada + uso.get("output_tokens", 0) * saida) / 1_000_000
+
+
 # --- Pastas ---
 PASTA_CEREBRO = RAIZ / "cerebro"
 PASTA_LEADS = RAIZ / "data" / "local" / "leads"  # ignorada pelo Git

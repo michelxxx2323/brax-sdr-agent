@@ -17,6 +17,12 @@
 | 009 | Aprovação humana no Slack antes de agendar com executivo | Aceita | 2026-09-24 |
 | 010 | Roteamento por faixas como hipótese a calibrar | Aceita | 2026-09-24 |
 | 011 | Marca fictícia inspirada em empresa real | Aceita | 2026-09-24 |
+| 012 | Haiku 4.5 pelo ID curto; comparar com Sonnet 5 e Opus 5.5 na Fase 6 | Aceita | 2026-09-24 |
+| 013 | O modelo extrai os dados, o código decide a faixa | Aceita | 2026-09-24 |
+| 014 | Memória em arquivo local na Fase 2, Supabase depois | Aceita | 2026-09-24 |
+| 015 | Laço de ferramentas manual em vez do Tool Runner | Aceita | 2026-09-24 |
+| 016 | Cérebro inteiro no prompt, com cache | Aceita | 2026-09-24 |
+| 017 | Guardrails em camadas: prompt, código e checagem automática | Aceita | 2026-09-24 |
 
 ---
 
@@ -73,9 +79,8 @@ O custo por conversa importa para o case ("mais barato que um SDR humano").
 **Motivo:** equilibra custo e qualidade. Deixar os nomes em **um único arquivo de configuração** permite trocar de modelo
 sem mexer no código e comparar modelos nos evals da Fase 6.
 
-**Observação:** os IDs acima conferem com a lista de modelos atual da Anthropic que eu, Claude, conhecia nesta sessão.
-Ainda assim, devem ser checados na documentação oficial (docs.anthropic.com, página de modelos) na Fase 2,
-antes da primeira chamada real à API.
+**Observação:** os IDs foram conferidos na referência oficial da API no início da Fase 2.
+O ID do modelo de conversa foi trocado pelo nome curto (ver decisão 012).
 
 ---
 
@@ -198,3 +203,103 @@ ficam marcadas com `<!-- REVISAR -->` até serem validadas.
 
 **Motivo:** um produto real dá contexto de mercado crível; a marca fictícia evita confusão, uso indevido de marca e
 promessas em nome de terceiros.
+
+---
+
+## 012: Haiku 4.5 pelo ID curto; comparar com Sonnet 5 e Opus 5.5 na Fase 6
+
+**Contexto:** na conferência dos IDs (Fase 2), a referência oficial indicou `claude-haiku-4-5` como nome do modelo,
+em vez da versão com data `claude-haiku-4-5-20251001`. Também surgiu a pergunta: por que não usar o modelo mais forte
+(Claude Opus 5.5) na conversa?
+
+**Opções consideradas:**
+1. Haiku 4.5 (US$ 1 / US$ 5 por milhão de tokens de entrada/saída): rápido e barato.
+2. Sonnet 5 (US$ 2 / US$ 10): meio-termo.
+3. Opus 5.5 (US$ 4 / US$ 20): mais forte, cerca de 4x o custo do Haiku, sempre "pensa" antes de responder (mais lento).
+
+**Decisão:** Haiku 4.5 (`claude-haiku-4-5`) na conversa. Os três modelos serão comparados nos evals da Fase 6.
+
+**Motivo:** uma conversa de qualificação é guiada pelo cérebro e pelas ferramentas; o raciocínio pesado (decidir a faixa)
+fica no código (decisão 013). A escolha final deve vir de **medição** (nota de qualidade por custo), não de suposição.
+Como o modelo fica em `config.py` e pode ser trocado pela variável `BRAX_MODELO_CONVERSA`, a comparação não exige mudar código.
+
+---
+
+## 013: O modelo extrai os dados, o código decide a faixa
+
+**Contexto:** a tabela de roteamento (self-service, executivo, fora do ICP) é uma regra de negócio com limites numéricos.
+
+**Opções consideradas:**
+1. Deixar o modelo ler a tabela no cérebro e decidir a faixa.
+2. O modelo registra os dados (`registrar_qualificacao`) e uma função Python decide a faixa (`rotear_lead`).
+
+**Decisão:** opção 2 (`src/brax_sdr/roteamento.py`).
+
+**Motivo:** modelos de linguagem podem errar comparações ("20 funcionários é mais que 20?"). Em código, a regra é
+**determinística, testável** (17 testes cobrem os limites) e **auditável**: o motivo de cada faixa fica registrado.
+Quando os limites forem recalibrados (decisão 010), a mudança acontece em um lugar só (`config.py`).
+
+---
+
+## 014: Memória em arquivo local na Fase 2, Supabase depois
+
+**Contexto:** a arquitetura prevê o Supabase (decisão 005), mas a Fase 2 roda só no terminal.
+
+**Opções consideradas:**
+1. Supabase já na Fase 2.
+2. Um arquivo JSON por lead em `data/local/` (ignorado pelo Git), atrás de uma interface simples (`carregar` / `salvar`).
+
+**Decisão:** opção 2.
+
+**Motivo:** permite validar o comportamento do agente sem criar contas nem configurar banco. Como o resto do código só
+conhece `carregar` e `salvar`, a troca pelo Supabase na fase de canais muda um único arquivo (`memoria.py`).
+
+---
+
+## 015: Laço de ferramentas manual em vez do Tool Runner
+
+**Contexto:** o SDK da Anthropic oferece o *Tool Runner*, que executa o laço "modelo pede ferramenta → código executa →
+devolve resultado" automaticamente, e é a opção recomendada na maioria dos casos.
+
+**Opções consideradas:**
+1. Tool Runner (`client.beta.messages.tool_runner`).
+2. Laço manual com `client.messages.create`.
+
+**Decisão:** opção 2 (`src/brax_sdr/agente.py`).
+
+**Motivo:** o P.H. precisa **salvar o histórico completo** (inclusive as chamadas de ferramentas) na memória do lead,
+e o Tool Runner não expõe esse histórico diretamente. O laço manual também evita depender de um recurso beta e deixa
+explícitos pontos importantes: não salvar nada se a API falhar no meio, tratar recusas e limitar o número de rodadas.
+
+---
+
+## 016: Cérebro inteiro no prompt, com cache
+
+**Contexto:** o agente precisa consultar o cérebro (cerca de 10 mil tokens hoje).
+
+**Opções consideradas:**
+1. Ferramenta de busca (`consultar_cerebro`) que devolve só os trechos relevantes.
+2. Colocar todos os arquivos no prompt do sistema, sempre na mesma ordem, com cache de prompt.
+
+**Decisão:** opção 2, por enquanto.
+
+**Motivo:** com esse tamanho, o modelo vê todo o contexto (sem risco de a busca perder o trecho certo), e o cache cobra
+cerca de 10% do preço de entrada nas leituras seguintes. A busca (com pgvector no Supabase) só entra se o cérebro
+crescer a ponto de pesar no custo ou na qualidade.
+
+---
+
+## 017: Guardrails em camadas: prompt, código e checagem automática
+
+**Contexto:** no setor financeiro, uma resposta errada (prometer limite, pedir documento) tem custo alto.
+Instruções no prompt ajudam, mas não garantem.
+
+**Decisão:** três camadas.
+1. **Prompt:** as regras de `cerebro/regras/guardrails.md` aparecem nas instruções do P.H.
+2. **Código (garantia):** depois de um opt-out, o agente nem chama a API; o link de agenda só é liberado pela
+   ferramenta de aprovação quando um humano aprova; a faixa é decidida pelo código (decisão 013).
+3. **Checagem automática da resposta:** padrões de texto (ex.: "limite ... R$ 20 mil") geram **alertas** registrados
+   no histórico. Nesta fase eles não bloqueiam o envio, porque regras por palavra-chave têm falsos positivos.
+
+**Motivo:** o que pode ser garantido em código não fica só no prompt. Os alertas criam um registro para medir.
+Na Fase 6, um LLM juiz avalia cada guardrail com mais precisão, e dá para decidir, com dados, se os alertas devem bloquear.

@@ -43,23 +43,39 @@ Um único agente usando a Claude API com **ferramentas (tools)**. A cada mensage
 
 | Uso | Modelo | Por quê |
 |---|---|---|
-| Conversa com o lead | `claude-haiku-4-5-20251001` | Rápido e barato, suficiente para diálogo guiado |
+| Conversa com o lead | `claude-haiku-4-5` | Rápido e barato, suficiente para diálogo guiado (comparação na Fase 6, decisão 012) |
 | Tarefas complexas (resumo para o executivo, pesquisa) e avaliações | `claude-sonnet-5` | Mais capacidade de raciocínio |
 
-### 3. Ferramentas previstas
+### 3. Ferramentas
 
-| Ferramenta | O que faz | Fase |
+| Ferramenta | O que faz | Status |
 |---|---|---|
-| `consultar_cerebro` | Busca trechos relevantes nos arquivos do cérebro | 2 |
-| `registrar_qualificacao` | Salva os dados descobertos (funcionários, gasto, setor, persona) | 2 |
-| `rotear_lead` | Aplica a tabela de roteamento e registra faixa + motivo | 2 |
-| `pesquisar_empresa` | Busca informações públicas da empresa e do decisor | 2 ou 5 |
-| `enviar_link_app` | Envia o link oficial de abertura de conta (self-service) | 3/4 |
-| `solicitar_aprovacao` | Pede aprovação humana no Slack antes de agendar com executivo | 5 |
-| `atualizar_crm` | Cria/atualiza contato, empresa e negócio no HubSpot | 5 |
-| `transferir_para_humano` | Encaminha a conversa para uma pessoa | 2 (simulado) / 5 |
-| `registrar_opt_out` | Registra pedido de parada (LGPD) e bloqueia novos contatos | 2 (simulado) / 5 |
-| `agendar_followup` | Programa uma nova mensagem se o lead sumir | 3/4 |
+| `registrar_qualificacao` | Salva os dados descobertos (funcionários, gasto, setor, persona, sinais de compra) | ✅ Fase 2 |
+| `rotear_lead` | Aplica a tabela de roteamento **em código** e registra faixa + motivo (decisão 013) | ✅ Fase 2 |
+| `solicitar_aprovacao_executivo` | Pede aprovação humana antes de agendar com executivo | ✅ Fase 2 (terminal) → Slack na Fase 5 |
+| `transferir_para_humano` | Encaminha a conversa para uma pessoa | ✅ Fase 2 (registro local) → Fase 5 |
+| `registrar_opt_out` | Registra pedido de parada (LGPD); o código bloqueia novas respostas | ✅ Fase 2 (registro local) → Fase 5 |
+| `atualizar_crm` | Cria/atualiza contato, empresa e negócio no HubSpot | Fase 5 |
+| `agendar_followup` | Programa uma nova mensagem se o lead sumir | Fases 3/4 |
+| `pesquisar_empresa` | Busca informações públicas da empresa e do decisor | A definir |
+| `consultar_cerebro` | Busca trechos relevantes do cérebro | Só se o cérebro crescer (decisão 016) |
+
+O link do app (self-service) e o link de agenda (executivo) são devolvidos pelas ferramentas `rotear_lead` e
+`solicitar_aprovacao_executivo`: o modelo nunca inventa um link, e a agenda só é liberada depois da aprovação humana.
+
+### Implementação atual (Fase 2)
+
+| Arquivo | Papel |
+|---|---|
+| `src/brax_sdr/config.py` | Modelos, limites de roteamento, links e tabela de preços (único lugar) |
+| `src/brax_sdr/cerebro.py` | Lê `cerebro/*.md` em ordem fixa (necessário para o cache) |
+| `src/brax_sdr/prompt.py` | Instruções do P.H.: bloco fixo com cache + bloco de contexto do lead |
+| `src/brax_sdr/roteamento.py` | Tabela de roteamento e pontuação de prioridade |
+| `src/brax_sdr/ferramentas.py` | Definição e execução das ferramentas, com validação dos dados |
+| `src/brax_sdr/guardrails.py` | Checagem automática das respostas (alertas G1 a G4) |
+| `src/brax_sdr/memoria.py` | Memória por lead (arquivo JSON local; Supabase depois) |
+| `src/brax_sdr/agente.py` | Laço de conversa com ferramentas (decisão 015) |
+| `src/brax_sdr/terminal.py` | Interface de terminal com aprovação humana simulada |
 
 ### 4. Cérebro: três camadas
 
@@ -69,8 +85,8 @@ Um único agente usando a Claude API com **ferramentas (tools)**. A cada mensage
 | **Dados** | Supabase (Postgres) | Leads, empresas, conversas, qualificação |
 | **Memória por lead** | Supabase | Histórico de mensagens e resumo do lead, lido **antes de cada resposta**, em qualquer canal |
 
-Na Fase 2 o cérebro pode ser carregado inteiro no prompt (são poucos arquivos). Busca semântica
-(pgvector no Supabase) só entra se o volume de conteúdo justificar.
+Na Fase 2 o cérebro é carregado inteiro no prompt, com cache (decisão 016), e a memória por lead fica em arquivo
+local (decisão 014). Busca semântica (pgvector no Supabase) só entra se o volume de conteúdo justificar.
 
 ### 5. Dados (rascunho do modelo no Supabase)
 

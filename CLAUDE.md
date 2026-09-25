@@ -44,7 +44,7 @@ Detalhes: `docs/arquitetura.md`. Decisões: `docs/decisoes.md`.
 - Um único agente com ferramentas (tools), sem subagentes por enquanto.
 - Python + SDK oficial da Anthropic (`anthropic`).
 - Modelos definidos em **um único arquivo de configuração** (não espalhar nomes de modelo pelo código):
-  - conversa: `claude-haiku-4-5-20251001` (leve e barato)
+  - conversa: `claude-haiku-4-5` (leve e barato; comparar com Sonnet 5 e Opus 5.5 na Fase 6)
   - tarefas complexas e avaliações: `claude-sonnet-5`
   - Confirmar os IDs na documentação oficial da Anthropic antes de usar.
 - WhatsApp **somente** pela API oficial da Meta (Cloud API, número de teste). Nunca APIs não oficiais.
@@ -71,7 +71,7 @@ Texto completo: `cerebro/regras/guardrails.md`.
 ## Fases
 
 1. **Fundação**: estrutura, documentação e cérebro. ✅ concluída e aprovada
-2. Agente no terminal
+2. **Agente no terminal**: 🟡 implementado, em validação com a API real
 3. Canal e-mail
 4. Canal WhatsApp (número de teste da Meta)
 5. CRM e aprovação humana (HubSpot + Slack)
@@ -80,4 +80,8 @@ Texto completo: `cerebro/regras/guardrails.md`.
 ## Ambiente local
 
 - Windows 11, PowerShell. Python 3.14. Git 2.55 (instalado na Fase 1).
-- Pastas: `cerebro/`, `docs/`, `src/` (código), `tests/` (testes).
+- Pastas: `cerebro/`, `docs/`, `src/brax_sdr/` (código), `tests/` (testes).
+- Ambiente: `.venv` na raiz. Sempre use `.venv\Scripts\python.exe`.
+- Testes: `.venv\Scripts\python.exe -m pytest` (não chamam a API; o agente é testado com um cliente falso).
+- Conversar: `.venv\Scripts\python.exe conversar.py --detalhes`.
+- Decisões de desenho do código: o modelo extrai dados, o código decide a faixa (013); laço manual de ferramentas (015); guardrails em camadas (017).

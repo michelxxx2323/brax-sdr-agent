@@ -3,7 +3,7 @@
 > Um agente de IA que faz pré-vendas (SDR) inbound por WhatsApp e e-mail para uma fintech B2B,
 > qualificando leads, roteando para o canal certo e registrando tudo no CRM.
 
-**Status:** 🟢 Fase 1 (Fundação) concluída. Próxima: Fase 2 (agente no terminal).
+**Status:** 🟡 Fase 2 (agente no terminal) implementada, em validação. Fase 1 concluída.
 
 > ⚠️ **A BRAX é uma empresa fictícia**, criada para este case e **inspirada na [Brex](https://www.brex.com/)**.
 > Nome, planos, preços e funcionalidades são inventados. Não há relação com a Brex nem com nenhuma empresa real.
@@ -75,11 +75,36 @@ e, na dúvida, passa para um humano. Ver [cerebro/regras/guardrails.md](cerebro/
 | # | Fase | Entrega | Status |
 |---|---|---|---|
 | 1 | Fundação | Estrutura, documentação e cérebro | ✅ Concluída |
-| 2 | Agente no terminal | Conversar com o P.H. no terminal como se fosse um lead | ⚪ |
+| 2 | Agente no terminal | Conversar com o P.H. no terminal como se fosse um lead | 🟡 Em validação |
 | 3 | Canal e-mail | Gmail API | ⚪ |
 | 4 | Canal WhatsApp | Meta Cloud API (número de teste) | ⚪ |
 | 5 | CRM e aprovação humana | HubSpot + Slack | ⚪ |
 | 6 | Evals e métricas | Conversas de teste com LLM como juiz e painel de taxa de qualificação | ⚪ |
+
+## Como rodar (Windows)
+
+Pré-requisitos: Python 3.10+ e uma chave da API da Anthropic ([console.anthropic.com](https://console.anthropic.com/)).
+
+```powershell
+# 1. Criar o ambiente isolado e instalar as dependências
+python -m venv .venv
+.venv\Scripts\python.exe -m pip install -r requirements.txt
+
+# 2. Configurar a chave: copie .env.example para .env e preencha ANTHROPIC_API_KEY
+copy .env.example .env
+
+# 3. Rodar os testes (não chamam a API, custo zero)
+.venv\Scripts\python.exe -m pytest
+
+# 4. Conversar com o P.H. como se você fosse um lead
+.venv\Scripts\python.exe conversar.py --detalhes
+.venv\Scripts\python.exe conversar.py --lead ana-lumen --canal email
+```
+
+No terminal você faz dois papéis: o **lead** e o **time humano**. Quando o P.H. pedir aprovação para agendar
+com um executivo, o terminal mostra o resumo como se fosse o Slack e pergunta se você aprova.
+Use `/estado` para ver o que o P.H. já registrou sobre o lead. O histórico fica em `data/local/leads/`
+(fora do Git), e usar o mesmo `--lead` continua a conversa.
 
 ## Estrutura do repositório
 
@@ -91,8 +116,9 @@ brax-sdr-agent/
 │   ├── voz/          # tom de voz e exemplos por canal
 │   └── regras/       # guardrails e FAQ
 ├── docs/             # arquitetura e registro de decisões
-├── src/              # código do agente (a partir da Fase 2)
-├── tests/            # testes e evals
+├── src/brax_sdr/     # código do agente (ver docs/arquitetura.md)
+├── tests/            # testes automáticos (sem chamar a API)
+├── conversar.py      # conversa com o P.H. no terminal
 ├── .env.example      # nomes das variáveis de ambiente (sem valores)
 └── CLAUDE.md         # contexto para sessões com o Claude Code
 ```

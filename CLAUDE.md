@@ -9,6 +9,9 @@ Sou iniciante e não sou desenvolvedor, mas entendo um pouco de arquitetura de s
 - **Idioma:** sempre português simples. Antes de cada etapa, explique o que vai fazer e por quê.
 - **Confirmação:** peça minha confirmação antes de instalar qualquer coisa ou rodar comandos que alterem meu computador (instalar pacotes, criar ambientes, mudar configurações globais, deletar arquivos).
 - **Commits:** pequenos e frequentes, com mensagens claras em português (ex.: `Cérebro: adiciona objeções da persona CFO`).
+- **Push:** autorizado a fazer `git push` para o GitHub ao fim de cada etapa, sem perguntar antes. O repositório é **público**
+  (https://github.com/michelxxx2323/brax-sdr-agent): antes de cada push, confira que nada sensível (.env, chaves, data/local/) está versionado.
+  Nunca use `push --force` sem pedir.
 - **Segredos:** nunca coloque chaves de API, senhas ou tokens no código. Use `.env` (já no `.gitignore`) e documente o nome da variável em `.env.example`, sem valor.
 - **Erros:** se algo der errado, explique o erro e o que vai tentar. Não esconda falhas.
 - **Fases:** não avance para a próxima fase sem minha aprovação explícita da atual.

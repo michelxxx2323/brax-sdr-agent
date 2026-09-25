@@ -1,0 +1,5 @@
+# Dependências do projeto. Instalar com:
+#   .venv\Scripts\python.exe -m pip install -r requirements.txt
+anthropic>=1.8,<2
+python-dotenv>=1.2
+pytest>=9

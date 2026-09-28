@@ -55,6 +55,7 @@ Um único agente usando a Claude API com **ferramentas (tools)**. A cada mensage
 | `solicitar_aprovacao_executivo` | Pede aprovação humana antes de agendar com executivo | ✅ Fase 2 (terminal) → Slack na Fase 5 |
 | `transferir_para_humano` | Encaminha a conversa para uma pessoa | ✅ Fase 2 (registro local) → Fase 5 |
 | `registrar_opt_out` | Registra pedido de parada (LGPD); o código bloqueia novas respostas | ✅ Fase 2 (registro local) → Fase 5 |
+| `encerrar_conversa` | Encerra após a despedida; despedidas seguintes não chegam à IA (decisão 021) | ✅ Fase 2 |
 | `atualizar_crm` | Cria/atualiza contato, empresa e negócio no HubSpot | Fase 5 |
 | `agendar_followup` | Programa uma nova mensagem se o lead sumir | Fases 3/4 |
 | `pesquisar_empresa` | Busca informações públicas da empresa e do decisor | A definir |
@@ -72,7 +73,8 @@ O link do app (self-service) e o link de agenda (executivo) são devolvidos pela
 | `src/brax_sdr/prompt.py` | Instruções do P.H.: bloco fixo com cache + bloco de contexto do lead |
 | `src/brax_sdr/roteamento.py` | Tabela de roteamento e pontuação de prioridade |
 | `src/brax_sdr/ferramentas.py` | Definição e execução das ferramentas, com validação dos dados |
-| `src/brax_sdr/guardrails.py` | Checagem automática das respostas (alertas G1 a G4) |
+| `src/brax_sdr/guardrails.py` | Checagem automática das respostas (alertas de guardrail, estilo e confiabilidade) |
+| `src/brax_sdr/protecao.py` | Encerramento de conversa e limites de mensagens, tamanho e custo, antes da API (decisão 021) |
 | `src/brax_sdr/memoria.py` | Memória por lead (arquivo JSON local; Supabase depois) |
 | `src/brax_sdr/agente.py` | Laço de conversa com ferramentas (decisão 015) |
 | `src/brax_sdr/terminal.py` | Interface de terminal com aprovação humana simulada |

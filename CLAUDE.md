@@ -89,4 +89,4 @@ Texto completo: `cerebro/regras/guardrails.md`.
 - Ambiente: `.venv` na raiz. Sempre use `.venv\Scripts\python.exe`.
 - Testes: `.venv\Scripts\python.exe -m pytest` (não chamam a API; o agente é testado com um cliente falso).
 - Conversar: `.venv\Scripts\python.exe conversar.py --detalhes`.
-- Decisões de desenho do código: o modelo extrai dados, o código decide a faixa (013); laço manual de ferramentas (015); guardrails em camadas (017).
+- Decisões de desenho do código: o modelo extrai dados, o código decide a faixa (013); laço manual de ferramentas (015); guardrails em camadas (017); identificação curta e humano sob demanda (020); proteção de custo e encerramento antes da API (021).

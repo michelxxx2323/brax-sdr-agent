@@ -22,9 +22,11 @@
 | 014 | Memória em arquivo local na Fase 2, Supabase depois | Aceita | 2026-09-24 |
 | 015 | Laço de ferramentas manual em vez do Tool Runner | Aceita | 2026-09-24 |
 | 016 | Cérebro inteiro no prompt, com cache | Aceita | 2026-09-24 |
-| 017 | Guardrails em camadas: prompt, código e checagem automática | Aceita | 2026-09-24 |
+| 017 | Guardrails em camadas: prompt, código e checagem automática | Aceita (G4 atualizado pela 020) | 2026-09-24 |
 | 018 | Aprovação com opção "sugerir outro horário" | Aceita | 2026-09-27 |
 | 019 | O lead vê só o texto escrito depois das ferramentas | Aceita | 2026-09-27 |
+| 020 | Identificação curta e humano só quando faz sentido | Aceita | 2026-09-27 |
+| 021 | Encerramento de conversa e proteção de custo em código | Aceita | 2026-09-27 |
 
 ---
 
@@ -337,3 +339,45 @@ O texto que o lead não viu é apagado do histórico.
 
 **Motivo:** o texto final é o único que já conhece o resultado das ferramentas. Apagar do histórico o que não foi
 enviado garante que a memória do P.H. corresponda ao que o lead de fato leu.
+
+---
+
+## 020: Identificação curta e humano só quando faz sentido
+
+**Contexto:** nos testes, a primeira mensagem sempre dizia "sou assistente virtual" e "se preferir, falo com uma pessoa".
+Oferecer humano para todo lead gasta tempo do time comercial com contas pequenas, e a apresentação longa soava robótica.
+
+**Opções consideradas:**
+1. Manter como estava (apresentação + oferta de humano na 1ª mensagem).
+2. Não revelar que é IA, a menos que perguntem.
+3. Identificação curta como assistente virtual na 1ª mensagem, repetida só se perguntarem; humano oferecido
+   só na faixa executivo, quando algo sai do fluxo ou quando o lead pede.
+
+**Decisão:** opção 3. Isso atualiza o guardrail G4 e a decisão 017.
+
+**Motivo:** um agente com nome de pessoa ("Pedro Henrique") sem aviso levaria o lead a achar que fala com um humano.
+Em serviços financeiros, descobrir isso depois quebra a confiança, e a tendência regulatória (ex.: PL 2338/2023 no Brasil)
+é garantir o direito de saber quando se fala com uma IA. Uma frase curta resolve isso sem deixar a conversa robótica.
+O pedido explícito do lead por uma pessoa continua sendo atendido sempre.
+
+---
+
+## 021: Encerramento de conversa e proteção de custo em código
+
+**Contexto:** no teste "Lumen 3", o P.H. respondeu "tmj" e "é nois" com emojis, gastando tokens sem necessidade.
+Em produção, alguém mal-intencionado poderia mandar muitas mensagens (ou mensagens gigantes) só para gerar custo.
+
+**Decisão:** regras em `src/brax_sdr/protecao.py`, aplicadas **antes** de chamar a API:
+1. **Encerramento:** o P.H. chama `encerrar_conversa` depois da despedida. Mensagens seguintes que sejam só
+   despedida ("valeu", "tchau", emojis) não recebem resposta. Uma dúvida nova reabre a conversa.
+2. **Limite diário:** 30 mensagens por lead por dia. Ao passar, uma mensagem fixa avisa que uma pessoa do time
+   continua o atendimento; depois, silêncio até o dia seguinte.
+3. **Limite de custo:** US$ 0,50 acumulados por lead (uma qualificação normal custa poucos centavos). Ao passar,
+   mensagem fixa, transferência para humano e bloqueio até uma pessoa liberar.
+4. **Mensagem longa:** acima de 2.000 caracteres, o P.H. pede um resumo sem processar o texto.
+
+Os limites ficam em `config.py`, para calibrar com dados reais.
+
+**Motivo:** a proteção de custo não pode depender do modelo, porque cada mensagem que chega a ele já custa.
+Reconhecer uma despedida com uma lista de palavras é simples, previsível e gratuito. Os limites passam o caso a um
+humano em vez de simplesmente bloquear, porque um lead legítimo e muito engajado também pode atingi-los.

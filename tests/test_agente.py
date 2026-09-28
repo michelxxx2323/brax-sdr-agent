@@ -121,7 +121,7 @@ def test_mensagem_longa_no_whatsapp_e_encurtada(tmp_path):
     ])
     resposta = Agente(client=cliente, pasta_leads=tmp_path).responder("longo", "Me passa uma estimativa")
     assert resposta.texto == curta
-    assert cliente.chamadas[1]["messages"] == [{"role": "user", "content": LONGA}]
+    assert cliente.chamadas[1]["messages"] == [{"role": "user", "content": f"<mensagem>\n{LONGA}\n</mensagem>"}]
     assert "tools" not in cliente.chamadas[1]  # a reescrita não usa ferramentas
     salvo = memoria.carregar("longo", pasta=tmp_path)
     assert salvo.mensagens[-1]["content"] == [{"type": "text", "text": curta}]  # histórico = o que o lead viu
@@ -280,3 +280,41 @@ def test_recusa_do_modelo_vira_transferencia_segura(tmp_path):
     assert "pessoa do nosso time" in resposta.texto
     salvo = memoria.carregar("lead6", pasta=tmp_path)
     assert salvo.mensagens[-1]["role"] == "assistant"
+
+
+# --- Achados do teste "mei3" (continuação) ---
+
+def test_reescrita_fora_do_papel_e_descartada():
+    from brax_sdr.agente import _reescrita_confiavel
+
+    original = (
+        "Oi, Wesley! Para abrir a conta, basta baixar o app oficial da BRAX, cadastrar a empresa e enviar os "
+        "documentos por lá. A análise costuma sair em até 2 dias úteis. " * 3
+    )
+    # Respostas reais do editor no teste: falou de si mesmo e das próprias funções.
+    assert not _reescrita_confiavel(original, "Entendi! Estou pronto para reescrever mensagens de WhatsApp. Envie a mensagem.")
+    assert not _reescrita_confiavel(original, "Oi! Sou P.H. Estou aqui para conversar com leads e qualificar empresas.")
+    assert _reescrita_confiavel(
+        original, "Wesley, para abrir a conta baixe o app oficial da BRAX, cadastre a empresa e envie os documentos por lá. A análise costuma sair em até 2 dias úteis."
+    )
+
+
+def test_despedida_de_lead_roteado_encerra_automaticamente(tmp_path):
+    lead = memoria.carregar("abs", pasta=tmp_path)
+    lead.faixa = "self_service"
+    memoria.salvar(lead, pasta=tmp_path)
+    cliente = ClienteFalso([_msg([TextBlock(text="Abraço, Wesley!", type="text")], "end_turn")])
+    agente = Agente(client=cliente, pasta_leads=tmp_path)
+    assert agente.responder("abs", "Abs").texto == "Abraço, Wesley!"
+    assert memoria.carregar("abs", pasta=tmp_path).encerrada is True
+    segunda = agente.responder("abs", "tmj")  # não chega à IA: o ClienteFalso não tem mais respostas
+    assert segunda.motivo_silencio == "conversa_encerrada"
+
+
+def test_nao_encerra_se_o_ph_fez_uma_pergunta(tmp_path):
+    lead = memoria.carregar("pergunta", pasta=tmp_path)
+    lead.faixa = "executivo"
+    memoria.salvar(lead, pasta=tmp_path)
+    cliente = ClienteFalso([_msg([TextBlock(text="Perfeito! Pode ser amanhã às 15h?", type="text")], "end_turn")])
+    Agente(client=cliente, pasta_leads=tmp_path).responder("pergunta", "ok")
+    assert memoria.carregar("pergunta", pasta=tmp_path).encerrada is False

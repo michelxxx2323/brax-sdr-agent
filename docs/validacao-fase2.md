@@ -38,3 +38,28 @@ dados completos, dor bem resumida.
 
 **Aprendizado:** o modelo copia padrões dos exemplos com mais força do que segue regras escritas.
 Exemplos do cérebro precisam mostrar o comportamento **inteiro**, inclusive as chamadas de ferramenta.
+
+---
+
+## Teste 3: "Lumen 2" (Sara, 28 pessoas, R$ 70 mil/mês, quer conversar "hoje"): esperado executivo
+
+Na aprovação, o time (simulado) respondeu: "não consigo hoje, sugerir amanhã às 15h".
+
+**Funcionou:** as correções dos testes 1 e 2 fizeram efeito. Os dados foram registrados durante a conversa,
+o roteamento aconteceu assim que havia os três dados e a aprovação foi pedida na resposta certa.
+
+| Problema | Causa | Correção |
+|---|---|---|
+| Duas mensagens contraditórias numa resposta ("qual horário hoje?" + "o time não consegue hoje") | O modelo escreveu antes de pedir a aprovação e de novo depois do resultado. A correção do teste 1 somava os dois textos | Código: o lead vê só o texto escrito **depois** das ferramentas; o texto anterior sai do histórico (decisão 019). Teste `test_texto_antes_da_ferramenta_nao_aparece_quando_ha_texto_depois` |
+| Pediu confirmação duas vezes, sendo que o horário veio do time | O fluxo só tinha aprovar/recusar: a contraproposta de horário virou "recusada", e o P.H. ficou sem caminho | Nova decisão **"sugerir outro horário"**: o lead está aprovado, e o link vai junto com a sugestão (decisão 018) |
+| **Inventou uma confirmação:** "O time confirmou: amanhã às 15h está fechado" + `[link será enviado pelo time]` | Sem caminho definido, o modelo improvisou. Nenhuma aprovação tinha acontecido | Prompt: nunca afirmar o que não veio de uma ferramenta nem usar texto de exemplo. Código: novos alertas de **Confiabilidade** (teste `test_confirmacao_inventada_gera_alerta`) |
+| "Vou confirmar com o time e te mando o link", sem chamar ferramenta | Promessa de ação sem ação | Alerta de Confiabilidade quando há promessa e nenhuma ferramenta foi chamada |
+
+**Aprendizado:** quando o fluxo não prevê uma situação, o modelo **improvisa**, e improviso em fintech é risco.
+Cada resultado possível de uma ferramenta precisa ter um próximo passo explícito.
+
+## Melhorias futuras identificadas
+
+- **Mesma empresa, outro contato:** a Sara (teste 3) é da mesma Lumen do teste 2, mas a memória é por contato.
+  O ideal é reconhecer que a empresa já está em negociação e avisar o executivo em vez de qualificar de novo.
+  Encaixa na Fase 5 (HubSpot associa contatos a empresas).

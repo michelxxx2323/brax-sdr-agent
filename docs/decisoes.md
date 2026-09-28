@@ -23,6 +23,8 @@
 | 015 | Laço de ferramentas manual em vez do Tool Runner | Aceita | 2026-09-24 |
 | 016 | Cérebro inteiro no prompt, com cache | Aceita | 2026-09-24 |
 | 017 | Guardrails em camadas: prompt, código e checagem automática | Aceita | 2026-09-24 |
+| 018 | Aprovação com opção "sugerir outro horário" | Aceita | 2026-09-27 |
+| 019 | O lead vê só o texto escrito depois das ferramentas | Aceita | 2026-09-27 |
 
 ---
 
@@ -303,3 +305,35 @@ Instruções no prompt ajudam, mas não garantem.
 
 **Motivo:** o que pode ser garantido em código não fica só no prompt. Os alertas criam um registro para medir.
 Na Fase 6, um LLM juiz avalia cada guardrail com mais precisão, e dá para decidir, com dados, se os alertas devem bloquear.
+
+---
+
+## 018: Aprovação com opção "sugerir outro horário"
+
+**Contexto:** no teste "Lumen 2", o time aprovou o lead, mas não podia no horário pedido. Com só "aprovar" ou
+"recusar", a contraproposta virou recusa, e o P.H. ficou sem caminho: pediu confirmação duas vezes e acabou
+inventando uma confirmação.
+
+**Opções consideradas:**
+1. Manter aprovar/recusar e deixar o texto da observação guiar o modelo.
+2. Separar as decisões: aprovar, **aprovar com outro horário**, recusar (o lead não vai para o executivo), decidir depois.
+3. Tirar a negociação de horário do fluxo: aprovar só o lead e deixar ele escolher na agenda do executivo.
+
+**Decisão:** opção 2.
+
+**Motivo:** cada resultado tem um próximo passo explícito, e o modelo não precisa interpretar texto livre para
+saber se pode ou não enviar o link. A opção 3 é o destino natural quando houver uma agenda real (ex.: HubSpot
+Meetings) na Fase 5; até lá, a opção 2 representa melhor o que o time comercial responde no Slack.
+
+---
+
+## 019: O lead vê só o texto escrito depois das ferramentas
+
+**Contexto:** o modelo pode escrever um texto, chamar uma ferramenta e escrever outro depois do resultado.
+Somar os dois gerou mensagens contraditórias; mostrar só o último deixava a resposta vazia quando ele não escrevia mais nada.
+
+**Decisão:** mostrar o texto escrito depois dos resultados. Se ele vier vazio, mostrar o último texto escrito antes.
+O texto que o lead não viu é apagado do histórico.
+
+**Motivo:** o texto final é o único que já conhece o resultado das ferramentas. Apagar do histórico o que não foi
+enviado garante que a memória do P.H. corresponda ao que o lead de fato leu.

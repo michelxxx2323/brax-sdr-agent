@@ -111,6 +111,16 @@ despedida, com as mensagens seguintes de despedida sem chamar a API (decisão 02
 **Aprovado sem ressalvas.** Confirmou em uma frase ("Entendido, não vou mais entrar em contato") e as três
 mensagens seguintes não receberam resposta nem chamaram a API.
 
+### Teste 9: "MEI 2" (Joana Cupcake): reteste do fora do perfil
+
+| Problema | Causa | Correção |
+|---|---|---|
+| Respondeu só "Boa sorte com os cupcakes! 🧁", sem explicar o motivo | Mesmo com a instrução explícita, o modelo não explicou | A recusa virou **texto padronizado por motivo**, enviado pelo código (decisão 023) |
+| Faixa e motivo de novo vazios no CRM | O modelo usou `encerrar_conversa` com "fora_do_assunto", a única exceção da trava criada no teste 6 | O dado que desqualifica (MEI, sem CNPJ, PF, só crédito) já roteia no código. "Fora do assunto" não vale quando os dados permitem rotear |
+
+**Aprendizado:** quando o modelo erra duas vezes o mesmo ponto, mesmo com instruções claras, o ponto sai do modelo.
+Um momento sensível e repetitivo (a recusa) ganha em previsibilidade com um texto padronizado.
+
 ## Melhorias futuras identificadas
 
 - **Mesma empresa, outro contato:** a Sara (teste 3) é da mesma Lumen do teste 2, mas a memória é por contato.

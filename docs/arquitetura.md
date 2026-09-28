@@ -74,6 +74,7 @@ O link do app (self-service) e o link de agenda (executivo) são devolvidos pela
 | `src/brax_sdr/roteamento.py` | Tabela de roteamento e pontuação de prioridade |
 | `src/brax_sdr/ferramentas.py` | Definição e execução das ferramentas, com validação dos dados |
 | `src/brax_sdr/guardrails.py` | Checagem automática das respostas (alertas de guardrail, estilo e confiabilidade) |
+| `src/brax_sdr/mensagens.py` | Mensagens padronizadas de recusa (fora do perfil), enviadas pelo código (decisão 023) |
 | `src/brax_sdr/protecao.py` | Encerramento de conversa e limites de mensagens, tamanho e custo, antes da API (decisão 021) |
 | `src/brax_sdr/memoria.py` | Memória por lead (arquivo JSON local; Supabase depois) |
 | `src/brax_sdr/agente.py` | Laço de conversa com ferramentas (decisão 015) |

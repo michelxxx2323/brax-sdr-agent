@@ -28,6 +28,7 @@
 | 020 | Identificação curta e humano só quando faz sentido | Aceita | 2026-09-27 |
 | 021 | Encerramento de conversa e proteção de custo em código | Aceita | 2026-09-27 |
 | 022 | Encurtar automaticamente mensagens longas no WhatsApp | Aceita | 2026-09-27 |
+| 023 | Recusa de lead fora do perfil feita pelo código, com texto padronizado | Aceita | 2026-09-28 |
 
 ---
 
@@ -402,3 +403,23 @@ falhar, vai a original. O histórico guarda a versão enviada.
 **Motivo:** resolve o sintoma com custo baixo (uma chamada pequena, só quando necessário) e sem depender de o
 modelo obedecer à regra de tamanho. A opção 4 fica para a comparação de modelos da Fase 6: se um modelo mais forte
 respeitar o tamanho sozinho, a reescrita deixa de ser acionada e o custo extra some.
+
+---
+
+## 023: Recusa de lead fora do perfil feita pelo código, com texto padronizado
+
+**Contexto:** em dois testes seguidos ("mei" e "mei2"), o modelo encerrou a conversa com um MEI sem explicar o motivo
+("Abraço!", "Boa sorte com os cupcakes!") e sem registrar a faixa. Na segunda vez, contornou a trava da primeira correção.
+
+**Opções consideradas:**
+1. Reforçar ainda mais o prompt.
+2. Usar um modelo mais forte só nesse momento.
+3. Tirar esse momento do modelo: o dado que desqualifica roteia automaticamente, e o código envia uma mensagem
+   padronizada por motivo e encerra a conversa.
+
+**Decisão:** opção 3 (`src/brax_sdr/mensagens.py`).
+
+**Motivo:** a recusa é curta, repetitiva e sensível. Em fintech, mensagens de recusa costumam ser padronizadas e
+revisadas por compliance, porque uma recusa mal explicada gera reclamação. O texto fixo garante explicação, sugestão
+e tom corretos, e o CRM sempre recebe faixa e motivo. Perde-se a personalização desse único momento, mas o nome do
+lead é mantido. O restante da conversa continua livre.

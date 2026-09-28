@@ -149,6 +149,18 @@ carrega o código só ao iniciar). As correções do teste 10 não foram exercit
 **Aprendizado:** até uma tarefa simples ("encurte este texto") precisa separar com clareza a instrução do conteúdo.
 Sem isso, o modelo pode responder ao conteúdo em vez de trabalhar sobre ele.
 
+### Teste 12: "MEI 4" (Sergio Brigadeiros): reteste com o código atualizado
+
+**Funcionou:** recusa padronizada com faixa e motivo registrados; despedida final em silêncio, sem chamar a API.
+
+| Problema | Causa | Correção |
+|---|---|---|
+| "Entedi, Obrigado" reabriu a conversa | Erro de digitação fora da lista | Palavras longas parecidas com as da lista também contam ("entedi" → "entendi"), sem pegar "cartão" ou "tarde" |
+| O cliente recebeu *"Despedidas seguintes não recebem resposta"* | Frase copiada da descrição de `encerrar_conversa` | Frase removida da ferramenta e do prompt (quem silencia é o código). O bloqueio de texto interno ganhou esse padrão |
+
+**Aprendizado:** tudo o que o modelo lê (descrições de ferramenta inclusive) pode acabar numa resposta ao cliente.
+Regras de funcionamento do sistema que o modelo não precisa aplicar não devem estar no texto que ele lê.
+
 ## Melhorias futuras identificadas
 
 - **Mesma empresa, outro contato:** a Sara (teste 3) é da mesma Lumen do teste 2, mas a memória é por contato.

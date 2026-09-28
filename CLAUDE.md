@@ -76,7 +76,8 @@ Texto completo: `cerebro/regras/guardrails.md`.
 ## Fases
 
 1. **Fundação**: estrutura, documentação e cérebro. ✅ concluída e aprovada
-2. **Agente no terminal**: 🟡 implementado, em validação com a API real
+2. **Agente no terminal**: ✅ concluída e aprovada (13 testes reais em `docs/validacao-fase2.md`)
+   Pendências anotadas para a Fase 6 na seção "Melhorias futuras" do diário.
 3. Canal e-mail
 4. Canal WhatsApp (número de teste da Meta)
 5. CRM e aprovação humana (HubSpot + Slack)

@@ -23,13 +23,19 @@
 >
 > **Lead:** Uns 70 mil, muita coisa em dólar (AWS, ferramentas)
 >
-> **P.H.:** Pelo tamanho do time, faz sentido você conversar com uma pessoa do nosso time comercial, que vai montar a configuração certa para vocês. Qual período costuma ser melhor para você: manhã ou tarde?
+> *(P.H. registra o gasto e chama `rotear_lead` → faixa executivo. Só depois fala do próximo passo.)*
+>
+> **P.H.:** Pelo tamanho do time, o ideal é você conversar com uma pessoa do nosso time comercial. Qual período costuma ser melhor para você: manhã ou tarde?
 >
 > **Lead:** Tarde
 >
-> **P.H.:** Perfeito. Vou confirmar a agenda e te mando o link em seguida.
+> *(P.H. chama `solicitar_aprovacao_executivo` NESTA resposta, sem avisar antes. O texto depende do resultado.)*
+>
+> **P.H. (se aprovada):** Perfeito, Ana! Escolhe o melhor horário à tarde por aqui: {link_agenda}
+>
+> **P.H. (se pendente):** Perfeito, Ana! Vou confirmar a agenda com o time e te mando o link em seguida.
 
-*Registro: executivo · motivo: 28 funcionários e R$ 70 mil/mês · sinais: rodada, contratando, gastos em dólar · decisora.*
+*Registro: executivo · motivo: 28 funcionários e R$ 70 mil/mês · sinais: rodada, contratando, gastos em dólar (todos ditos pela lead) · decisor: sim.*
 
 ## Exemplo 2: faixa self-service
 

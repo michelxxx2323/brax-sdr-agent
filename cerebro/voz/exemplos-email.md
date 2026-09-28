@@ -54,7 +54,7 @@ Abraço,
 P.H. · Assistente virtual da BRAX
 ```
 
-*Registro: executivo · motivo: 120 funcionários · persona CFO, decisora.*
+*Registro: executivo · motivo: 120 funcionários · persona CFO, decisor: sim.*
 
 ## Exemplo 3: follow-up (lead parou de responder)
 

@@ -7,6 +7,7 @@ Uso (na pasta do projeto):
 
 import argparse
 import os
+import re
 import sys
 
 import anthropic
@@ -72,6 +73,14 @@ def mostrar_estado(lead_id: str) -> None:
     print("---\n")
 
 
+_COMANDO = re.compile(r"^\s*(\.venv[\\/]|python(\.exe)?\s|py\s)|conversar\.py", re.IGNORECASE)
+
+
+def parece_comando(texto: str) -> bool:
+    """Achado no teste "mei3": comandos do terminal digitados dentro da conversa viraram mensagens do lead."""
+    return bool(_COMANDO.search(texto))
+
+
 def _credencial_configurada() -> bool:
     return bool(os.getenv("ANTHROPIC_API_KEY") or os.getenv("ANTHROPIC_AUTH_TOKEN"))
 
@@ -116,6 +125,10 @@ def main() -> None:
             continue
         if texto == "/estado":
             mostrar_estado(args.lead)
+            continue
+        if parece_comando(texto):
+            print("Isso parece um comando do terminal, não uma mensagem de lead. Nada foi enviado ao P.H.")
+            print("Para trocar de lead, digite /sair e depois rode o comando.\n")
             continue
 
         try:

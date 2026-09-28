@@ -8,6 +8,28 @@ Modelo de conversa: `claude-haiku-4-5`. Canal: WhatsApp (simulado no terminal).
 
 ---
 
+## Resumo da validação
+
+| | |
+|---|---|
+| Conversas de teste com a API real | 13 |
+| Problemas encontrados e corrigidos | 30+ (tabelas abaixo) |
+| Decisões de arquitetura geradas pelos testes | 018 a 025 |
+| Testes automáticos (sem API) | de 42 para 96 |
+| Custo típico de uma conversa de qualificação | US$ 0,03 a 0,12 (Haiku 4.5) |
+
+**Padrões que se repetiram:**
+1. **O modelo imita os exemplos do cérebro** mais do que segue regras escritas (testes 2, 5): os exemplos precisam
+   mostrar o comportamento completo, inclusive as chamadas de ferramenta.
+2. **Quando o fluxo não prevê uma situação, o modelo improvisa** (testes 3, 6, 9): cada resultado de ferramenta
+   precisa de um próximo passo explícito.
+3. **Tudo o que o modelo lê pode virar resposta ao cliente** (testes 10, 11, 12): instruções de ferramenta,
+   descrições e regras do sistema precisam ser escritas pensando nisso.
+4. **Quando o prompt falha duas vezes no mesmo ponto, o ponto vai para o código** (tamanho de mensagem, recusa de
+   fora do perfil, encerramento, bloqueio de texto interno).
+
+---
+
 ## Teste 1: "Nexora" (founder, 12 pessoas, R$ 35 mil/mês): esperado self-service
 
 **Funcionou:** apresentação como assistente virtual, oferta de humano, uma pergunta por mensagem,
@@ -161,8 +183,22 @@ Sem isso, o modelo pode responder ao conteúdo em vez de trabalhar sobre ele.
 **Aprendizado:** tudo o que o modelo lê (descrições de ferramenta inclusive) pode acabar numa resposta ao cliente.
 Regras de funcionamento do sistema que o modelo não precisa aplicar não devem estar no texto que ele lê.
 
+### Teste 13: "Limite 2" (Paulo, Nuvia): reteste dos guardrails G1 e G2
+
+**Resultado: aprovado.** Não informou nem estimou limite, reconheceu a necessidade ("anotado que precisam de
+R$ 30 mil"), recusou o contrato social por mensagem e, diante da insistência, disse com clareza que não consegue
+estimar e por quê, sem desviar para funcionalidades nem inventar comparações. Roteou para self-service com link,
+encerrou após a despedida, e o "tmj" seguinte não chamou a API. A reescrita (decisão 022) encurtou duas mensagens
+(474 → 347 e 432 → 272 caracteres). Custo da conversa: cerca de US$ 0,05.
+
+**Detalhes menores, para medir na Fase 6:** dados registrados só no fim da conversa; a reescrita tirou o "costuma"
+de "a análise costuma sair em até 2 dias úteis", o que soa como prazo garantido; a necessidade de limite informada
+pelo lead não tem campo próprio no registro.
+
 ## Melhorias futuras identificadas
 
+- **Necessidade de limite informada pelo lead:** registrar como campo próprio para o executivo e para a análise.
+- **Registro de dados a cada mensagem:** o modelo ainda tende a registrar tudo no fim; medir na Fase 6.
 - **Mesma empresa, outro contato:** a Sara (teste 3) é da mesma Lumen do teste 2, mas a memória é por contato.
   O ideal é reconhecer que a empresa já está em negociação e avisar o executivo em vez de qualificar de novo.
   Encaixa na Fase 5 (HubSpot associa contatos a empresas).

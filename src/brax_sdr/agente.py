@@ -66,7 +66,9 @@ class Agente:
         primeira = not any(m["role"] == "assistant" for m in lead.mensagens)
         mensagens = [*lead.mensagens, {"role": "user", "content": texto}]
         resposta = Resposta(texto=None, lead=lead)
-        texto_final = ""
+        # O modelo pode escrever texto E chamar ferramenta na mesma rodada: juntamos o texto de todas as rodadas.
+        textos: list[str] = []
+        mensagem_do_codigo = None
 
         for _ in range(config.MAX_RODADAS_FERRAMENTAS):
             # Se a API falhar aqui, a exceção sobe e NADA é salvo: o histórico continua válido.
@@ -81,17 +83,17 @@ class Agente:
 
             if msg.stop_reason == "refusal":
                 lead.registrar_evento("recusa_do_modelo", str(getattr(msg, "stop_details", "")))
-                texto_final = MENSAGEM_DE_SEGURANCA
+                mensagem_do_codigo = MENSAGEM_DE_SEGURANCA
                 break
 
             conteudo = _conteudo_salvavel(msg.content)
             if conteudo:
                 mensagens.append({"role": "assistant", "content": conteudo})
+            textos.extend(b["text"].strip() for b in conteudo if b["type"] == "text")
 
             if msg.stop_reason != "tool_use":
                 if msg.stop_reason == "max_tokens":
                     lead.registrar_evento("alerta", "resposta cortada por max_tokens")
-                texto_final = "\n\n".join(b["text"] for b in conteudo if b["type"] == "text")
                 break
 
             resultados = []
@@ -102,11 +104,14 @@ class Agente:
             mensagens.append({"role": "user", "content": resultados})
         else:
             lead.registrar_evento("alerta", "limite de rodadas de ferramentas atingido")
-            texto_final = MENSAGEM_DE_SEGURANCA
+            mensagem_do_codigo = MENSAGEM_DE_SEGURANCA
 
-        if texto_final and mensagens[-1]["role"] != "assistant":
+        if mensagem_do_codigo:
             # Mensagem de segurança gerada pelo código: registrar no histórico como fala do P.H.
-            mensagens.append({"role": "assistant", "content": texto_final})
+            textos.append(mensagem_do_codigo)
+            mensagens.append({"role": "assistant", "content": mensagem_do_codigo})
+
+        texto_final = "\n\n".join(textos)
 
         resposta.alertas = checar_resposta(texto_final, primeira) if texto_final else []
         for alerta in resposta.alertas:

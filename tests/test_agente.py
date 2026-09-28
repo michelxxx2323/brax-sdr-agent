@@ -56,6 +56,19 @@ def test_conversa_com_ferramenta_salva_historico_completo(tmp_path):
     assert '"funcionarios": 6' in cliente.chamadas[1]["system"][1]["text"]
 
 
+def test_texto_escrito_junto_com_ferramenta_nao_se_perde(tmp_path):
+    # Caso real da primeira conversa: texto + ferramenta na mesma rodada, depois rodada final vazia.
+    cliente = ClienteFalso([
+        _msg([
+            TextBlock(text="Perfeito! Hoje como o time paga as despesas?", type="text"),
+            ToolUseBlock(id="t1", name="registrar_qualificacao", input={"funcionarios": 12}, type="tool_use"),
+        ], "tool_use"),
+        _msg([], "end_turn"),
+    ])
+    resposta = Agente(client=cliente, pasta_leads=tmp_path).responder("lead7", "Somos 12 pessoas")
+    assert resposta.texto == "Perfeito! Hoje como o time paga as despesas?"
+
+
 def test_historico_e_relido_na_mensagem_seguinte(tmp_path):
     cliente = ClienteFalso([
         _msg([TextBlock(text="Olá! Sou o P.H., assistente virtual da BRAX.", type="text")], "end_turn"),

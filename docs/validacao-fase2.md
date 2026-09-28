@@ -58,6 +58,20 @@ o roteamento aconteceu assim que havia os três dados e a aprovação foi pedida
 **Aprendizado:** quando o fluxo não prevê uma situação, o modelo **improvisa**, e improviso em fintech é risco.
 Cada resultado possível de uma ferramenta precisa ter um próximo passo explícito.
 
+## Teste 4: "Lumen 3" (Ricardo, CFO, mesmo cenário do teste 3): reteste das correções
+
+Na aprovação, o time (simulado) escolheu "sugerir outro horário: segunda que vem às 16h".
+
+**Resultado: aprovado.** As correções dos testes 1 a 3 funcionaram com a API real:
+- Uma única mensagem depois da aprovação, com o horário sugerido e o link (decisões 018 e 019).
+- Nenhum alerta de guardrail, estilo ou confiabilidade na conversa.
+- A regra em código evitou um erro: o P.H. tentou rotear sem o tipo de empresa, recebeu "falta: tipo_empresa"
+  e perguntou antes de seguir (decisão 013 funcionando na prática).
+
+**Detalhes menores, para medir na Fase 6:** duas perguntas numa mesma mensagem; reenviou o link depois da
+confirmação; "Até segunda!" (quem vai na reunião é o executivo); continuou respondendo a mensagens de despedida
+("tmj", "é nois") em vez de encerrar.
+
 ## Melhorias futuras identificadas
 
 - **Mesma empresa, outro contato:** a Sara (teste 3) é da mesma Lumen do teste 2, mas a memória é por contato.

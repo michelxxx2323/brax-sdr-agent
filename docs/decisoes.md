@@ -401,6 +401,10 @@ de ~300 no tom de voz e no prompt. Os alertas de estilo registravam o problema, 
 **Decisão:** opção 3, com travas: a versão curta só é aceita se for menor e mantiver todos os links; se a chamada
 falhar, vai a original. O histórico guarda a versão enviada.
 
+**Atualização (teste 11):** o texto passou a ir entre marcações `<mensagem>`, e a reescrita também é descartada
+se falar em "reescrever", tiver termos internos ou usar menos da metade das palavras da original. Motivo: o editor
+respondeu ao conteúdo ("Estou pronto para reescrever mensagens…") em vez de reescrevê-lo.
+
 **Motivo:** resolve o sintoma com custo baixo (uma chamada pequena, só quando necessário) e sem depender de o
 modelo obedecer à regra de tamanho. A opção 4 fica para a comparação de modelos da Fase 6: se um modelo mais forte
 respeitar o tamanho sozinho, a reescrita deixa de ser acionada e o custo extra some.

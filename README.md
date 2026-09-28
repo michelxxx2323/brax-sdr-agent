@@ -106,6 +106,8 @@ No terminal você faz dois papéis: o **lead** e o **time humano**. Quando o P.H
 com um executivo, o terminal mostra o resumo como se fosse o Slack e pergunta se você aprova.
 Use `/estado` para ver o que o P.H. já registrou sobre o lead. O histórico fica em `data/local/leads/`
 (fora do Git), e usar o mesmo `--lead` continua a conversa.
+Para trocar de lead, digite `/sair` antes de rodar o próximo comando. Depois de atualizar o código,
+abra uma conversa nova: uma sessão aberta continua com o código antigo.
 
 ## Estrutura do repositório
 

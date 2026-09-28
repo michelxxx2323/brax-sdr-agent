@@ -133,6 +133,22 @@ Um momento sensível e repetitivo (a recusa) ganha em previsibilidade com um tex
 **Aprendizado:** o texto de retorno das ferramentas também é prompt. Uma instrução condicional ("se X, explique")
 pode fazer o modelo narrar a condição para o cliente. Instruções de ferramenta devem ser curtas e diretas.
 
+### Teste 11: continuação do "MEI 3" (sessão antiga, com comandos digitados na conversa)
+
+O terminal da conversa anterior ficou aberto, e os comandos para iniciar os próximos testes foram digitados
+dentro dele. Resultado: os comandos viraram mensagens do lead, e a sessão rodou com o **código antigo** (o Python
+carrega o código só ao iniciar). As correções do teste 10 não foram exercitadas, mas surgiram problemas novos.
+
+| Problema | Causa | Correção |
+|---|---|---|
+| O "editor" da reescrita (decisão 022) respondeu *"Entendi! Estou pronto para reescrever mensagens…"* | O texto a reescrever ia solto, e o modelo o tratou como conversa. As travas (menor e com links) não pegaram | Texto entre `<mensagem>` e `</mensagem>`, e novas travas: descarta reescrita que fale em "reescrever", tenha termos internos ou use menos da metade das palavras da original |
+| "Vou confirmar com o time e te retorno", sem ninguém para retornar | A frase era o modelo de resposta para "não sei" no próprio cérebro | "Não sei" passa a chamar `transferir_para_humano` (cérebro, guardrails e prompt) |
+| "Abs! 👊", "Tmj!" respondidos | O modelo não chamou `encerrar_conversa` | Código: lead roteado que se despede, com resposta sem pergunta, tem a conversa encerrada automaticamente |
+| Comandos do terminal enviados como mensagens | Erro operacional, fácil de repetir | O terminal reconhece comandos e avisa, sem enviar nada |
+
+**Aprendizado:** até uma tarefa simples ("encurte este texto") precisa separar com clareza a instrução do conteúdo.
+Sem isso, o modelo pode responder ao conteúdo em vez de trabalhar sobre ele.
+
 ## Melhorias futuras identificadas
 
 - **Mesma empresa, outro contato:** a Sara (teste 3) é da mesma Lumen do teste 2, mas a memória é por contato.

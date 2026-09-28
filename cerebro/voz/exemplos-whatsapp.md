@@ -33,7 +33,9 @@
 >
 > **P.H. (se aprovada):** Perfeito, Ana! Escolhe o melhor horário à tarde por aqui: {link_agenda}
 >
-> **P.H. (se pendente):** Perfeito, Ana! Vou confirmar a agenda com o time e te mando o link em seguida.
+> **P.H. (se novo horário):** Ana, à tarde hoje o time não consegue, mas amanhã às 15h está livre. Se funcionar, confirma por aqui: {link_agenda}
+>
+> **P.H. (se pendente):** Perfeito, Ana! Vou confirmar a agenda com o time e te retorno por aqui.
 
 *Registro: executivo · motivo: 28 funcionários e R$ 70 mil/mês · sinais: rodada, contratando, gastos em dólar (todos ditos pela lead) · decisor: sim.*
 

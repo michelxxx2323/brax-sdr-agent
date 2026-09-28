@@ -27,7 +27,7 @@ class Lead:
     motivo_faixa: str | None = None
     prioridade: int = 0
     opt_out: bool = False
-    aprovacao: str | None = None  # pendente | aprovada | recusada
+    aprovacao: str | None = None  # pendente | aprovada | novo_horario | recusada
     eventos: list[dict] = field(default_factory=list)
     criado_em: str = field(default_factory=_agora)
     atualizado_em: str = field(default_factory=_agora)

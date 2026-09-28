@@ -13,7 +13,7 @@ from brax_sdr.memoria import Lead
 from brax_sdr.roteamento import PONTOS_POR_SINAL, TIPOS_EMPRESA, prioridade, rotear
 
 # Recebe (lead, resumo, disponibilidade) e devolve (decisao, observacao),
-# com decisao em "aprovada" | "recusada" | "pendente".
+# com decisao em "aprovada" | "novo_horario" | "recusada" | "pendente".
 Aprovador = Callable[[Lead, str, str], tuple[str, str]]
 
 PERSONAS = ("founder_ceo", "financas_cfo", "operacoes_people", "outro")
@@ -186,11 +186,21 @@ def _solicitar_aprovacao(lead: Lead, entrada: dict, aprovador: Aprovador | None)
     resposta = {"aprovacao": decisao, "observacao_do_time": observacao}
     if decisao == "aprovada":
         resposta["link_agenda"] = config.LINK_AGENDA_EXECUTIVO
-        resposta["proximo_passo"] = "Envie o link de agenda do executivo."
+        resposta["proximo_passo"] = "Envie o link de agenda do executivo nesta mensagem."
+    elif decisao == "novo_horario":
+        # Contraproposta: o lead foi aprovado, só o horário muda. O link vai junto, sem pedir confirmação antes.
+        resposta["link_agenda"] = config.LINK_AGENDA_EXECUTIVO
+        resposta["proximo_passo"] = (
+            "O lead foi aprovado, mas o horário pedido não dá. Nesta mesma mensagem, ofereça o horário sugerido "
+            "pelo time (observacao_do_time) e envie o link de agenda para o lead confirmar. Não pergunte antes se pode enviar."
+        )
     elif decisao == "recusada":
-        resposta["proximo_passo"] = "Não envie agenda. Siga a observação do time; se não houver, diga que o time vai retornar."
+        resposta["proximo_passo"] = (
+            "O time não aprovou o agendamento com executivo. Não envie link de agenda. Siga a observação do time "
+            "(ex.: indicar o app); se não houver, diga que o time vai retornar por aqui."
+        )
     else:
-        resposta["proximo_passo"] = "Diga que vai confirmar a agenda e retorna em seguida. Não envie link."
+        resposta["proximo_passo"] = "Diga que vai confirmar a agenda com o time e retorna por aqui. Não envie link."
     return resposta
 
 

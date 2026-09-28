@@ -4,7 +4,7 @@ import json
 
 from brax_sdr import config
 from brax_sdr.ferramentas import executar
-from brax_sdr.guardrails import checar_resposta
+from brax_sdr.guardrails import checar_confiabilidade, checar_resposta
 from brax_sdr.memoria import Lead
 
 
@@ -76,6 +76,28 @@ def test_aprovacao_aprovada_libera_link_de_agenda():
     assert lead.aprovacao == "aprovada"
 
 
+def test_aprovacao_com_novo_horario_libera_link_e_repassa_sugestao():
+    lead = Lead(id="t", faixa="executivo")
+    resultado, _ = _executar(
+        "solicitar_aprovacao_executivo",
+        {"resumo": "Lumen", "disponibilidade": "hoje"},
+        lead,
+        aprovador=lambda lead, resumo, disp: ("novo_horario", "amanhã às 15h"),
+    )
+    assert resultado["link_agenda"] == config.LINK_AGENDA_EXECUTIVO
+    assert resultado["observacao_do_time"] == "amanhã às 15h"
+    assert lead.aprovacao == "novo_horario"
+
+
+def test_aprovacao_recusada_nao_libera_link():
+    lead = Lead(id="t", faixa="executivo")
+    resultado, _ = _executar(
+        "solicitar_aprovacao_executivo", {"resumo": "x", "disponibilidade": "y"}, lead,
+        aprovador=lambda *_: ("recusada", "indicar o app"),
+    )
+    assert "link_agenda" not in resultado
+
+
 def test_aprovacao_sem_aprovador_fica_pendente_e_sem_link():
     lead = Lead(id="t", faixa="executivo")
     resultado, _ = _executar("solicitar_aprovacao_executivo", {"resumo": "x", "disponibilidade": "manhã"}, lead)
@@ -114,6 +136,17 @@ def test_alertas_de_estilo_no_whatsapp():
     assert checar_resposta(longa, False, "whatsapp") == [f"Estilo: mensagem longa para WhatsApp ({len(longa)} caracteres)"]
     assert checar_resposta("O link é **este**", False, "whatsapp") == ["Estilo: markdown (**) no WhatsApp"]
     assert checar_resposta(longa + "**x**", False, "email") == []  # no e-mail, texto maior é normal
+
+
+def test_alertas_de_confiabilidade():
+    # Frase real do teste "lumen2", dita sem nenhuma ferramenta.
+    promessa = "Perfeito, Sara! Vou confirmar a agenda com o time e te mando o link em seguida."
+    assert checar_confiabilidade(promessa, []) == [
+        "Confiabilidade: promete uma ação para depois sem ter chamado nenhuma ferramenta"
+    ]
+    # A mesma frase é legítima quando a aprovação ficou pendente nesta resposta.
+    assert checar_confiabilidade(promessa, ["solicitar_aprovacao_executivo"]) == []
+    assert checar_confiabilidade("Aqui está o link: https://agenda.brax.example", []) == []
 
 
 def test_frase_de_protecao_nao_e_confundida_com_pedido():

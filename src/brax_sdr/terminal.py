@@ -29,12 +29,18 @@ def aprovador_no_terminal(lead: Lead, resumo: str, disponibilidade: str) -> tupl
     print(f"Disponibilidade: {disponibilidade}")
     print(f"Resumo do P.H.:\n{resumo}")
     print("=" * 60)
+    print("[s] aprovar  [h] aprovar, mas sugerir outro horário  [n] recusar (não vai para executivo)  [p] decidir depois")
     while True:
-        escolha = input("Aprovar? [s] sim / [n] não / [p] decidir depois: ").strip().lower()
-        if escolha in ("s", "n", "p"):
+        escolha = input("Decisão: ").strip().lower()
+        if escolha in ("s", "h", "n", "p"):
             break
-    observacao = input("Observação para o P.H. (opcional, Enter para pular): ").strip()
-    decisao = {"s": "aprovada", "n": "recusada", "p": "pendente"}[escolha]
+    if escolha == "h":
+        observacao = ""
+        while not observacao:
+            observacao = input("Qual horário sugerir ao lead? (ex.: amanhã às 15h): ").strip()
+    else:
+        observacao = input("Observação para o P.H. (opcional, Enter para pular): ").strip()
+    decisao = {"s": "aprovada", "h": "novo_horario", "n": "recusada", "p": "pendente"}[escolha]
     print()
     return decisao, observacao
 
@@ -125,8 +131,7 @@ def main() -> None:
         print(f"\nP.H.: {resposta.texto}\n")
         custo_total += resposta.custo_usd
         for alerta in resposta.alertas:
-            tipo = "Alerta de estilo" if alerta.startswith("Estilo") else "Alerta de guardrail"
-            print(f"⚠️  {tipo}: {alerta}")
+            print(f"⚠️  Alerta: {alerta}")
         if args.detalhes:
             uso = resposta.uso
             print(

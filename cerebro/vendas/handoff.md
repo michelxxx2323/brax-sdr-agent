@@ -21,9 +21,11 @@
 **O que o agente faz:**
 1. Diz que vai conectar o lead com uma pessoa do time comercial.
 2. Pergunta a disponibilidade (período do dia, dias da semana).
-3. **Pede aprovação no Slack** com o resumo abaixo. Enquanto espera, avisa o lead: "Vou confirmar a agenda e te retorno em seguida".
+3. **Pede aprovação no Slack** com o resumo abaixo, na mesma resposta em que o lead informa a disponibilidade
+   (sem avisar antes). Só se a aprovação ficar **pendente**, avisa: "Vou confirmar a agenda e te retorno por aqui".
 4. **Aprovado:** envia o link de agenda do executivo (`BRAX_LINK_AGENDA_EXECUTIVO`).
-   **Recusado:** segue a orientação do humano (ex.: mandar para self-service) e registra o motivo.
+   **Aprovado com outro horário:** oferece o horário sugerido pelo time e envia o link na mesma mensagem.
+   **Recusado:** o lead não vai para o executivo; segue a orientação do humano (ex.: mandar para self-service) e registra o motivo.
 5. Registra no CRM: faixa `executivo`, motivo, resumo, status da aprovação.
 
 **Resumo para o Slack / executivo (modelo):**
@@ -37,7 +39,7 @@ Solução atual: {solucao_atual}
 Sinais de compra: {sinais} (prioridade {pontos})
 Motivo da faixa: {motivo}
 Canal: {whatsapp|email} · Disponibilidade: {disponibilidade}
-[Aprovar] [Recusar]
+[Aprovar] [Sugerir outro horário] [Recusar]
 ```
 
 <!-- REVISAR: tempo máximo de espera pela aprovação antes de avisar o lead de novo (sugestão: 2 horas úteis) -->

@@ -27,6 +27,7 @@
 | 019 | O lead vê só o texto escrito depois das ferramentas | Aceita | 2026-09-27 |
 | 020 | Identificação curta e humano só quando faz sentido | Aceita | 2026-09-27 |
 | 021 | Encerramento de conversa e proteção de custo em código | Aceita | 2026-09-27 |
+| 022 | Encurtar automaticamente mensagens longas no WhatsApp | Aceita | 2026-09-27 |
 
 ---
 
@@ -381,3 +382,23 @@ Os limites ficam em `config.py`, para calibrar com dados reais.
 **Motivo:** a proteção de custo não pode depender do modelo, porque cada mensagem que chega a ele já custa.
 Reconhecer uma despedida com uma lista de palavras é simples, previsível e gratuito. Os limites passam o caso a um
 humano em vez de simplesmente bloquear, porque um lead legítimo e muito engajado também pode atingi-los.
+
+---
+
+## 022: Encurtar automaticamente mensagens longas no WhatsApp
+
+**Contexto:** em três testes seguidos, o P.H. mandou mensagens de 370 a 613 caracteres no WhatsApp, apesar do limite
+de ~300 no tom de voz e no prompt. Os alertas de estilo registravam o problema, mas não o evitavam.
+
+**Opções consideradas:**
+1. Insistir no prompt (já tentado).
+2. Cortar o texto no limite (quebraria frases e poderia cortar links).
+3. Quando passar de 400 caracteres, pedir ao modelo uma versão curta numa chamada separada, sem ferramentas.
+4. Trocar o modelo de conversa por um mais forte.
+
+**Decisão:** opção 3, com travas: a versão curta só é aceita se for menor e mantiver todos os links; se a chamada
+falhar, vai a original. O histórico guarda a versão enviada.
+
+**Motivo:** resolve o sintoma com custo baixo (uma chamada pequena, só quando necessário) e sem depender de o
+modelo obedecer à regra de tamanho. A opção 4 fica para a comparação de modelos da Fase 6: se um modelo mais forte
+respeitar o tamanho sozinho, a reescrita deixa de ser acionada e o custo extra some.

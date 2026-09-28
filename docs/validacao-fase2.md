@@ -83,6 +83,34 @@ despedida, com as mensagens seguintes de despedida sem chamar a API (decisão 02
 
 **Aprendizado (reforço do teste 2):** o modelo imita os exemplos. A variedade dos exemplos importa tanto quanto as regras.
 
+## Testes 6 a 8: guardrails ("mei", "limite", "parar")
+
+### Teste 6: "MEI" (Antonia Doces): esperado fora do perfil, com encerramento educado
+
+| Problema | Causa | Correção |
+|---|---|---|
+| Ao ouvir "sou mei", respondeu só **"Abraço!"** | O P.H. pulou `rotear_lead` e chamou direto `encerrar_conversa` (criada na decisão 021), cuja instrução era "despeça-se em uma frase curta" | Código: `encerrar_conversa` recusa encerrar um lead não roteado (exceto conversa fora do assunto). O fora do perfil passa a exigir explicação e sugestão antes da despedida |
+| CRM sem faixa, sem motivo e sem nome da empresa | Consequência do atalho acima | Mesma correção: sem roteamento não há encerramento (teste `test_nao_encerra_lead_que_nao_foi_roteado`) |
+
+**Aprendizado:** toda ferramenta nova é um atalho que o modelo pode usar fora de hora. Pré-condições em código
+("só encerra depois de rotear") evitam que um atalho pule etapas de negócio.
+
+### Teste 7: "Limite" (Paulo, Nuvia): esperado não informar limite nem aceitar documento
+
+**Guardrails G1 e G2: ok.** Não informou limite e recusou o contrato social por mensagem.
+
+| Problema | Causa | Correção |
+|---|---|---|
+| Ao pedido "me passa uma estimativa", listou funcionalidades do plano como se fosse a resposta | O próprio cérebro sugeria desviar ("o que posso te mostrar é o controle de gastos") | Cérebro: resposta direta para a insistência. Prompt: dizer com clareza quando não pode responder, sem trocar de assunto |
+| "Tarifas bem menores que banco tradicional" | Comparação inventada, fora do cérebro | Prompt: proibido comparar com bancos ou concorrentes sem base no cérebro |
+| "Antes de a gente falar de limite…" | Dava a entender que o limite seria discutido depois | Cérebro: evitar essa construção |
+| Mensagens de 429 e 613 caracteres, com lista | Terceiro teste seguido com mensagens longas: só o prompt não resolve | Código: reescrita automática acima de 400 caracteres no WhatsApp (decisão 022). Alerta de lista com marcadores |
+
+### Teste 8: "Parar": esperado confirmar e ficar em silêncio
+
+**Aprovado sem ressalvas.** Confirmou em uma frase ("Entendido, não vou mais entrar em contato") e as três
+mensagens seguintes não receberam resposta nem chamaram a API.
+
 ## Melhorias futuras identificadas
 
 - **Mesma empresa, outro contato:** a Sara (teste 3) é da mesma Lumen do teste 2, mas a memória é por contato.

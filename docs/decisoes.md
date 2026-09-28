@@ -29,6 +29,7 @@
 | 021 | Encerramento de conversa e proteção de custo em código | Aceita | 2026-09-27 |
 | 022 | Encurtar automaticamente mensagens longas no WhatsApp | Aceita | 2026-09-27 |
 | 023 | Recusa de lead fora do perfil feita pelo código, com texto padronizado | Aceita | 2026-09-28 |
+| 024 | Bloqueio de texto interno antes do envio | Aceita | 2026-09-28 |
 
 ---
 
@@ -423,3 +424,23 @@ respeitar o tamanho sozinho, a reescrita deixa de ser acionada e o custo extra s
 revisadas por compliance, porque uma recusa mal explicada gera reclamação. O texto fixo garante explicação, sugestão
 e tom corretos, e o CRM sempre recebe faixa e motivo. Perde-se a personalização desse único momento, mas o nome do
 lead é mantido. O restante da conversa continua livre.
+
+---
+
+## 024: Bloqueio de texto interno antes do envio
+
+**Contexto:** no teste "MEI 3", o P.H. mandou ao cliente um comentário sobre a própria conversa ("seguindo o protocolo,
+despedidas do lead… não recebem resposta"). Vazar raciocínio interno quebra a experiência e pode expor regras do sistema.
+
+**Opções consideradas:**
+1. Só ajustar a instrução que provocou o vazamento.
+2. Além disso, verificar em código cada resposta antes do envio e bloquear textos com termos internos.
+3. Usar um segundo modelo para revisar toda resposta (mais preciso, mas custo e latência em toda mensagem).
+
+**Decisão:** opção 2. A lista de termos contém só palavras que nunca aparecem numa fala legítima ao cliente ("lead",
+"prompt", nomes de ferramentas e campos internos). Quando dispara: com a conversa encerrada, o P.H. fica em silêncio;
+com a conversa ativa, envia a mensagem de segurança e transfere para humano. O texto bloqueado fica registrado.
+
+**Motivo:** a verificação é gratuita e determinística. Palavras comuns como "ferramenta" ou "instruções" ficaram de fora
+de propósito: um bloqueio indevido troca uma resposta boa por uma transferência. A opção 3 pode ser avaliada na
+Fase 6, com dados sobre a frequência de vazamentos.

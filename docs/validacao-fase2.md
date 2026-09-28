@@ -121,6 +121,18 @@ mensagens seguintes não receberam resposta nem chamaram a API.
 **Aprendizado:** quando o modelo erra duas vezes o mesmo ponto, mesmo com instruções claras, o ponto sai do modelo.
 Um momento sensível e repetitivo (a recusa) ganha em previsibilidade com um texto padronizado.
 
+### Teste 10: "MEI 3" (Wesley Consertos): reteste da recusa padronizada
+
+**Funcionou:** a recusa padronizada (decisão 023), com faixa `fora_do_icp` e motivo `mei` registrados.
+
+| Problema | Causa | Correção |
+|---|---|---|
+| "entendi. obrigado" reabriu a conversa, e "tmj" recebeu "Tmj! 👊" | "entendi" não estava na lista de despedidas | Lista ampliada ("entendi", "tá", "pode deixar"...), sem incluir saudações como "bom dia" |
+| **Vazamento:** o cliente recebeu *"Conversa encerrada. Wesley recebeu a orientação… seguindo o protocolo, despedidas do lead… não recebem resposta"* | A instrução de `encerrar_conversa` ("se o lead já recebeu o próximo passo, explique…") levou o modelo a raciocinar em voz alta quando não tinha nada a dizer | Instrução nova: no máximo uma despedida curta, ou nada. O código permite encerrar em silêncio e **bloqueia antes do envio** qualquer texto com termos internos (decisão 024) |
+
+**Aprendizado:** o texto de retorno das ferramentas também é prompt. Uma instrução condicional ("se X, explique")
+pode fazer o modelo narrar a condição para o cliente. Instruções de ferramenta devem ser curtas e diretas.
+
 ## Melhorias futuras identificadas
 
 - **Mesma empresa, outro contato:** a Sara (teste 3) é da mesma Lumen do teste 2, mas a memória é por contato.

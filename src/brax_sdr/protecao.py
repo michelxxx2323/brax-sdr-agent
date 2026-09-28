@@ -7,6 +7,7 @@ Tudo aqui roda ANTES de chamar a API: quando uma regra dispara, a resposta
 import re
 import unicodedata
 from datetime import date
+from difflib import get_close_matches
 
 from brax_sdr import config
 from brax_sdr.memoria import Lead
@@ -31,8 +32,18 @@ _PALAVRAS_DE_DESPEDIDA = {
 }
 
 
+_PALAVRAS_LONGAS = [p for p in _PALAVRAS_DE_DESPEDIDA if len(p) >= 5]
+
+
 def _sem_acentos(texto: str) -> str:
     return "".join(c for c in unicodedata.normalize("NFD", texto) if unicodedata.category(c) != "Mn")
+
+
+def _palavra_de_despedida(palavra: str) -> bool:
+    if palavra in _PALAVRAS_DE_DESPEDIDA:
+        return True
+    # Tolera erro de digitação em palavras longas (achado no teste "mei4": "Entedi, Obrigado").
+    return len(palavra) >= 5 and bool(get_close_matches(palavra, _PALAVRAS_LONGAS, n=1, cutoff=0.85))
 
 
 def eh_despedida(texto: str) -> bool:
@@ -40,7 +51,7 @@ def eh_despedida(texto: str) -> bool:
     if len(texto) > 60:
         return False
     palavras = re.findall(r"[a-z]+", _sem_acentos(texto.lower()))
-    return all(p in _PALAVRAS_DE_DESPEDIDA for p in palavras)  # só emojis/pontuação também conta
+    return all(_palavra_de_despedida(p) for p in palavras)  # só emojis/pontuação também conta
 
 
 def verificar_antes_da_api(lead: Lead, texto: str) -> tuple[str, str | None] | None:

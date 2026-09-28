@@ -26,13 +26,16 @@ def _agente(tmp_path):
 @pytest.mark.parametrize(
     "texto",
     ["tmj", "é nois", "Valeu!", "obrigado 🙏", "👍", "falou, abraço", "Tchau tchau", "ok, combinado",
-     "entendi. obrigado", "Tá, pode deixar"],  # "entendi. obrigado": caso real do teste "mei3"
+     "entendi. obrigado", "Tá, pode deixar",  # "entendi. obrigado": caso real do teste "mei3"
+     "Entedi, Obrigado", "obrigdo"],  # erros de digitação: caso real do teste "mei4"
 )
 def test_reconhece_despedidas(texto):
     assert eh_despedida(texto)
 
 
-@pytest.mark.parametrize("texto", ["Bom dia", "valeu, e quanto custa o plano?", "tchau, mas antes: tem cartão virtual?"])
+@pytest.mark.parametrize(
+    "texto", ["Bom dia", "valeu, e quanto custa o plano?", "tchau, mas antes: tem cartão virtual?", "cartão", "à tarde"]
+)
 def test_nao_confunde_pergunta_com_despedida(texto):
     assert not eh_despedida(texto)
 

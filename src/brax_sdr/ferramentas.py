@@ -105,8 +105,7 @@ FERRAMENTAS = [
         "name": "encerrar_conversa",
         "description": (
             "Encerra a conversa depois da despedida. Use quando o próximo passo já foi entregue e o lead agradeceu "
-            "ou se despediu, ou quando o lead insistir em assuntos sem relação com a BRAX. Despedidas seguintes "
-            "não recebem resposta; uma dúvida nova reabre a conversa automaticamente."
+            "ou se despediu, ou quando o lead insistir em assuntos sem relação com a BRAX."
         ),
         "input_schema": {
             "type": "object",

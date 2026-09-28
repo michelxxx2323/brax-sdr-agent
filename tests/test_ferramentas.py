@@ -155,6 +155,7 @@ def test_alertas_de_confiabilidade():
 def test_deteccao_de_texto_interno():
     assert parece_texto_interno("Não há necessidade de responder: despedidas do lead não recebem resposta.")
     assert parece_texto_interno("Vou chamar rotear_lead agora.")
+    assert parece_texto_interno("Despedidas seguintes não recebem resposta. Se tiver uma dúvida, é só chamar!")  # teste "mei4"
     # Frases legítimas não podem ser bloqueadas.
     assert not parece_texto_interno("O próximo passo é abrir a conta pelo app: https://app.brax.example")
     assert not parece_texto_interno("Nossa ferramenta de gestão de despesas lê o comprovante por foto.")

@@ -82,7 +82,9 @@ def tipo_de_evento(alerta: str) -> str:
 _TEXTO_INTERNO = re.compile(
     r"\b(lead|leads|prompt|tool_use|proximo_passo|registrar_qualificacao|rotear_lead|"
     r"solicitar_aprovacao_executivo|transferir_para_humano|registrar_opt_out|encerrar_conversa|"
-    r"dados_coletados|fora_do_icp|self_service|dados_insuficientes)\b",
+    r"dados_coletados|fora_do_icp|self_service|dados_insuficientes)\b"
+    # Regras do sistema narradas ao cliente (teste "mei4": "Despedidas seguintes não recebem resposta").
+    r"|\bdespedidas?\b[^.\n]{0,40}\bn[ãa]o recebe(m)? resposta",
     re.IGNORECASE,
 )
 

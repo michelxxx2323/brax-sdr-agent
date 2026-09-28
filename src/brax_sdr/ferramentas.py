@@ -46,6 +46,7 @@ FERRAMENTAS = [
                 "solucao_atual": {"type": "string", "description": "Banco, cartão ou ferramenta que usam hoje."},
                 "sinais_de_compra": {
                     "type": "array",
+                    "description": "Só sinais que o lead mencionou explicitamente. Não deduza (ex.: anúncios no Facebook não indicam gastos em dólar).",
                     "items": {"type": "string", "enum": list(PONTOS_POR_SINAL)},
                 },
                 "so_quer_credito": {"type": "boolean", "description": "Verdadeiro se o lead busca apenas crédito ou empréstimo."},

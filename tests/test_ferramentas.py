@@ -109,6 +109,13 @@ def test_alertas_de_guardrail():
     assert checar_resposta("Oi! Tudo bem?", True) == ["G4: primeira mensagem sem identificação como assistente virtual"]
 
 
+def test_alertas_de_estilo_no_whatsapp():
+    longa = "Entendi perfeitamente. " * 20
+    assert checar_resposta(longa, False, "whatsapp") == [f"Estilo: mensagem longa para WhatsApp ({len(longa)} caracteres)"]
+    assert checar_resposta("O link é **este**", False, "whatsapp") == ["Estilo: markdown (**) no WhatsApp"]
+    assert checar_resposta(longa + "**x**", False, "email") == []  # no e-mail, texto maior é normal
+
+
 def test_frase_de_protecao_nao_e_confundida_com_pedido():
     texto = "Eu nunca vou te pedir senha, código ou documento por aqui."
     assert checar_resposta(texto, False) == []

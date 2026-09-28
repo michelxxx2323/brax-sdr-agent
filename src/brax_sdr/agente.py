@@ -113,9 +113,9 @@ class Agente:
 
         texto_final = "\n\n".join(textos)
 
-        resposta.alertas = checar_resposta(texto_final, primeira) if texto_final else []
+        resposta.alertas = checar_resposta(texto_final, primeira, lead.canal) if texto_final else []
         for alerta in resposta.alertas:
-            lead.registrar_evento("alerta_guardrail", alerta)
+            lead.registrar_evento("alerta_estilo" if alerta.startswith("Estilo") else "alerta_guardrail", alerta)
 
         lead.mensagens = mensagens
         memoria.salvar(lead, pasta=self.pasta_leads)

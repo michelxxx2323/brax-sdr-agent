@@ -125,7 +125,8 @@ def main() -> None:
         print(f"\nP.H.: {resposta.texto}\n")
         custo_total += resposta.custo_usd
         for alerta in resposta.alertas:
-            print(f"⚠️  Alerta de guardrail: {alerta}")
+            tipo = "Alerta de estilo" if alerta.startswith("Estilo") else "Alerta de guardrail"
+            print(f"⚠️  {tipo}: {alerta}")
         if args.detalhes:
             uso = resposta.uso
             print(

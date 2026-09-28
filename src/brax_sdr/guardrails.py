@@ -2,7 +2,8 @@
 
 Fase 2: só ALERTA (registra no histórico e mostra no terminal), porque regras
 por palavra-chave têm falsos positivos. Na Fase 6, um LLM juiz avalia cada
-guardrail com mais precisão. Os códigos G1-G4 seguem cerebro/regras/guardrails.md.
+guardrail com mais precisão. Os códigos G1-G4 seguem cerebro/regras/guardrails.md;
+os alertas "Estilo" seguem cerebro/voz/tom-de-voz.md.
 """
 
 import re
@@ -16,8 +17,16 @@ _PEDIDO_DADO_SENSIVEL = re.compile(
 )
 
 
-def checar_resposta(texto: str, primeira_mensagem: bool) -> list[str]:
+LIMITE_CARACTERES_WHATSAPP = 400  # o tom de voz pede ~300; a folga evita alertas por pouco
+
+
+def checar_resposta(texto: str, primeira_mensagem: bool, canal: str = "whatsapp") -> list[str]:
     alertas = []
+    if canal == "whatsapp":
+        if len(texto) > LIMITE_CARACTERES_WHATSAPP:
+            alertas.append(f"Estilo: mensagem longa para WhatsApp ({len(texto)} caracteres)")
+        if "**" in texto:
+            alertas.append("Estilo: markdown (**) no WhatsApp")
     if _LIMITE_COM_VALOR.search(texto):
         alertas.append("G1: possível valor de limite informado")
     if _PEDIDO_DADO_SENSIVEL.search(texto):

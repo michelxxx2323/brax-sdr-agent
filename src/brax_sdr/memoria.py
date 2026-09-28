@@ -28,6 +28,10 @@ class Lead:
     prioridade: int = 0
     opt_out: bool = False
     aprovacao: str | None = None  # pendente | aprovada | novo_horario | recusada
+    encerrada: bool = False  # despedidas depois do encerramento não recebem resposta
+    custo_total_usd: float = 0.0  # estimativa acumulada de todas as respostas deste lead
+    mensagens_hoje: dict = field(default_factory=dict)  # {"data", "total", "avisado"}
+    bloqueio: str | None = None  # ex.: "limite_de_custo" (só uma pessoa do time desbloqueia)
     eventos: list[dict] = field(default_factory=list)
     criado_em: str = field(default_factory=_agora)
     atualizado_em: str = field(default_factory=_agora)

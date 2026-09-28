@@ -14,14 +14,16 @@ from brax_sdr.ferramentas import FERRAMENTAS, Aprovador, executar
 from brax_sdr.guardrails import checar_confiabilidade, checar_resposta, tipo_de_evento
 from brax_sdr.memoria import Lead
 from brax_sdr.prompt import montar_system
+from brax_sdr.protecao import verificar_antes_da_api
 
 MENSAGEM_DE_SEGURANCA = "Vou te passar para uma pessoa do nosso time, que continua o atendimento em seguida."
 
 
 @dataclass
 class Resposta:
-    texto: str | None  # None = o P.H. não deve responder (ex.: opt-out)
+    texto: str | None  # None = o P.H. não deve responder (ver motivo_silencio)
     lead: Lead
+    motivo_silencio: str | None = None  # opt_out | conversa_encerrada | limite_diario | limite_de_custo
     ferramentas_usadas: list[str] = field(default_factory=list)
     alertas: list[str] = field(default_factory=list)
     uso: dict = field(default_factory=dict)
@@ -66,7 +68,18 @@ class Agente:
         if lead.opt_out:
             lead.registrar_evento("mensagem_apos_opt_out", "não respondida; encaminhar a humano se necessário")
             memoria.salvar(lead, pasta=self.pasta_leads)
-            return Resposta(texto=None, lead=lead)
+            return Resposta(texto=None, lead=lead, motivo_silencio="opt_out")
+
+        # Proteção de custo e encerramento (decisão 021): decide sem chamar a API.
+        protecao = verificar_antes_da_api(lead, texto)
+        if protecao:
+            motivo, resposta_fixa = protecao
+            lead.registrar_evento("sem_chamada_a_api", motivo)
+            if resposta_fixa:
+                recebida = texto if len(texto) <= config.LIMITE_CARACTERES_MENSAGEM else f"[mensagem de {len(texto)} caracteres, não processada]"
+                lead.mensagens += [{"role": "user", "content": recebida}, {"role": "assistant", "content": resposta_fixa}]
+            memoria.salvar(lead, pasta=self.pasta_leads)
+            return Resposta(texto=resposta_fixa, lead=lead, motivo_silencio=None if resposta_fixa else motivo)
 
         primeira = not any(m["role"] == "assistant" for m in lead.mensagens)
         mensagens = [*lead.mensagens, {"role": "user", "content": texto}]
@@ -141,6 +154,7 @@ class Agente:
             lead.registrar_evento(tipo_de_evento(alerta), alerta)
 
         lead.mensagens = mensagens
+        lead.custo_total_usd += resposta.custo_usd
         memoria.salvar(lead, pasta=self.pasta_leads)
         resposta.texto = texto_final
         return resposta

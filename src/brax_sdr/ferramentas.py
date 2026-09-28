@@ -101,6 +101,20 @@ FERRAMENTAS = [
         "description": "Registra que o lead pediu para não receber mais mensagens (LGPD). Depois disso, nenhum contato é feito.",
         "input_schema": {"type": "object", "properties": {}, "additionalProperties": False},
     },
+    {
+        "name": "encerrar_conversa",
+        "description": (
+            "Encerra a conversa depois da despedida. Use quando o próximo passo já foi entregue e o lead agradeceu "
+            "ou se despediu, ou quando o lead insistir em assuntos sem relação com a BRAX. Despedidas seguintes "
+            "não recebem resposta; uma dúvida nova reabre a conversa automaticamente."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {"motivo": {"type": "string", "description": "Ex.: próximo passo entregue, fora do assunto."}},
+            "required": ["motivo"],
+            "additionalProperties": False,
+        },
+    },
 ]
 
 _TEXTO_SEM_INFORMACAO = re.compile(
@@ -218,6 +232,12 @@ def _registrar_opt_out(lead: Lead) -> dict:
     return {"ok": True, "proximo_passo": "Confirme em uma frase curta que não vai mais entrar em contato. Não faça perguntas."}
 
 
+def _encerrar_conversa(lead: Lead, entrada: dict) -> dict:
+    lead.encerrada = True
+    lead.registrar_evento("conversa_encerrada", entrada["motivo"])
+    return {"ok": True, "proximo_passo": "Despeça-se em uma frase curta, sem fazer perguntas."}
+
+
 def executar(nome: str, entrada: dict, lead: Lead, aprovador: Aprovador | None = None) -> tuple[str, bool]:
     """Executa uma ferramenta. Devolve (conteúdo em JSON, é_erro)."""
     try:
@@ -231,6 +251,8 @@ def executar(nome: str, entrada: dict, lead: Lead, aprovador: Aprovador | None =
             resultado = _transferir_para_humano(lead, entrada)
         elif nome == "registrar_opt_out":
             resultado = _registrar_opt_out(lead)
+        elif nome == "encerrar_conversa":
+            resultado = _encerrar_conversa(lead, entrada)
         else:
             raise ValueError(f"ferramenta desconhecida: {nome}")
     except (ValueError, KeyError) as erro:

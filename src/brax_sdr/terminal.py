@@ -21,6 +21,14 @@ AJUDA = """Comandos:
   /sair     encerra (o histórico fica salvo; use o mesmo --lead para continuar)"""
 
 
+MOTIVOS_DE_SILENCIO = {
+    "opt_out": "este lead pediu para não receber mensagens (opt-out)",
+    "conversa_encerrada": "conversa encerrada, e esta mensagem é só uma despedida (nenhum token gasto)",
+    "limite_diario": "limite de mensagens por dia atingido (nenhum token gasto)",
+    "limite_de_custo": "limite de custo deste lead atingido; uma pessoa do time assume (nenhum token gasto)",
+}
+
+
 def aprovador_no_terminal(lead: Lead, resumo: str, disponibilidade: str) -> tuple[str, str]:
     """Simula a aprovação no Slack: você decide no terminal."""
     print("\n" + "=" * 60)
@@ -50,6 +58,10 @@ def mostrar_estado(lead_id: str) -> None:
     print(f"\n--- Estado do lead '{lead.id}' ---")
     print(f"Canal: {lead.canal} | Faixa: {lead.faixa or '-'} | Motivo: {lead.motivo_faixa or '-'}")
     print(f"Prioridade: {lead.prioridade} | Aprovação: {lead.aprovacao or '-'} | Opt-out: {'sim' if lead.opt_out else 'não'}")
+    print(
+        f"Encerrada: {'sim' if lead.encerrada else 'não'} | Bloqueio: {lead.bloqueio or '-'} | "
+        f"Custo acumulado: ~US$ {lead.custo_total_usd:.4f} (limite US$ {config.LIMITE_CUSTO_POR_LEAD_USD:.2f})"
+    )
     print("Dados coletados:")
     for campo, valor in lead.dados.items():
         print(f"  {campo}: {valor}")
@@ -125,7 +137,7 @@ def main() -> None:
             continue
 
         if resposta.texto is None:
-            print("[O P.H. não responde: este lead pediu para não receber mensagens (opt-out).]\n")
+            print(f"[O P.H. não responde: {MOTIVOS_DE_SILENCIO.get(resposta.motivo_silencio, resposta.motivo_silencio)}]\n")
             continue
 
         print(f"\nP.H.: {resposta.texto}\n")

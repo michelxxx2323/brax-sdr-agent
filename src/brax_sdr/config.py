@@ -23,6 +23,11 @@ MAX_TOKENS_CONVERSA = 4096
 # Segurança contra laços infinitos de ferramentas numa única resposta.
 MAX_RODADAS_FERRAMENTAS = 8
 
+# --- Proteção contra abuso e custo (decisão 021). Ao passar do limite, o código responde sem chamar a API. ---
+LIMITE_MENSAGENS_POR_DIA = 30  # por lead
+LIMITE_CARACTERES_MENSAGEM = 2000
+LIMITE_CUSTO_POR_LEAD_USD = 0.50  # uma qualificação normal custa poucos centavos
+
 # Preço em US$ por milhão de tokens (entrada, saída), conferido em 2026-09-24.
 # Só para ESTIMAR custo no terminal e nos evals; a fatura oficial está no Console da Anthropic.
 PRECOS_USD_POR_MILHAO = {

@@ -144,6 +144,39 @@ def test_email_nao_e_encurtado(tmp_path):
     assert len(cliente.chamadas) == 1
 
 
+def test_lead_mei_recebe_mensagem_padronizada_e_conversa_encerra(tmp_path):
+    # Caso real "mei2": o modelo registrou MEI, encerrou como "fora do assunto" e respondeu
+    # só "Boa sorte com os cupcakes!", sem explicar o motivo nem registrar a faixa.
+    lead = memoria.carregar("mei", pasta=tmp_path)
+    lead.mensagens = [{"role": "user", "content": "aqui é a Joana"}, {"role": "assistant", "content": "Oi, Joana! Sou o P.H., assistente virtual da BRAX."}]
+    memoria.salvar(lead, pasta=tmp_path)
+    cliente = ClienteFalso([
+        _msg([
+            ToolUseBlock(id="t1", name="registrar_qualificacao",
+                         input={"nome_contato": "Joana", "empresa": "Joana Cupcake", "tipo_empresa": "mei"}, type="tool_use"),
+            ToolUseBlock(id="t2", name="encerrar_conversa", input={"motivo": "fora_do_assunto"}, type="tool_use"),
+        ], "tool_use"),
+        _msg([TextBlock(text="Boa sorte com os cupcakes! 🧁", type="text")], "end_turn"),
+    ])
+    resposta = Agente(client=cliente, pasta_leads=tmp_path).responder("mei", "sou mei")
+
+    assert resposta.texto.startswith("Obrigado pelo interesse, Joana!")
+    assert "MEI" in resposta.texto
+    salvo = memoria.carregar("mei", pasta=tmp_path)
+    assert (salvo.faixa, salvo.motivo_faixa, salvo.encerrada) == ("fora_do_icp", "mei", True)
+    assert salvo.mensagens[-1]["content"][0]["text"] == resposta.texto  # histórico = o que a Joana viu
+
+
+def test_mei_na_primeira_mensagem_inclui_identificacao(tmp_path):
+    cliente = ClienteFalso([
+        _msg([ToolUseBlock(id="t1", name="registrar_qualificacao", input={"tipo_empresa": "mei"}, type="tool_use")], "tool_use"),
+        _msg([], "end_turn"),
+    ])
+    resposta = Agente(client=cliente, pasta_leads=tmp_path).responder("mei-direto", "Sou MEI, quero um cartão")
+    assert "assistente virtual" in resposta.texto
+    assert resposta.alertas == []
+
+
 def test_historico_e_relido_na_mensagem_seguinte(tmp_path):
     cliente = ClienteFalso([
         _msg([TextBlock(text="Olá! Sou o P.H., assistente virtual da BRAX.", type="text")], "end_turn"),

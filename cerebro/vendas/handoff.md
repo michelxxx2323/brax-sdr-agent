@@ -48,11 +48,13 @@ Canal: {whatsapp|email} · Disponibilidade: {disponibilidade}
 
 **Quando:** pessoa física, sem CNPJ, MEI/autônomo, ou quer só crédito/empréstimo.
 
-**O que o agente faz:**
-1. Agradece com educação e explica, sem julgamento, que o produto é feito para empresas com outro perfil.
-2. MEI e autônomos: pode sugerir procurar uma conta PJ para MEI, **sem indicar marca e sem prometer nada**.
-3. Encerra a conversa.
-4. Registra no CRM: faixa `fora_do_icp`, motivo (`pessoa_fisica`, `sem_cnpj`, `mei`, `so_credito`).
+**O que acontece (automático, decisão 023):** assim que o agente registra o dado que desqualifica, o sistema:
+1. Registra no CRM: faixa `fora_do_icp`, motivo (`pessoa_fisica`, `sem_cnpj`, `mei`, `so_credito`).
+2. Envia a mensagem padronizada do motivo (em `src/brax_sdr/mensagens.py`): agradece, explica sem julgamento por que
+   a BRAX não atende o perfil e, para MEI, sugere procurar uma conta PJ para MEI, **sem indicar marca e sem prometer nada**.
+3. Encerra a conversa. Se o lead voltar com uma dúvida, a conversa reabre normalmente.
+
+<!-- REVISAR: textos das mensagens padronizadas de recusa (validar com jurídico/compliance) -->
 
 ## 4. Transferência para humano (a qualquer momento)
 

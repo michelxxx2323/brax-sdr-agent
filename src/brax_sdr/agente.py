@@ -14,6 +14,7 @@ from brax_sdr.cerebro import carregar_cerebro
 from brax_sdr.ferramentas import FERRAMENTAS, Aprovador, executar
 from brax_sdr.guardrails import LIMITE_CARACTERES_WHATSAPP, checar_confiabilidade, checar_resposta, tipo_de_evento
 from brax_sdr.memoria import Lead
+from brax_sdr.mensagens import mensagem_fora_do_icp
 from brax_sdr.prompt import montar_system
 from brax_sdr.protecao import verificar_antes_da_api
 
@@ -115,6 +116,7 @@ class Agente:
             return Resposta(texto=resposta_fixa, lead=lead, motivo_silencio=None if resposta_fixa else motivo)
 
         primeira = not any(m["role"] == "assistant" for m in lead.mensagens)
+        faixa_inicial = lead.faixa
         mensagens = [*lead.mensagens, {"role": "user", "content": texto}]
         resposta = Resposta(texto=None, lead=lead)
         # Cada rodada: (posição da mensagem do assistente em `mensagens`, textos escritos nela).
@@ -178,13 +180,28 @@ class Agente:
             if posicao != rodada_exibida:
                 _remover_texto(mensagens[posicao])
 
-        # Mensagem longa no WhatsApp: pede uma versão curta ao modelo (decisão 022).
-        if not mensagem_do_codigo and lead.canal == "whatsapp" and len(texto_final) > LIMITE_CARACTERES_WHATSAPP:
+        def fixar_texto(novo: str) -> None:
+            """Troca o texto que o lead vai ver, mantendo o histórico igual ao que foi enviado."""
+            if textos_finais:
+                _trocar_texto(mensagens[-1], novo)
+            elif rodada_exibida is not None:
+                _trocar_texto(mensagens[rodada_exibida], novo)
+            else:
+                mensagens.append({"role": "assistant", "content": [{"type": "text", "text": novo}]})
+
+        if not mensagem_do_codigo and lead.faixa == "fora_do_icp" and faixa_inicial != "fora_do_icp":
+            # Recusa com texto padronizado e encerramento feitos pelo código (decisão 023).
+            texto_final = mensagem_fora_do_icp(lead.motivo_faixa, lead.dados.get("nome_contato"), primeira)
+            fixar_texto(texto_final)
+            if not lead.encerrada:
+                lead.encerrada = True
+                lead.registrar_evento("conversa_encerrada", f"fora do perfil: {lead.motivo_faixa}")
+        elif not mensagem_do_codigo and lead.canal == "whatsapp" and len(texto_final) > LIMITE_CARACTERES_WHATSAPP:
+            # Mensagem longa no WhatsApp: pede uma versão curta ao modelo (decisão 022).
             curto = self._encurtar(texto_final, resposta.uso)
             if curto != texto_final:
                 lead.registrar_evento("mensagem_encurtada", f"{len(texto_final)} → {len(curto)} caracteres")
-                posicao = rodada_exibida if rodada_exibida is not None else len(mensagens) - 1
-                _trocar_texto(mensagens[posicao], curto)
+                fixar_texto(curto)
                 texto_final = curto
 
         resposta.alertas = (

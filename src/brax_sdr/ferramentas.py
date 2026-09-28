@@ -166,32 +166,39 @@ def _registrar_qualificacao(lead: Lead, entrada: dict) -> dict:
     lead.dados.update(novos)
     lead.prioridade = prioridade(lead.dados.get("sinais_de_compra"), lead.dados.get("decisor"))
     lead.registrar_evento("qualificacao", ", ".join(sorted(novos)))
-    return {"ok": True, "dados_coletados": lead.dados}
+    resultado = {"ok": True, "dados_coletados": lead.dados}
+    # Dado que desqualifica (MEI, sem CNPJ, PF, só crédito): o código roteia na hora (decisão 023).
+    if lead.faixa is None and _rotear_dados(lead).faixa == "fora_do_icp":
+        resultado["roteamento"] = _rotear_lead(lead)
+    return resultado
 
 
 _PROXIMO_PASSO = {
     "self_service": "Envie o link oficial do app (link_app) e reforce que cadastro e documentos são feitos só no app.",
     "executivo": "Pergunte a disponibilidade do lead e depois chame solicitar_aprovacao_executivo. Não envie link de agenda ainda.",
     "fora_do_icp": (
-        "Chame encerrar_conversa (proximo_passo_entregue) e, depois do resultado, escreva UMA mensagem que: "
-        "agradeça o interesse, explique em uma frase por que a BRAX não atende esse perfil (ex.: é feita para "
-        "LTDA e S.A. com time), sugira procurar uma conta PJ adequada (sem citar marcas), não prometa nada "
-        "e deseje sucesso."
+        "Lead fora do perfil. O sistema envia automaticamente a mensagem padronizada de encerramento e encerra a "
+        "conversa: não chame outras ferramentas e não escreva outra mensagem."
     ),
     "humano": "Diga que uma pessoa do time vai continuar o atendimento e chame transferir_para_humano.",
     "dados_insuficientes": "Pergunte, uma coisa por vez, o que falta para rotear.",
 }
 
 
-def _rotear_lead(lead: Lead) -> dict:
+def _rotear_dados(lead: Lead):
+    """Calcula a faixa com os dados atuais, sem gravar nada."""
     d = lead.dados
-    resultado = rotear(
+    return rotear(
         tipo_empresa=d.get("tipo_empresa"),
         funcionarios=d.get("funcionarios"),
         gasto_mensal=d.get("gasto_mensal"),
         so_quer_credito=bool(d.get("so_quer_credito")),
         setor_especial=bool(d.get("setor_especial")),
     )
+
+
+def _rotear_lead(lead: Lead) -> dict:
+    resultado = _rotear_dados(lead)
     resposta = {"faixa": resultado.faixa, "motivo": resultado.motivo, "proximo_passo": _PROXIMO_PASSO[resultado.faixa]}
     if resultado.faixa != "dados_insuficientes":
         lead.faixa, lead.motivo_faixa = resultado.faixa, resultado.motivo
@@ -252,6 +259,9 @@ def _encerrar_conversa(lead: Lead, entrada: dict) -> dict:
         raise ValueError(
             "o lead ainda não foi roteado: registre os dados com registrar_qualificacao e chame rotear_lead antes de encerrar"
         )
+    # Achado no teste "mei2": o modelo usou fora_do_assunto para escapar da regra acima.
+    if motivo == "fora_do_assunto" and lead.faixa is None and _rotear_dados(lead).faixa != "dados_insuficientes":
+        raise ValueError("os dados já permitem rotear: chame rotear_lead em vez de encerrar como fora do assunto")
     lead.encerrada = True
     lead.registrar_evento("conversa_encerrada", motivo)
     return {

@@ -49,6 +49,21 @@ def test_nao_encerra_lead_que_nao_foi_roteado():
     assert lead.encerrada is False
 
 
+def test_fora_do_assunto_nao_serve_de_atalho_quando_da_para_rotear():
+    # Caso real "mei2": o modelo usou "fora_do_assunto" para escapar da exigência de rotear.
+    lead = Lead(id="t", dados={"tipo_empresa": "ltda", "funcionarios": 5, "gasto_mensal": 5000})
+    saida, erro = executar("encerrar_conversa", {"motivo": "fora_do_assunto"}, lead)
+    assert erro is True
+    assert "rotear_lead" in saida
+
+
+def test_dado_que_desqualifica_roteia_automaticamente():
+    lead = Lead(id="t")
+    saida, _ = executar("registrar_qualificacao", {"tipo_empresa": "mei"}, lead)
+    assert (lead.faixa, lead.motivo_faixa) == ("fora_do_icp", "mei")
+    assert '"roteamento"' in saida
+
+
 def test_conversa_fora_do_assunto_pode_ser_encerrada_sem_roteamento():
     lead = Lead(id="t")
     _, erro = executar("encerrar_conversa", {"motivo": "fora_do_assunto"}, lead)

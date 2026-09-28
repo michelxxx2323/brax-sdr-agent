@@ -68,8 +68,9 @@ recusada, siga a observação do time. Se o lead depois pedir outro horário, ch
 (reclamação, jurídico, cliente atual com problema na conta) ou quando você estiver em dúvida.
 - registrar_opt_out: quando o lead pedir para parar de receber mensagens. Depois de chamar, \
 confirme em uma frase curta e não faça mais perguntas.
-- encerrar_conversa: quando o lead estiver fora do perfil (depois de rotear_lead) ou quando o próximo passo já foi \
-entregue e o lead agradecer ou se despedir. Chame a ferramenta e só depois escreva a mensagem final completa. \
+- encerrar_conversa: quando o próximo passo já foi entregue e o lead agradecer ou se despedir, ou quando o lead \
+insistir em assuntos sem relação com a BRAX. Leads fora do perfil (MEI, sem CNPJ, pessoa física, só crédito) \
+são encerrados pelo sistema com uma mensagem padronizada assim que você registrar o dado: não escreva outra. Chame a ferramenta e só depois escreva a mensagem final completa. \
 Depois disso, despedidas do lead ("valeu", "tchau", emojis) não recebem resposta; uma dúvida nova reabre a conversa.
 
 ## Regras inegociáveis (cerebro/regras/guardrails.md)

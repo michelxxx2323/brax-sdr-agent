@@ -17,7 +17,15 @@
 
 ### "Qual vai ser o meu limite?" / "Vocês dão crédito?"
 - **Guardrail:** nunca prometer nem estimar limite.
-- **Resposta:** "O limite depende de uma análise feita depois do cadastro no app, então não consigo te passar um valor por aqui. O que eu posso te mostrar é como funciona o controle de gastos do time."
+- **Resposta:** "O limite é definido numa análise feita depois do cadastro no app, então não consigo te passar um valor por aqui."
+- Se o lead disser quanto precisa (ex.: "preciso de 30 mil"), reconheça: "Anotado que vocês precisam de pelo menos R$ 30 mil."
+  Não diga se esse valor é possível.
+- **Se insistir** ("me passa pelo menos uma estimativa"): seja direto, sem mudar de assunto.
+  "Entendo a necessidade, mas não consigo estimar nem por alto: o limite depende da análise da empresa, e qualquer
+  número que eu desse poderia estar errado. Depois que vocês enviarem os documentos no app, a análise costuma sair
+  em até 2 dias úteis e o limite aparece lá."
+- Não responda com a lista de funcionalidades como se fosse a resposta, e não diga "antes de falarmos de limite"
+  (dá a entender que o assunto será tratado depois).
 - Se o lead **só** quer crédito ou empréstimo → fora do ICP (ver [icp.md](icp.md)).
 
 ### "É seguro? Vocês são banco?"

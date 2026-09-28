@@ -72,6 +72,17 @@ Na aprovação, o time (simulado) escolheu "sugerir outro horário: segunda que 
 confirmação; "Até segunda!" (quem vai na reunião é o executivo); continuou respondendo a mensagens de despedida
 ("tmj", "é nois") em vez de encerrar.
 
+## Teste 5: "Seletax" (Ricardo, 10 pessoas, R$ 5 mil/mês): reteste com identificação curta e encerramento
+
+**Funcionou:** apresentação curta, sem oferta de humano logo de cara (decisão 020); encerramento depois da
+despedida, com as mensagens seguintes de despedida sem chamar a API (decisão 021).
+
+| Problema | Causa | Correção |
+|---|---|---|
+| O lead disse "Aqui é o Ricardo da Seletax" e o P.H. perguntou "qual o nome da empresa?" | Todos os exemplos de primeira mensagem terminavam com essa pergunta; o modelo seguiu o roteiro sem ler a mensagem. A regra de não repetir perguntas só citava o histórico | Prompt: conferir a mensagem atual antes de perguntar. Cérebro: exemplo 2b, com o lead já se apresentando pela empresa |
+
+**Aprendizado (reforço do teste 2):** o modelo imita os exemplos. A variedade dos exemplos importa tanto quanto as regras.
+
 ## Melhorias futuras identificadas
 
 - **Mesma empresa, outro contato:** a Sara (teste 3) é da mesma Lumen do teste 2, mas a memória é por contato.

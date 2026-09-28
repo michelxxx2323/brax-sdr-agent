@@ -77,6 +77,8 @@ O link do app (self-service) e o link de agenda (executivo) são devolvidos pela
 | `src/brax_sdr/agente.py` | Laço de conversa com ferramentas (decisão 015) |
 | `src/brax_sdr/terminal.py` | Interface de terminal com aprovação humana simulada |
 
+O que cada teste real revelou e como foi corrigido: [validacao-fase2.md](validacao-fase2.md).
+
 ### 4. Cérebro: três camadas
 
 | Camada | Onde fica | Conteúdo |

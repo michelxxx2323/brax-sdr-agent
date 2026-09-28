@@ -11,7 +11,7 @@ import anthropic
 from brax_sdr import config, memoria
 from brax_sdr.cerebro import carregar_cerebro
 from brax_sdr.ferramentas import FERRAMENTAS, Aprovador, executar
-from brax_sdr.guardrails import checar_resposta
+from brax_sdr.guardrails import checar_confiabilidade, checar_resposta, tipo_de_evento
 from brax_sdr.memoria import Lead
 from brax_sdr.prompt import montar_system
 
@@ -34,6 +34,11 @@ class Resposta:
 def _somar_uso(total: dict, usage) -> None:
     for campo in ("input_tokens", "output_tokens", "cache_creation_input_tokens", "cache_read_input_tokens"):
         total[campo] = total.get(campo, 0) + (getattr(usage, campo, None) or 0)
+
+
+def _remover_texto(mensagem: dict) -> None:
+    """Tira os blocos de texto de uma mensagem com ferramenta (os blocos tool_use continuam)."""
+    mensagem["content"] = [b for b in mensagem["content"] if b["type"] != "text"]
 
 
 def _conteudo_salvavel(content) -> list[dict]:
@@ -66,8 +71,9 @@ class Agente:
         primeira = not any(m["role"] == "assistant" for m in lead.mensagens)
         mensagens = [*lead.mensagens, {"role": "user", "content": texto}]
         resposta = Resposta(texto=None, lead=lead)
-        # O modelo pode escrever texto E chamar ferramenta na mesma rodada: juntamos o texto de todas as rodadas.
-        textos: list[str] = []
+        # Cada rodada: (posição da mensagem do assistente em `mensagens`, textos escritos nela).
+        rodadas_com_ferramenta: list[tuple[int, list[str]]] = []
+        textos_finais: list[str] = []
         mensagem_do_codigo = None
 
         for _ in range(config.MAX_RODADAS_FERRAMENTAS):
@@ -89,12 +95,15 @@ class Agente:
             conteudo = _conteudo_salvavel(msg.content)
             if conteudo:
                 mensagens.append({"role": "assistant", "content": conteudo})
-            textos.extend(b["text"].strip() for b in conteudo if b["type"] == "text")
+            textos_da_rodada = [b["text"].strip() for b in conteudo if b["type"] == "text"]
 
             if msg.stop_reason != "tool_use":
                 if msg.stop_reason == "max_tokens":
                     lead.registrar_evento("alerta", "resposta cortada por max_tokens")
+                textos_finais = textos_da_rodada
                 break
+
+            rodadas_com_ferramenta.append((len(mensagens) - 1, textos_da_rodada))
 
             resultados = []
             for bloco in (b for b in conteudo if b["type"] == "tool_use"):
@@ -106,16 +115,30 @@ class Agente:
             lead.registrar_evento("alerta", "limite de rodadas de ferramentas atingido")
             mensagem_do_codigo = MENSAGEM_DE_SEGURANCA
 
+        # O lead vê UMA mensagem: a escrita depois dos resultados das ferramentas. Texto escrito antes de uma
+        # ferramenta pode contradizer o resultado (ex.: perguntar horário e depois receber recusa), então sai
+        # do histórico. Exceção: se a rodada final vier vazia, vale o último texto escrito antes.
+        rodada_exibida = None
         if mensagem_do_codigo:
-            # Mensagem de segurança gerada pelo código: registrar no histórico como fala do P.H.
-            textos.append(mensagem_do_codigo)
+            texto_final = mensagem_do_codigo
             mensagens.append({"role": "assistant", "content": mensagem_do_codigo})
+        elif textos_finais:
+            texto_final = "\n\n".join(textos_finais)
+        else:
+            com_texto = [r for r in rodadas_com_ferramenta if r[1]]
+            rodada_exibida = com_texto[-1][0] if com_texto else None
+            texto_final = "\n\n".join(com_texto[-1][1]) if com_texto else ""
+        for posicao, _ in rodadas_com_ferramenta:
+            if posicao != rodada_exibida:
+                _remover_texto(mensagens[posicao])
 
-        texto_final = "\n\n".join(textos)
-
-        resposta.alertas = checar_resposta(texto_final, primeira, lead.canal) if texto_final else []
+        resposta.alertas = (
+            checar_resposta(texto_final, primeira, lead.canal) + checar_confiabilidade(texto_final, resposta.ferramentas_usadas)
+            if texto_final
+            else []
+        )
         for alerta in resposta.alertas:
-            lead.registrar_evento("alerta_estilo" if alerta.startswith("Estilo") else "alerta_guardrail", alerta)
+            lead.registrar_evento(tipo_de_evento(alerta), alerta)
 
         lead.mensagens = mensagens
         memoria.salvar(lead, pasta=self.pasta_leads)

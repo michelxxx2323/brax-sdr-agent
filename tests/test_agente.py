@@ -69,6 +69,42 @@ def test_texto_escrito_junto_com_ferramenta_nao_se_perde(tmp_path):
     assert resposta.texto == "Perfeito! Hoje como o time paga as despesas?"
 
 
+def test_texto_antes_da_ferramenta_nao_aparece_quando_ha_texto_depois(tmp_path):
+    # Caso real "lumen2": pergunta escrita antes da aprovação + resposta depois da recusa = duas mensagens contraditórias.
+    lead = memoria.carregar("lead8", pasta=tmp_path)
+    lead.faixa = "executivo"
+    memoria.salvar(lead, pasta=tmp_path)
+    cliente = ClienteFalso([
+        _msg([
+            TextBlock(text="Qual horário funciona melhor para você hoje: manhã ou tarde?", type="text"),
+            ToolUseBlock(id="t1", name="solicitar_aprovacao_executivo",
+                         input={"resumo": "Lumen", "disponibilidade": "Hoje"}, type="tool_use"),
+        ], "tool_use"),
+        _msg([TextBlock(text="Hoje não dá, mas amanhã às 15h está livre: link", type="text")], "end_turn"),
+    ])
+    agente = Agente(client=cliente, pasta_leads=tmp_path, aprovador=lambda *_: ("novo_horario", "amanhã às 15h"))
+    resposta = agente.responder("lead8", "Quero conversar hoje")
+
+    assert resposta.texto == "Hoje não dá, mas amanhã às 15h está livre: link"
+    salvo = memoria.carregar("lead8", pasta=tmp_path)
+    textos_salvos = [b["text"] for m in salvo.mensagens if isinstance(m["content"], list) for b in m["content"] if b["type"] == "text"]
+    assert textos_salvos == ["Hoje não dá, mas amanhã às 15h está livre: link"]  # o histórico mostra só o que o lead viu
+    assert salvo.mensagens[1]["content"][0]["type"] == "tool_use"
+
+
+def test_confirmacao_inventada_gera_alerta(tmp_path):
+    # Caso real "lumen2": o P.H. disse que o time confirmou sem ter pedido aprovação.
+    cliente = ClienteFalso([_msg([TextBlock(
+        text="O time confirmou: amanhã às 15h está fechado. Link: [link será enviado pelo time]", type="text")], "end_turn")])
+    lead = memoria.carregar("lead9", pasta=tmp_path)
+    lead.mensagens = [{"role": "user", "content": "oi"}, {"role": "assistant", "content": "Olá, sou o P.H., assistente virtual."}]
+    memoria.salvar(lead, pasta=tmp_path)
+    resposta = Agente(client=cliente, pasta_leads=tmp_path).responder("lead9", "E aí?")
+    assert "Confiabilidade: afirma confirmação do time sem ter pedido aprovação nesta resposta" in resposta.alertas
+    assert "Confiabilidade: texto de exemplo entre colchetes (ex.: [link])" in resposta.alertas
+    assert memoria.carregar("lead9", pasta=tmp_path).eventos[-1]["tipo"] == "alerta_confiabilidade"
+
+
 def test_historico_e_relido_na_mensagem_seguinte(tmp_path):
     cliente = ClienteFalso([
         _msg([TextBlock(text="Olá! Sou o P.H., assistente virtual da BRAX.", type="text")], "end_turn"),

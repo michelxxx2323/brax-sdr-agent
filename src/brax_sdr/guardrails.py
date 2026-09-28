@@ -19,6 +19,7 @@ _PEDIDO_DADO_SENSIVEL = re.compile(
 
 
 LIMITE_CARACTERES_WHATSAPP = 400  # o tom de voz pede ~300; a folga evita alertas por pouco
+_LISTA_COM_MARCADORES = re.compile(r"^\s*[-*•]\s+\S", re.MULTILINE)
 
 
 def checar_resposta(texto: str, primeira_mensagem: bool, canal: str = "whatsapp") -> list[str]:
@@ -28,6 +29,8 @@ def checar_resposta(texto: str, primeira_mensagem: bool, canal: str = "whatsapp"
             alertas.append(f"Estilo: mensagem longa para WhatsApp ({len(texto)} caracteres)")
         if "**" in texto:
             alertas.append("Estilo: markdown (**) no WhatsApp")
+        if _LISTA_COM_MARCADORES.search(texto):
+            alertas.append("Estilo: lista com marcadores no WhatsApp")
     if _LIMITE_COM_VALOR.search(texto):
         alertas.append("G1: possível valor de limite informado")
     if _PEDIDO_DADO_SENSIVEL.search(texto):

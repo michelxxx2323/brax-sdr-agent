@@ -4,6 +4,7 @@ Laço manual de ferramentas (decisão 015): precisamos salvar o histórico
 completo (incluindo chamadas de ferramentas) na memória do lead.
 """
 
+import re
 from dataclasses import dataclass, field
 
 import anthropic
@@ -11,7 +12,7 @@ import anthropic
 from brax_sdr import config, memoria
 from brax_sdr.cerebro import carregar_cerebro
 from brax_sdr.ferramentas import FERRAMENTAS, Aprovador, executar
-from brax_sdr.guardrails import checar_confiabilidade, checar_resposta, tipo_de_evento
+from brax_sdr.guardrails import LIMITE_CARACTERES_WHATSAPP, checar_confiabilidade, checar_resposta, tipo_de_evento
 from brax_sdr.memoria import Lead
 from brax_sdr.prompt import montar_system
 from brax_sdr.protecao import verificar_antes_da_api
@@ -43,6 +44,20 @@ def _remover_texto(mensagem: dict) -> None:
     mensagem["content"] = [b for b in mensagem["content"] if b["type"] != "text"]
 
 
+def _trocar_texto(mensagem: dict, texto: str) -> None:
+    """Substitui os blocos de texto de uma mensagem do assistente por um único texto (mantém tool_use)."""
+    outros = [b for b in mensagem["content"] if b["type"] != "text"] if isinstance(mensagem["content"], list) else []
+    mensagem["content"] = [{"type": "text", "text": texto}, *outros]
+
+
+INSTRUCOES_ENCURTAR = (
+    "Você reescreve mensagens de WhatsApp de um assistente de vendas. Reescreva a mensagem recebida em até "
+    "300 caracteres, em português do Brasil, mantendo o sentido, o tom, o nome da pessoa, todos os links exatamente "
+    "como estão e qualquer aviso de segurança (ex.: cadastro e documentos só no app). Sem markdown e sem listas. "
+    "No máximo uma pergunta. Não acrescente informações. Responda apenas com a mensagem reescrita."
+)
+
+
 def _conteudo_salvavel(content) -> list[dict]:
     """Converte os blocos da resposta para dicionários, sem blocos de texto vazios (a API os rejeita)."""
     blocos = [b.to_dict() for b in content]
@@ -60,6 +75,24 @@ class Agente:
         self.aprovador = aprovador
         self.pasta_leads = pasta_leads
         self.cerebro = carregar_cerebro()
+
+    def _encurtar(self, texto: str, uso: dict) -> str:
+        """Pede uma versão curta da mensagem. Na dúvida (erro, ficou maior, perdeu link), mantém a original."""
+        try:
+            msg = self.client.messages.create(
+                model=config.MODELO_CONVERSA,
+                max_tokens=1024,
+                system=INSTRUCOES_ENCURTAR,
+                messages=[{"role": "user", "content": texto}],
+            )
+        except anthropic.APIError:
+            return texto
+        _somar_uso(uso, msg.usage)
+        curto = "\n\n".join(b.text.strip() for b in msg.content if b.type == "text").strip()
+        links = re.findall(r"https?://[^\s)]+", texto)
+        if not curto or len(curto) >= len(texto) or any(link not in curto for link in links):
+            return texto
+        return curto
 
     def responder(self, lead_id: str, texto: str, canal: str = "whatsapp") -> Resposta:
         lead = memoria.carregar(lead_id, canal=canal, pasta=self.pasta_leads)
@@ -144,6 +177,15 @@ class Agente:
         for posicao, _ in rodadas_com_ferramenta:
             if posicao != rodada_exibida:
                 _remover_texto(mensagens[posicao])
+
+        # Mensagem longa no WhatsApp: pede uma versão curta ao modelo (decisão 022).
+        if not mensagem_do_codigo and lead.canal == "whatsapp" and len(texto_final) > LIMITE_CARACTERES_WHATSAPP:
+            curto = self._encurtar(texto_final, resposta.uso)
+            if curto != texto_final:
+                lead.registrar_evento("mensagem_encurtada", f"{len(texto_final)} → {len(curto)} caracteres")
+                posicao = rodada_exibida if rodada_exibida is not None else len(mensagens) - 1
+                _trocar_texto(mensagens[posicao], curto)
+                texto_final = curto
 
         resposta.alertas = (
             checar_resposta(texto_final, primeira, lead.canal) + checar_confiabilidade(texto_final, resposta.ferramentas_usadas)

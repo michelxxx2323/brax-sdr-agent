@@ -136,6 +136,9 @@ def test_alertas_de_estilo_no_whatsapp():
     assert checar_resposta(longa, False, "whatsapp") == [f"Estilo: mensagem longa para WhatsApp ({len(longa)} caracteres)"]
     assert checar_resposta("O link é **este**", False, "whatsapp") == ["Estilo: markdown (**) no WhatsApp"]
     assert checar_resposta(longa + "**x**", False, "email") == []  # no e-mail, texto maior é normal
+    lista = "No plano Start vocês têm:\n- Conta PJ com Pix\n- Cartões virtuais"
+    assert checar_resposta(lista, False, "whatsapp") == ["Estilo: lista com marcadores no WhatsApp"]
+    assert checar_resposta("Custa R$ 490 - e inclui tudo", False, "whatsapp") == []  # hífen no meio da frase não é lista
 
 
 def test_alertas_de_confiabilidade():

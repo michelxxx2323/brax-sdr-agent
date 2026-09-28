@@ -105,6 +105,45 @@ def test_confirmacao_inventada_gera_alerta(tmp_path):
     assert memoria.carregar("lead9", pasta=tmp_path).eventos[-1]["tipo"] == "alerta_confiabilidade"
 
 
+LONGA = (
+    "Fico feliz em te dar uma visão, Paulo! No plano Start (gratuito), vocês têm conta PJ com Pix, TED e boletos, "
+    "cartões virtuais ilimitados e até 5 cartões físicos, gestão de despesas com foto do comprovante no app e "
+    "integração com contador. Não tem custo mensal. O limite do cartão sai da análise depois que vocês abrem a conta. "
+    "Quer começar? É só abrir a conta direto lá: https://app.brax.example/abrir-conta"
+)
+
+
+def test_mensagem_longa_no_whatsapp_e_encurtada(tmp_path):
+    curta = "Paulo, o limite sai da análise feita no app, não consigo estimar. Abre a conta aqui: https://app.brax.example/abrir-conta"
+    cliente = ClienteFalso([
+        _msg([TextBlock(text=LONGA, type="text")], "end_turn"),
+        _msg([TextBlock(text=curta, type="text")], "end_turn"),  # resposta da chamada de reescrita
+    ])
+    resposta = Agente(client=cliente, pasta_leads=tmp_path).responder("longo", "Me passa uma estimativa")
+    assert resposta.texto == curta
+    assert cliente.chamadas[1]["messages"] == [{"role": "user", "content": LONGA}]
+    assert "tools" not in cliente.chamadas[1]  # a reescrita não usa ferramentas
+    salvo = memoria.carregar("longo", pasta=tmp_path)
+    assert salvo.mensagens[-1]["content"] == [{"type": "text", "text": curta}]  # histórico = o que o lead viu
+    assert salvo.eventos[0]["tipo"] == "mensagem_encurtada"
+
+
+def test_reescrita_que_perde_o_link_e_descartada(tmp_path):
+    cliente = ClienteFalso([
+        _msg([TextBlock(text=LONGA, type="text")], "end_turn"),
+        _msg([TextBlock(text="Paulo, abre a conta pelo app!", type="text")], "end_turn"),  # sumiu o link
+    ])
+    resposta = Agente(client=cliente, pasta_leads=tmp_path).responder("longo2", "Me passa uma estimativa")
+    assert resposta.texto == LONGA
+
+
+def test_email_nao_e_encurtado(tmp_path):
+    cliente = ClienteFalso([_msg([TextBlock(text=LONGA, type="text")], "end_turn")])
+    resposta = Agente(client=cliente, pasta_leads=tmp_path).responder("email1", "Oi", canal="email")
+    assert resposta.texto == LONGA
+    assert len(cliente.chamadas) == 1
+
+
 def test_historico_e_relido_na_mensagem_seguinte(tmp_path):
     cliente = ClienteFalso([
         _msg([TextBlock(text="Olá! Sou o P.H., assistente virtual da BRAX.", type="text")], "end_turn"),

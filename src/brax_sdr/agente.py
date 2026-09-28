@@ -12,7 +12,13 @@ import anthropic
 from brax_sdr import config, memoria
 from brax_sdr.cerebro import carregar_cerebro
 from brax_sdr.ferramentas import FERRAMENTAS, Aprovador, executar
-from brax_sdr.guardrails import LIMITE_CARACTERES_WHATSAPP, checar_confiabilidade, checar_resposta, tipo_de_evento
+from brax_sdr.guardrails import (
+    LIMITE_CARACTERES_WHATSAPP,
+    checar_confiabilidade,
+    checar_resposta,
+    parece_texto_interno,
+    tipo_de_evento,
+)
 from brax_sdr.memoria import Lead
 from brax_sdr.mensagens import mensagem_fora_do_icp
 from brax_sdr.prompt import montar_system
@@ -204,6 +210,20 @@ class Agente:
                 fixar_texto(curto)
                 texto_final = curto
 
+        if not mensagem_do_codigo and texto_final and parece_texto_interno(texto_final):
+            # Texto interno ("o lead se despediu", nomes de ferramentas) nunca chega ao cliente (decisão 024).
+            lead.registrar_evento("vazamento_bloqueado", texto_final[:300])
+            if lead.encerrada:
+                texto_final = ""
+                if textos_finais:
+                    mensagens.pop()  # a última mensagem era só o texto vazado
+                elif rodada_exibida is not None:
+                    _remover_texto(mensagens[rodada_exibida])
+            else:
+                texto_final = MENSAGEM_DE_SEGURANCA
+                fixar_texto(texto_final)
+                lead.registrar_evento("transferencia_humano", "resposta bloqueada por conter texto interno")
+
         resposta.alertas = (
             checar_resposta(texto_final, primeira, lead.canal) + checar_confiabilidade(texto_final, resposta.ferramentas_usadas)
             if texto_final
@@ -215,5 +235,9 @@ class Agente:
         lead.mensagens = mensagens
         lead.custo_total_usd += resposta.custo_usd
         memoria.salvar(lead, pasta=self.pasta_leads)
+        if not texto_final and lead.encerrada:
+            # Encerrou sem nada a dizer (ex.: o lead só se despediu): silêncio em vez de mensagem vazia.
+            resposta.motivo_silencio = "conversa_encerrada"
+            return resposta
         resposta.texto = texto_final
         return resposta

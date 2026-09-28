@@ -73,3 +73,20 @@ def tipo_de_evento(alerta: str) -> str:
     if alerta.startswith("Confiabilidade"):
         return "alerta_confiabilidade"
     return "alerta_guardrail"
+
+
+# --- Vazamento: texto interno que nunca pode chegar ao cliente (achado no teste "mei3") ---
+
+# Só termos que NUNCA aparecem numa fala legítima ao cliente. Palavras comuns ("ferramenta", "instruções",
+# "protocolo") ficam de fora: um bloqueio indevido troca a resposta por uma transferência para humano.
+_TEXTO_INTERNO = re.compile(
+    r"\b(lead|leads|prompt|tool_use|proximo_passo|registrar_qualificacao|rotear_lead|"
+    r"solicitar_aprovacao_executivo|transferir_para_humano|registrar_opt_out|encerrar_conversa|"
+    r"dados_coletados|fora_do_icp|self_service|dados_insuficientes)\b",
+    re.IGNORECASE,
+)
+
+
+def parece_texto_interno(texto: str) -> bool:
+    """Verdadeiro se a mensagem fala do sistema em vez de falar com o cliente (ex.: 'o lead se despediu')."""
+    return bool(_TEXTO_INTERNO.search(texto))

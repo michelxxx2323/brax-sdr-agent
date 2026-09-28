@@ -24,6 +24,10 @@ _PALAVRAS_DE_DESPEDIDA = {
     "tmj", "tamo", "junto", "e", "nois", "falou", "flw", "abs", "abraco", "abracos", "ate", "mais", "logo",
     "ok", "okay", "blz", "beleza", "show", "top", "perfeito", "perfeita", "combinado", "fechado", "certo",
     "muito", "de", "nada", "joia", "otimo", "otima", "legal", "kk", "kkk", "kkkk", "haha", "rs", "entao",
+    # Achado no teste "mei3": "entendi. obrigado" reabriu a conversa.
+    # ("bom" e "dia" ficam de fora: "Bom dia" pode abrir uma conversa nova.)
+    "entendi", "entendido", "entendo", "compreendi", "ta", "ah", "sim", "pode", "deixa", "deixar", "tranquilo",
+    "obrigadao", "valeuzao", "bjs", "beijos", "abracao",
 }
 
 

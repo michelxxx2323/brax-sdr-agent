@@ -4,7 +4,7 @@ import json
 
 from brax_sdr import config
 from brax_sdr.ferramentas import executar
-from brax_sdr.guardrails import checar_confiabilidade, checar_resposta
+from brax_sdr.guardrails import checar_confiabilidade, checar_resposta, parece_texto_interno
 from brax_sdr.memoria import Lead
 
 
@@ -150,6 +150,15 @@ def test_alertas_de_confiabilidade():
     # A mesma frase é legítima quando a aprovação ficou pendente nesta resposta.
     assert checar_confiabilidade(promessa, ["solicitar_aprovacao_executivo"]) == []
     assert checar_confiabilidade("Aqui está o link: https://agenda.brax.example", []) == []
+
+
+def test_deteccao_de_texto_interno():
+    assert parece_texto_interno("Não há necessidade de responder: despedidas do lead não recebem resposta.")
+    assert parece_texto_interno("Vou chamar rotear_lead agora.")
+    # Frases legítimas não podem ser bloqueadas.
+    assert not parece_texto_interno("O próximo passo é abrir a conta pelo app: https://app.brax.example")
+    assert not parece_texto_interno("Nossa ferramenta de gestão de despesas lê o comprovante por foto.")
+    assert not parece_texto_interno("Siga as instruções do app para enviar os documentos.")
 
 
 def test_frase_de_protecao_nao_e_confundida_com_pedido():

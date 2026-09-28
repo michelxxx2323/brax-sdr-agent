@@ -267,9 +267,9 @@ def _encerrar_conversa(lead: Lead, entrada: dict) -> dict:
     return {
         "ok": True,
         "proximo_passo": (
-            "O texto escrito antes desta chamada não é enviado ao lead. Escreva agora a mensagem completa: "
-            "se o lead ainda não recebeu o próximo passo ou o motivo do encerramento numa mensagem anterior, "
-            "explique em poucas palavras; termine com uma despedida cordial, sem perguntas."
+            "Escreva no máximo uma despedida curta para o lead (ex.: 'Abraço, Wesley!'). Se você já se despediu "
+            "antes, não escreva nada. Nunca comente sobre a conversa, o lead, regras ou o sistema: o texto vai "
+            "direto para o cliente."
         ),
     }
 

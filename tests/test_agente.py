@@ -177,6 +177,52 @@ def test_mei_na_primeira_mensagem_inclui_identificacao(tmp_path):
     assert resposta.alertas == []
 
 
+VAZAMENTO_REAL = (
+    "Conversa encerrada. Wesley recebeu a orientação sobre MEI na mensagem anterior e se despediu naturalmente "
+    'com "é nois". Não há necessidade de nova mensagem — seguindo o protocolo, despedidas do lead após o próximo '
+    "passo ser entregue não recebem resposta."
+)
+
+
+def test_texto_interno_ao_encerrar_nao_chega_ao_cliente(tmp_path):
+    # Caso real "mei3": ao encerrar, o P.H. escreveu um comentário interno para o cliente.
+    lead = memoria.carregar("wesley", pasta=tmp_path)
+    lead.faixa, lead.motivo_faixa = "fora_do_icp", "mei"
+    lead.mensagens = [{"role": "user", "content": "é mei"}, {"role": "assistant", "content": "Obrigado pelo interesse, Wesley!"}]
+    memoria.salvar(lead, pasta=tmp_path)
+    cliente = ClienteFalso([
+        _msg([ToolUseBlock(id="t1", name="encerrar_conversa", input={"motivo": "proximo_passo_entregue"}, type="tool_use")], "tool_use"),
+        _msg([TextBlock(text=VAZAMENTO_REAL, type="text")], "end_turn"),
+    ])
+    resposta = Agente(client=cliente, pasta_leads=tmp_path).responder("wesley", "valeu, até mais meu chapa")
+
+    assert resposta.texto is None
+    assert resposta.motivo_silencio == "conversa_encerrada"
+    salvo = memoria.carregar("wesley", pasta=tmp_path)
+    textos = [b.get("text", "") for m in salvo.mensagens if isinstance(m["content"], list) for b in m["content"]]
+    assert not any("protocolo" in t for t in textos)  # o vazamento não fica no histórico
+    assert any(e["tipo"] == "vazamento_bloqueado" for e in salvo.eventos)
+
+
+def test_texto_interno_no_meio_da_conversa_vira_transferencia(tmp_path):
+    cliente = ClienteFalso([_msg([TextBlock(text="O lead ainda não informou o gasto mensal.", type="text")], "end_turn")])
+    resposta = Agente(client=cliente, pasta_leads=tmp_path).responder("vaza2", "oi")
+    assert "pessoa do nosso time" in resposta.texto
+
+
+def test_encerrar_sem_escrever_nada_fica_em_silencio(tmp_path):
+    lead = memoria.carregar("mudo", pasta=tmp_path)
+    lead.faixa = "self_service"
+    memoria.salvar(lead, pasta=tmp_path)
+    cliente = ClienteFalso([
+        _msg([ToolUseBlock(id="t1", name="encerrar_conversa", input={"motivo": "proximo_passo_entregue"}, type="tool_use")], "tool_use"),
+        _msg([], "end_turn"),
+    ])
+    resposta = Agente(client=cliente, pasta_leads=tmp_path).responder("mudo", "valeu mesmo, vou abrir hoje ainda")
+    assert resposta.texto is None
+    assert resposta.motivo_silencio == "conversa_encerrada"
+
+
 def test_historico_e_relido_na_mensagem_seguinte(tmp_path):
     cliente = ClienteFalso([
         _msg([TextBlock(text="Olá! Sou o P.H., assistente virtual da BRAX.", type="text")], "end_turn"),

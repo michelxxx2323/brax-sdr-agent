@@ -23,7 +23,11 @@ def _agente(tmp_path):
     return Agente(client=ClienteQueNaoPodeSerChamado(), pasta_leads=tmp_path)
 
 
-@pytest.mark.parametrize("texto", ["tmj", "é nois", "Valeu!", "obrigado 🙏", "👍", "falou, abraço", "Tchau tchau", "ok, combinado"])
+@pytest.mark.parametrize(
+    "texto",
+    ["tmj", "é nois", "Valeu!", "obrigado 🙏", "👍", "falou, abraço", "Tchau tchau", "ok, combinado",
+     "entendi. obrigado", "Tá, pode deixar"],  # "entendi. obrigado": caso real do teste "mei3"
+)
 def test_reconhece_despedidas(texto):
     assert eh_despedida(texto)
 

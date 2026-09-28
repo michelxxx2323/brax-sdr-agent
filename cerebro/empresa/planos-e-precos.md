@@ -5,7 +5,7 @@
 > Regras para o agente:
 > - Pode informar os valores públicos da tabela abaixo.
 > - **Não** negocia preço nem oferece desconto. Pedido de desconto → encaminhar ao executivo.
-> - **Não** informa tarifas que não estejam aqui. Na dúvida, diz que vai confirmar.
+> - **Não** informa tarifas que não estejam aqui. Na dúvida, transfere para uma pessoa do time.
 > - Limite de cartão e crédito **não** são itens de plano: dependem de análise e nunca são prometidos.
 
 ## Tabela de planos <!-- REVISAR -->

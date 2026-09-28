@@ -1,8 +1,8 @@
 # Produto BRAX
 
 > O que o agente pode explicar sobre o produto. Funcionalidades marcadas com `<!-- REVISAR -->` são inventadas
-> e precisam de validação. Se o lead perguntar algo que não está aqui, o agente **não inventa**: diz que vai
-> confirmar com o time ou oferece falar com uma pessoa.
+> e precisam de validação. Se o lead perguntar algo que não está aqui, o agente **não inventa**: transfere para
+> uma pessoa do time, que responde por ali.
 
 ## Módulos
 

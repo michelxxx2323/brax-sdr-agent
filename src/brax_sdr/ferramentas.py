@@ -5,6 +5,7 @@ as mesmas ferramentas passam a chamar HubSpot (CRM) e Slack (aprovação).
 """
 
 import json
+import re
 from collections.abc import Callable
 
 from brax_sdr import config
@@ -101,6 +102,10 @@ FERRAMENTAS = [
     },
 ]
 
+_TEXTO_SEM_INFORMACAO = re.compile(
+    r"|-+|\?+|n/?a|none|null|desconhecid[oa]|n[ãa]o (?:informad[oa]|sei|dispon[íi]vel)", re.IGNORECASE
+)
+
 _TIPOS_JSON = {"string": str, "integer": int, "number": (int, float), "boolean": bool, "array": list}
 
 
@@ -125,6 +130,10 @@ def _validar_qualificacao(entrada: dict) -> dict:
                 raise ValueError(f"{campo} só aceita {permitidos}")
         if campo in ("funcionarios", "gasto_mensal") and valor < 0:
             raise ValueError(f"{campo} não pode ser negativo")
+        if isinstance(valor, str):
+            valor = valor.strip()
+            if _TEXTO_SEM_INFORMACAO.fullmatch(valor):
+                continue  # "não informado" não é um dado: descartar em vez de gravar
         limpo[campo] = valor
     return limpo
 

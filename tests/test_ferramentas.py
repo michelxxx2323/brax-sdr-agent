@@ -32,6 +32,17 @@ def test_qualificacao_rejeita_dado_invalido_sem_alterar_o_lead():
     assert erro is True
 
 
+def test_qualificacao_descarta_textos_sem_informacao():
+    # Caso real da primeira conversa: o modelo enviou nome_contato="Não informado".
+    lead = Lead(id="t")
+    _executar(
+        "registrar_qualificacao",
+        {"nome_contato": "Não informado", "site": "  ", "cargo": "desconhecido", "empresa": " Nexora "},
+        lead,
+    )
+    assert lead.dados == {"empresa": "Nexora"}
+
+
 def test_rotear_self_service_devolve_link_do_app():
     lead = Lead(id="t", dados={"tipo_empresa": "ltda", "funcionarios": 6, "gasto_mensal": 8000})
     resultado, _ = _executar("rotear_lead", {}, lead)

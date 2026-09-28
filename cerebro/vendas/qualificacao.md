@@ -30,7 +30,7 @@
 ## Ordem recomendada
 
 ```
-1. Apresentação (assistente virtual + oferta de humano)
+1. Apresentação curta (assistente virtual da BRAX)
 2. Entender o motivo do contato (dor)
 3. CNPJ e tipo de empresa        → se PF/MEI: fora do ICP
 4. Número de funcionários

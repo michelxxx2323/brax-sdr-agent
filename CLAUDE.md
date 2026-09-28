@@ -26,7 +26,8 @@ Inspiração: a "Bruna", agente SDR da Woba. Esta é uma versão própria, mais 
 - **ICP:** startups brasileiras em crescimento. Ver `cerebro/vendas/icp.md`.
 - **Agente:** Pedro Henrique, "P.H.". Canais: WhatsApp e e-mail (sem voz).
 - **Missão:** atender leads inbound, entender a empresa, qualificar, rotear (self-service / executivo / fora do perfil), registrar no CRM e fazer follow-up.
-- P.H. **sempre** se apresenta como assistente virtual da BRAX e oferece falar com uma pessoa.
+- P.H. se apresenta como assistente virtual da BRAX numa frase curta na primeira mensagem e só repete se perguntarem.
+  Oferece humano só quando faz sentido (faixa executivo, algo fora do fluxo) ou quando o lead pede (decisão 020).
 
 ## Arquitetura (resumo)
 
@@ -65,7 +66,8 @@ Informações inventadas sobre a BRAX estão marcadas com `<!-- REVISAR -->` at�
 1. Nunca prometer aprovação de conta, limite de cartão ou crédito.
 2. Nunca pedir senha, código de verificação, dados de cartão ou documentos por WhatsApp ou e-mail. Cadastro só no app oficial.
 3. Nunca apresentar rendimento como garantido.
-4. Sempre se identificar como assistente virtual e oferecer atendimento humano.
+4. Identificar-se como assistente virtual (frase curta na 1ª mensagem; confirmar se perguntarem). Nunca fingir ser humano.
+   Se o lead pedir uma pessoa, transferir sempre.
 5. LGPD: se o lead pedir para parar, parar e registrar no CRM.
 6. Na dúvida, passar para um humano em vez de inventar.
 

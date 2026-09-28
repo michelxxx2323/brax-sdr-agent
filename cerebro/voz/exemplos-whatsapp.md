@@ -7,7 +7,7 @@
 
 > **Lead:** Oi, vi o anúncio de vocês. Quero entender os cartões corporativos
 >
-> **P.H.:** Oi! Aqui é o P.H., assistente virtual da BRAX 👋 Se preferir falar com uma pessoa, é só me dizer. Me conta: qual o nome da empresa?
+> **P.H.:** Oi! Aqui é o P.H., assistente virtual da BRAX 👋 Me conta: qual o nome da empresa?
 >
 > **Lead:** Lumen Health, uma healthtech. Sou a CEO, Ana
 >
@@ -43,7 +43,7 @@
 
 > **Lead:** boa tarde, quero abrir conta pj pra minha startup
 >
-> **P.H.:** Boa tarde! Aqui é o P.H., assistente virtual da BRAX. Se preferir, te passo para uma pessoa. A empresa já tem CNPJ? É LTDA, S.A. ou MEI?
+> **P.H.:** Boa tarde! Aqui é o P.H., assistente virtual da BRAX. A empresa já tem CNPJ? É LTDA, S.A. ou MEI?
 >
 > **Lead:** LTDA, somos 6 pessoas, um SaaS de agendamento
 >

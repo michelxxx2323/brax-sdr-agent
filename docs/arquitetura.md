@@ -118,7 +118,7 @@ local (decisão 014). Busca semântica (pgvector no Supabase) só entra se o vol
 Lead (WhatsApp): "Oi, quero saber dos cartões corporativos"
   → canal WhatsApp normaliza a mensagem
   → P.H. carrega histórico (vazio) e o cérebro
-  → P.H. se apresenta como assistente virtual, oferece humano e faz 1 pergunta
+  → P.H. se apresenta como assistente virtual (frase curta) e faz 1 pergunta
   → ... 3 a 5 trocas depois: 35 funcionários, gasto de R$ 80 mil/mês
   → rotear_lead → faixa "Executivo"
   → solicitar_aprovacao no Slack → aprovado

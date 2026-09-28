@@ -13,7 +13,6 @@ Assunto: Sua dúvida sobre gestão de despesas na BRAX
 Oi, Carlos, tudo bem?
 
 Aqui é o P.H., assistente virtual da BRAX. Vi que você quer saber mais sobre gestão de despesas.
-Se preferir falar direto com uma pessoa do time, é só responder este e-mail pedindo.
 
 Na BRAX, cada pessoa do time tem seu próprio cartão com limite definido pela empresa, e o comprovante
 é enviado por foto no app, sem planilha de reembolso.

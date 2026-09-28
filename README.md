@@ -34,7 +34,8 @@ desenharia essa operação do zero, com as decisões documentadas.
 **Pedro Henrique ("P.H.")** é o assistente virtual de pré-vendas da BRAX. Ele:
 
 - atende leads inbound por **WhatsApp** e **e-mail**;
-- sempre se apresenta como **assistente virtual** e oferece falar com uma pessoa;
+- se apresenta como **assistente virtual** numa frase curta (e confirma sempre que perguntarem);
+- oferece falar com uma pessoa quando faz sentido: lead da faixa executivo, algo fora do fluxo ou pedido do lead;
 - entende a empresa do lead e **qualifica** com base no [ICP](cerebro/vendas/icp.md);
 - **roteia** o lead para um de três caminhos:
 

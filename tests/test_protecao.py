@@ -33,9 +33,26 @@ def test_nao_confunde_pergunta_com_despedida(texto):
     assert not eh_despedida(texto)
 
 
-def test_ferramenta_encerra_a_conversa():
+def test_ferramenta_encerra_a_conversa_depois_do_roteamento():
+    lead = Lead(id="t", faixa="self_service")
+    _, erro = executar("encerrar_conversa", {"motivo": "proximo_passo_entregue"}, lead)
+    assert erro is False
+    assert lead.encerrada is True
+
+
+def test_nao_encerra_lead_que_nao_foi_roteado():
+    # Caso real "mei": o P.H. encerrou com "Abraço!" sem rotear; o CRM ficou sem faixa e sem motivo.
     lead = Lead(id="t")
-    executar("encerrar_conversa", {"motivo": "próximo passo entregue"}, lead)
+    saida, erro = executar("encerrar_conversa", {"motivo": "proximo_passo_entregue"}, lead)
+    assert erro is True
+    assert "rotear_lead" in saida
+    assert lead.encerrada is False
+
+
+def test_conversa_fora_do_assunto_pode_ser_encerrada_sem_roteamento():
+    lead = Lead(id="t")
+    _, erro = executar("encerrar_conversa", {"motivo": "fora_do_assunto"}, lead)
+    assert erro is False
     assert lead.encerrada is True
 
 

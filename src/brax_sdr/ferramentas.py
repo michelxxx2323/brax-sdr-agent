@@ -110,7 +110,13 @@ FERRAMENTAS = [
         ),
         "input_schema": {
             "type": "object",
-            "properties": {"motivo": {"type": "string", "description": "Ex.: próximo passo entregue, fora do assunto."}},
+            "properties": {
+                "motivo": {
+                    "type": "string",
+                    "enum": ["proximo_passo_entregue", "fora_do_assunto"],
+                    "description": "proximo_passo_entregue exige que rotear_lead já tenha definido a faixa.",
+                }
+            },
             "required": ["motivo"],
             "additionalProperties": False,
         },
@@ -166,7 +172,12 @@ def _registrar_qualificacao(lead: Lead, entrada: dict) -> dict:
 _PROXIMO_PASSO = {
     "self_service": "Envie o link oficial do app (link_app) e reforce que cadastro e documentos são feitos só no app.",
     "executivo": "Pergunte a disponibilidade do lead e depois chame solicitar_aprovacao_executivo. Não envie link de agenda ainda.",
-    "fora_do_icp": "Agradeça, explique com educação que o produto é para outro perfil, não prometa nada e encerre.",
+    "fora_do_icp": (
+        "Chame encerrar_conversa (proximo_passo_entregue) e, depois do resultado, escreva UMA mensagem que: "
+        "agradeça o interesse, explique em uma frase por que a BRAX não atende esse perfil (ex.: é feita para "
+        "LTDA e S.A. com time), sugira procurar uma conta PJ adequada (sem citar marcas), não prometa nada "
+        "e deseje sucesso."
+    ),
     "humano": "Diga que uma pessoa do time vai continuar o atendimento e chame transferir_para_humano.",
     "dados_insuficientes": "Pergunte, uma coisa por vez, o que falta para rotear.",
 }
@@ -233,9 +244,24 @@ def _registrar_opt_out(lead: Lead) -> dict:
 
 
 def _encerrar_conversa(lead: Lead, entrada: dict) -> dict:
+    motivo = entrada["motivo"]
+    if motivo not in ("proximo_passo_entregue", "fora_do_assunto"):
+        raise ValueError("motivo deve ser proximo_passo_entregue ou fora_do_assunto")
+    # Achado no teste "mei": encerrar sem rotear deixava o CRM sem faixa nem motivo.
+    if motivo == "proximo_passo_entregue" and lead.faixa is None:
+        raise ValueError(
+            "o lead ainda não foi roteado: registre os dados com registrar_qualificacao e chame rotear_lead antes de encerrar"
+        )
     lead.encerrada = True
-    lead.registrar_evento("conversa_encerrada", entrada["motivo"])
-    return {"ok": True, "proximo_passo": "Despeça-se em uma frase curta, sem fazer perguntas."}
+    lead.registrar_evento("conversa_encerrada", motivo)
+    return {
+        "ok": True,
+        "proximo_passo": (
+            "O texto escrito antes desta chamada não é enviado ao lead. Escreva agora a mensagem completa: "
+            "se o lead ainda não recebeu o próximo passo ou o motivo do encerramento numa mensagem anterior, "
+            "explique em poucas palavras; termine com uma despedida cordial, sem perguntas."
+        ),
+    }
 
 
 def executar(nome: str, entrada: dict, lead: Lead, aprovador: Aprovador | None = None) -> tuple[str, bool]:

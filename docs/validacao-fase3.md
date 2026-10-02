@@ -21,3 +21,12 @@ faltava ("falta: tipo_empresa") antes de rotear. Custo da conversa: cerca de US$
 
 **Aprendizado:** uma regra criada para um canal (019, no WhatsApp) teve efeito colateral no outro. No e-mail o modelo
 escreve a mensagem inteira de uma vez, e por isso o texto antes das ferramentas é muito mais comum.
+
+## Teste 2: "Paulo, Nuvia" do zero: reteste da primeira resposta
+
+**Resultado: aprovado.** A primeira resposta veio completa (apresentação curta, explicação, uma pergunta sobre o
+gasto mensal), com um único "Abraço," e uma única assinatura (decisão 027 funcionando).
+
+**Detalhe menor:** o P.H. não chamou `registrar_qualificacao` com os dados da primeira mensagem (Nuvia, LTDA,
+8 pessoas). A conversa não é afetada, porque ele lê o histórico, mas o registro fica incompleto até o roteamento.
+É a mesma tendência anotada na Fase 2, para medir na Fase 6.

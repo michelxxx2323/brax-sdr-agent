@@ -121,6 +121,7 @@ class Agente:
 
     def responder(self, lead_id: str, texto: str, canal: str = "whatsapp") -> Resposta:
         lead = memoria.carregar(lead_id, canal=canal, pasta=self.pasta_leads)
+        lead.canal = canal  # o canal vale por mensagem: um lead pode começar no WhatsApp e seguir por e-mail
 
         # Guardrail G5 garantido em código: depois do opt-out, o P.H. não responde.
         if lead.opt_out:

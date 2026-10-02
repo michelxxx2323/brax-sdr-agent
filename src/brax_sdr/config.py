@@ -56,6 +56,17 @@ PASTA_LEADS = RAIZ / "data" / "local" / "leads"  # ignorada pelo Git
 LIMITE_FUNCIONARIOS_SELF_SERVICE = 20
 LIMITE_GASTO_SELF_SERVICE = 50_000  # R$ por mês
 
+# --- Canal de e-mail (Fase 3) ---
+# gmail.modify: ler, enviar e etiquetar. Não permite apagar e-mails definitivamente.
+GMAIL_ESCOPOS = ["https://www.googleapis.com/auth/gmail.modify"]
+GMAIL_REMETENTE = os.getenv("GMAIL_REMETENTE", "")
+GMAIL_ETIQUETA_PROCESSADO = "BRAX/processado"
+EMAIL_INTERVALO_SEGUNDOS = 30
+# Lista opcional (separada por vírgula). Vazia = responde a qualquer remetente.
+EMAIL_REMETENTES_PERMITIDOS = {
+    e.strip().lower() for e in os.getenv("EMAIL_REMETENTES_PERMITIDOS", "").split(",") if e.strip()
+}
+
 # --- Links públicos ---
 LINK_APP = os.getenv("BRAX_LINK_APP") or "https://app.brax.example/abrir-conta"
 LINK_AGENDA_EXECUTIVO = os.getenv("BRAX_LINK_AGENDA_EXECUTIVO") or "https://agenda.brax.example/executivo"

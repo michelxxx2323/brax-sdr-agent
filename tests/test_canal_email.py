@@ -251,3 +251,43 @@ def test_lead_que_veio_do_whatsapp_responde_no_estilo_do_canal_atual(tmp_path):
     cliente = ClienteFalso(["Oi, Ana! Seguimos por e-mail então."])
     AtendenteEmail(GmailFalso([mensagem_gmail()]), Agente(client=cliente, pasta_leads=tmp_path)).processar("m1")
     assert memoria.carregar("ana@lumen.example", pasta=tmp_path).canal == "email"
+
+
+# --- Achado no 1º teste real de e-mail: o lead recebeu só "Abraço, P.H." ---
+
+def test_texto_antes_do_registro_de_dados_nao_se_perde(tmp_path):
+    # O modelo escreveu o e-mail inteiro ANTES de registrar os dados e, depois, só a despedida.
+    from anthropic.types import ToolUseBlock
+
+    class ClienteEmDuasRodadas(ClienteFalso):
+        def __init__(self):
+            super().__init__([])
+            self.respostas = [
+                Message(id="a", type="message", role="assistant", model="claude-haiku-4-5", stop_reason="tool_use",
+                        stop_sequence=None, usage=Usage(input_tokens=10, output_tokens=5), content=[
+                            TextBlock(type="text", text="Oi, Paulo,\n\nAqui é o P.H., assistente virtual da BRAX. "
+                                                        "Quanto a Nuvia gasta por mês com cartão?\n\nAbraço,\nP.H. · Assistente virtual da BRAX"),
+                            ToolUseBlock(type="tool_use", id="t1", name="registrar_qualificacao", input={"funcionarios": 8}),
+                        ]),
+                Message(id="b", type="message", role="assistant", model="claude-haiku-4-5", stop_reason="end_turn",
+                        stop_sequence=None, usage=Usage(input_tokens=10, output_tokens=5),
+                        content=[TextBlock(type="text", text="Abraço,\nP.H. · Assistente virtual da BRAX")]),
+            ]
+
+        def create(self, **kwargs):
+            self.chamadas.append(kwargs)
+            return self.respostas.pop(0)
+
+    gmail = GmailFalso([mensagem_gmail()])
+    AtendenteEmail(gmail, Agente(client=ClienteEmDuasRodadas(), pasta_leads=tmp_path)).processar("m1")
+    texto = _decodificar_resposta(gmail.enviadas[0]).get_content()
+    assert "Quanto a Nuvia gasta por mês com cartão?" in texto
+    assert texto.count("Abraço,") == 1
+    assert texto.count("Assistente virtual da BRAX") == 1
+    assert texto.rstrip().endswith(f"Abraço,\n{ASSINATURA}")
+
+
+def test_corpo_remove_assinatura_curta_e_fecho_repetido():
+    escrito = "Oi, Ana!\n\nAbraço,\nP.H.\n\nAbraço,\nP.H. - BRAX"
+    texto = _decodificar_resposta(montar_resposta(ler_mensagem(mensagem_gmail()), escrito)).get_content()
+    assert texto.rstrip() == f"Oi, Ana!\n\nAbraço,\n{ASSINATURA}"

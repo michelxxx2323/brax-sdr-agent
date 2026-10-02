@@ -24,7 +24,10 @@ from brax_sdr.mensagens import mensagem_fora_do_icp
 from brax_sdr.prompt import montar_system
 from brax_sdr.protecao import eh_despedida, verificar_antes_da_api
 
-MENSAGEM_DE_SEGURANCA = "Vou te passar para uma pessoa do nosso time, que continua o atendimento em seguida."
+# Ferramentas que só registram dados: o texto escrito antes delas continua valendo (decisão 027).
+FERRAMENTAS_SO_DE_REGISTRO = {"registrar_qualificacao"}
+
+MENSAGEM_DE_SEGURANCA ="Vou te passar para uma pessoa do nosso time, que continua o atendimento em seguida."
 
 
 @dataclass
@@ -176,7 +179,8 @@ class Agente:
                 textos_finais = textos_da_rodada
                 break
 
-            rodadas_com_ferramenta.append((len(mensagens) - 1, textos_da_rodada))
+            nomes = {b["name"] for b in conteudo if b["type"] == "tool_use"}
+            rodadas_com_ferramenta.append((len(mensagens) - 1, textos_da_rodada, nomes <= FERRAMENTAS_SO_DE_REGISTRO))
 
             resultados = []
             for bloco in (b for b in conteudo if b["type"] == "tool_use"):
@@ -188,21 +192,30 @@ class Agente:
             lead.registrar_evento("alerta", "limite de rodadas de ferramentas atingido")
             mensagem_do_codigo = MENSAGEM_DE_SEGURANCA
 
-        # O lead vê UMA mensagem: a escrita depois dos resultados das ferramentas. Texto escrito antes de uma
-        # ferramenta pode contradizer o resultado (ex.: perguntar horário e depois receber recusa), então sai
-        # do histórico. Exceção: se a rodada final vier vazia, vale o último texto escrito antes.
-        rodada_exibida = None
+        # Qual texto o lead vê (decisões 019 e 027). Texto escrito antes de uma ferramenta que PODE MUDAR a resposta
+        # (roteamento, aprovação, transferência...) perde a validade: ex.: perguntar o horário e depois receber
+        # uma recusa. Texto escrito antes de uma ferramenta que só REGISTRA dados continua valendo e é somado ao
+        # texto final (achado no 1º teste de e-mail: a resposta inteira veio antes do registro, e só "Abraço," depois).
+        # Se nada sobrar, vale o último texto escrito.
+        exibidas: list[int] = []
         if mensagem_do_codigo:
             texto_final = mensagem_do_codigo
             mensagens.append({"role": "assistant", "content": mensagem_do_codigo})
-        elif textos_finais:
-            texto_final = "\n\n".join(textos_finais)
         else:
-            com_texto = [r for r in rodadas_com_ferramenta if r[1]]
-            rodada_exibida = com_texto[-1][0] if com_texto else None
-            texto_final = "\n\n".join(com_texto[-1][1]) if com_texto else ""
-        for posicao, _ in rodadas_com_ferramenta:
-            if posicao != rodada_exibida:
+            partes: list[tuple[int, list[str]]] = []
+            for posicao, textos_rodada, so_registro in rodadas_com_ferramenta:
+                if not so_registro:
+                    partes = []
+                elif textos_rodada:
+                    partes.append((posicao, textos_rodada))
+            if textos_finais:
+                partes.append((len(mensagens) - 1, textos_finais))
+            if not partes:
+                partes = [(p, t) for p, t, _ in rodadas_com_ferramenta if t][-1:]
+            exibidas = [p for p, _ in partes]
+            texto_final = "\n\n".join(t for _, textos in partes for t in textos)
+        for posicao, _, _ in rodadas_com_ferramenta:
+            if posicao not in exibidas:
                 _remover_texto(mensagens[posicao])
 
         if not lead.encerrada and lead.faixa and eh_despedida(texto) and "?" not in texto_final:
@@ -213,10 +226,10 @@ class Agente:
 
         def fixar_texto(novo: str) -> None:
             """Troca o texto que o lead vai ver, mantendo o histórico igual ao que foi enviado."""
-            if textos_finais:
-                _trocar_texto(mensagens[-1], novo)
-            elif rodada_exibida is not None:
-                _trocar_texto(mensagens[rodada_exibida], novo)
+            for posicao in exibidas:
+                _remover_texto(mensagens[posicao])
+            if exibidas:
+                _trocar_texto(mensagens[exibidas[-1]], novo)
             else:
                 mensagens.append({"role": "assistant", "content": [{"type": "text", "text": novo}]})
 
@@ -240,10 +253,10 @@ class Agente:
             lead.registrar_evento("vazamento_bloqueado", texto_final[:300])
             if lead.encerrada:
                 texto_final = ""
-                if textos_finais:
-                    mensagens.pop()  # a última mensagem era só o texto vazado
-                elif rodada_exibida is not None:
-                    _remover_texto(mensagens[rodada_exibida])
+                for posicao in exibidas:
+                    _remover_texto(mensagens[posicao])
+                # Mensagens que ficaram sem nenhum bloco saem do histórico (a API rejeita conteúdo vazio).
+                mensagens[:] = [m for m in mensagens if not (m["role"] == "assistant" and m["content"] == [])]
             else:
                 texto_final = MENSAGEM_DE_SEGURANCA
                 fixar_texto(texto_final)

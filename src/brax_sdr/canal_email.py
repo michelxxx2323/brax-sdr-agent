@@ -153,13 +153,21 @@ def texto_para_o_agente(email: EmailRecebido, primeiro_contato: bool) -> str:
 # --- Resposta ----------------------------------------------------------------------------------
 
 _LINHA_ASSUNTO = re.compile(r"^\s*Assunto:.*\n+", re.IGNORECASE)
-_LINHA_ASSINATURA = re.compile(r"\n\s*P\.?\s?H\.?\b[^\n]*(BRAX|assistente)[^\n]*\s*$", re.IGNORECASE)
+# "P.H. · Assistente virtual da BRAX", "P.H. - BRAX" ou só "P.H." numa linha.
+_LINHA_ASSINATURA = re.compile(r"^\s*P\.?\s?H\.?\s*([·\-|][^\n]*)?$", re.IGNORECASE)
+_LINHA_DE_FECHO = re.compile(r"^\s*(abra[çc]os?|um abra[çc]o|att\.?|atenciosamente|at[ée] mais)\s*,?\s*$", re.IGNORECASE)
 
 
 def _corpo(texto: str) -> str:
-    """Só o corpo: assunto e assinatura são do sistema, mesmo que o modelo os escreva (ele imita os exemplos)."""
+    """Só o corpo: assunto e assinatura são do sistema, mesmo que o modelo os escreva (ele imita os exemplos).
+
+    O texto pode juntar duas partes da resposta (decisão 027): assinaturas saem e só o último fecho ("Abraço,") fica.
+    """
     corpo = _LINHA_ASSUNTO.sub("", texto.strip(), count=1)
-    corpo = _LINHA_ASSINATURA.sub("", corpo).rstrip()
+    linhas = [linha for linha in corpo.splitlines() if not _LINHA_ASSINATURA.match(linha)]
+    fechos = [i for i, linha in enumerate(linhas) if _LINHA_DE_FECHO.match(linha)]
+    linhas = [linha for i, linha in enumerate(linhas) if i not in fechos[:-1]]
+    corpo = re.sub(r"\n{3,}", "\n\n", "\n".join(linhas)).strip()
     ultima_linha = corpo.splitlines()[-1].strip() if corpo else ""
     separador = "\n" if ultima_linha.endswith(",") else "\n\n"  # "Abraço," fica colado na assinatura
     return f"{corpo}{separador}{ASSINATURA}"

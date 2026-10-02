@@ -2,6 +2,9 @@
 
 > Exemplos de referência para o agente (e, na Fase 6, casos de teste para os evals).
 > Empresas e pessoas são fictícias.
+>
+> **Atenção:** o assunto e a assinatura aparecem aqui para mostrar o e-mail completo, mas quem os coloca é o
+> sistema. O agente escreve só o corpo (da saudação até a despedida).
 
 ## Exemplo 1: primeira resposta a um formulário do site
 

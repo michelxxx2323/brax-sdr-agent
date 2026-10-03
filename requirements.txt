@@ -6,3 +6,7 @@ pytest>=9
 # Canal de e-mail (Fase 3): bibliotecas oficiais do Google para a Gmail API
 google-api-python-client>=2.200
 google-auth-oauthlib>=1.5
+# Canal de WhatsApp (Fase 4): servidor do webhook e chamadas HTTP
+fastapi>=0.140
+uvicorn>=0.50
+httpx>=0.28

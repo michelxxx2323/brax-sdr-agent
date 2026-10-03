@@ -67,6 +67,19 @@ EMAIL_REMETENTES_PERMITIDOS = {
     e.strip().lower() for e in os.getenv("EMAIL_REMETENTES_PERMITIDOS", "").split(",") if e.strip()
 }
 
+# --- Canal de WhatsApp (Fase 4) ---
+# "simulado": as respostas vão para um arquivo local lido pelo simular_whatsapp.py (sem número, sem Meta).
+# "meta": as respostas vão para a WhatsApp Cloud API (exige número e token).
+WHATSAPP_MODO = (os.getenv("WHATSAPP_MODO") or "simulado").lower()
+WHATSAPP_API_VERSAO = os.getenv("WHATSAPP_API_VERSAO") or "v23.0"  # confirmar a versão vigente na documentação da Meta
+WHATSAPP_ACCESS_TOKEN = os.getenv("WHATSAPP_ACCESS_TOKEN", "")
+WHATSAPP_PHONE_NUMBER_ID = os.getenv("WHATSAPP_PHONE_NUMBER_ID", "")
+WHATSAPP_VERIFY_TOKEN = os.getenv("WHATSAPP_VERIFY_TOKEN") or "verificacao-local"
+# No modo simulado, o simulador e o servidor usam esta chave para assinar e conferir as mensagens.
+WHATSAPP_APP_SECRET = os.getenv("WHATSAPP_APP_SECRET") or ("segredo-local-de-teste" if WHATSAPP_MODO == "simulado" else "")
+WHATSAPP_PORTA = int(os.getenv("WHATSAPP_PORTA") or 8000)
+PASTA_WHATSAPP = RAIZ / "data" / "local" / "whatsapp"  # saída simulada e ids já processados (fora do Git)
+
 # --- Follow-up (decisão 028; cadência de cerebro/vendas/handoff.md) ---
 FOLLOWUP_ESPERAS_DIAS_UTEIS = (1, 3)  # 1º lembrete após 1 dia útil; 2º (e último) após mais 3
 FOLLOWUP_VERIFICAR_A_CADA_MINUTOS = 10

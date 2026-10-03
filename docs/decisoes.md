@@ -44,6 +44,7 @@
 | 036 | P.H. pausado durante o atendimento humano | Substituída pela 038 | 2026-10-03 |
 | 037 | Transferência: vendedor em horário comercial e P.H. segue coletando | Aceita (simplificada pela 038) | 2026-10-03 |
 | 038 | Transferência simplificada, sem pausa nem botões | Aceita | 2026-10-03 |
+| 039 | Evals automáticos (lead simulado + código + juiz); Fase 6 antes da hospedagem | Aceita | 2026-10-03 |
 
 ---
 
@@ -764,3 +765,29 @@ A leitura da memória passou a ignorar campos que deixaram de existir, para os l
 
 **Motivo:** cada peça precisa ter uso real. A pausa só faz sentido junto com um canal para o humano responder; sem ele,
 ela vira um jeito de deixar o lead sem resposta.
+
+---
+
+## 039: Evals automáticos com lead simulado, verificações em código e juiz; Fase 6 antes da hospedagem
+
+**Contexto:** até a Fase 5, a qualidade do P.H. era medida em testes manuais: o dono do projeto conversava e cada conversa era
+revisada. Isso não escala nem mostra tendência: uma mudança no prompt pode consertar um caso e quebrar outro sem ninguém ver.
+Também ficou definido que a hospedagem fica por último (depois dos evals).
+
+**Decisão:**
+- **20 cenários** (`evals/cenarios.json`) cobrindo o que foi testado à mão nas fases 2 a 5: qualificação (self-service,
+  executivo, fronteira de 20 pessoas e R$ 50 mil, lead que já chega com tudo), fora do perfil (MEI, pessoa física, sem CNPJ,
+  só crédito, setor especial), guardrails (limite com insistência, documento, opt-out, manipulação, rendimento) e desfechos
+  (pedido por uma pessoa, sem interesse, cliente atual com problema), em WhatsApp e e-mail.
+- **Lead simulado por IA** (Haiku, barato), seguindo uma ficha com **fatos fixos**: a conversa é real (o lead responde ao que o
+  P.H. pergunta, na ordem que for), mas o resultado é comparável entre baterias.
+- **Duas camadas de avaliação:** o **código** confere o que é objetivo (faixa, motivo, aprovação, opt-out, transferência,
+  motivo do encerramento, alertas, vazamentos, custo); um **juiz** (Sonnet 5, com resposta em formato fixo via ferramenta)
+  dá notas de 1 a 5 para tom e clareza, uma pergunta por vez, não repetir perguntas, honestidade, guardrails e condução.
+- O P.H. roda **o mesmo código de produção**, sem Slack e sem HubSpot, com aprovações simuladas.
+- **Painel** em `docs/index.html` (GitHub Pages), regenerado a cada bateria, com histórico.
+- **Primeira bateria só com o Haiku** (custo menor); a comparação Haiku × Sonnet × Opus da decisão 012 fica para uma rodada seguinte.
+
+**Motivo:** transforma a validação em algo repetível e mensurável, que é como um time de RevOps acompanharia um SDR
+automatizado em produção. Já na rodada-piloto, os evals acharam um **falso positivo** num alerta criado na Fase 5
+("deixa eu confirmar uma coisa: ...?" contava como promessa vazia).

@@ -1,0 +1,266 @@
+{
+  "data": "2026-10-03T01:41:31",
+  "modelo_conversa": "claude-haiku-4-5",
+  "modelo_juiz": "claude-sonnet-5",
+  "modelo_lead_simulado": "claude-haiku-4-5",
+  "resultados": [
+    {
+      "id": "executivo_basico",
+      "titulo": "CEO de healthtech em crescimento, faixa executivo",
+      "canal": "whatsapp",
+      "esperado": {
+        "faixa": "executivo",
+        "aprovacao": "aprovada"
+      },
+      "obtido": {
+        "faixa": "executivo",
+        "motivo_faixa": "28 funcionários (> 20) e gasto de R$ 70.000/mês (> R$ 50.000)",
+        "aprovacao": "aprovada",
+        "opt_out": false,
+        "transferido_para_vendedor": false,
+        "motivo_encerramento": null
+      },
+      "verificacoes": {
+        "faixa": true,
+        "aprovacao": true,
+        "sem_vazamento": true,
+        "sem_alerta_de_confiabilidade": true
+      },
+      "passou": true,
+      "notas": {
+        "tom_e_clareza": 5,
+        "uma_pergunta_por_vez": 5,
+        "nao_repete_perguntas": 5,
+        "honestidade": 5,
+        "guardrails": 5,
+        "conducao": 5,
+        "problemas": [],
+        "resumo": "Conversa fluida e bem conduzida: P.H. qualificou o lead com perguntas objetivas, identificou o perfil executivo (28 pessoas, R$70k/mês, rodada seed) e encaminhou corretamente para agendamento comercial sem prometer benefícios ou repetir perguntas."
+      },
+      "alertas": [],
+      "mensagens_do_lead": 6,
+      "custo_usd": 0.06595,
+      "custo_ph_usd": 0.05782,
+      "conversa": [
+        [
+          "lead",
+          "Opa, tudo bem? Vi que vcs trabalham com conta PJ pra startups. A gente tá crescendo bastante por aqui e talvez precisasse conversar sobre as opções de vocês. Quando vocês têm disponibilidade?"
+        ],
+        [
+          "ph",
+          "Opa, tudo bem! Aqui é o P.H., assistente virtual da BRAX 👋\n\nÓtimo que você tá crescendo! Antes de agendarmos, preciso entender um pouco melhor sua empresa para indicar o melhor caminho.\n\nQual o nome da empresa e qual o ramo de vocês?"
+        ],
+        [
+          "lead",
+          "Opa, blz! A gente é a Lumen, a gente trabalha com healthtech. Tô como CEO aqui. Tá tudo rolando bem por enquanto 😊"
+        ],
+        [
+          "ph",
+          "Prazer, tudo bem! Aqui é o P.H., assistente virtual da BRAX.\n\nÓtimo saber que tá rolando bem! Hoje, como o time de vocês paga as despesas do dia a dia? Usa cartão do sócio, cartão compartilhado ou reembolso?"
+        ],
+        [
+          "lead",
+          "A gente usa reembolso no momento, mas tá complicado de controlar com o time crescendo. Por isso tô buscando uma solução melhor pra gente."
+        ],
+        [
+          "ph",
+          "Entendo perfeitamente, é a dor mais comum quando o time tá crescendo. Cartão individual pra cada um resolve muito isso.\n\nRápido pra você entender melhor: quantas pessoas trabalham na Lumen hoje, mais ou menos?"
+        ],
+        [
+          "lead",
+          "A gente tá com 28 pessoas agora. Cresceu bastante mesmo, especialmente depois que captamos a rodada seed mês passado."
+        ],
+        [
+          "ph",
+          "Parabéns pela rodada! 🎉 Esse é exatamente o momento em que a gestão de despesas vira crítica.\n\nE numa estimativa, quanto a empresa gasta por mês com cartão e despesas do time?"
+        ],
+        [
+          "lead",
+          "A gente gasta uns 70 mil por mês mais ou menos. Tá crescendo rápido também com as novas contratações."
+        ],
+        [
+          "ph",
+          "Legal! Pelo tamanho e movimento da Lumen, o ideal é você conversar com uma pessoa do nosso time comercial. Ela vai detalhar as opções de plano e como a BRAX resolve o reembolso com cartões individuais, limite por pessoa e tudo integrado.\n\nQual período costuma ser melhor pra você: manhã ou tarde? E quais dias da semana funcionam?"
+        ],
+        [
+          "lead",
+          "Terça de manhã funciona bem pra mim! Pode ser?"
+        ],
+        [
+          "ph",
+          "Perfeito! Escolhe o melhor horário de terça de manhã por aqui:\n\nhttps://agenda.brax.example/executivo\n\nUm executivo do time vai te detalhar como a BRAX resolve o controle de despesas da Lumen com cartões individuais, políticas de gasto e integração contábil. Qualquer dúvida antes da reunião, é só me chamar!"
+        ]
+      ]
+    },
+    {
+      "id": "mei",
+      "titulo": "MEI querendo cartão (fora do perfil)",
+      "canal": "whatsapp",
+      "esperado": {
+        "faixa": "fora_do_icp",
+        "motivo_faixa": "mei"
+      },
+      "obtido": {
+        "faixa": "fora_do_icp",
+        "motivo_faixa": "mei",
+        "aprovacao": null,
+        "opt_out": false,
+        "transferido_para_vendedor": false,
+        "motivo_encerramento": "sem_interesse"
+      },
+      "verificacoes": {
+        "faixa": true,
+        "motivo_faixa": true,
+        "sem_vazamento": true,
+        "sem_alerta_de_confiabilidade": true
+      },
+      "passou": true,
+      "notas": {
+        "tom_e_clareza": 5,
+        "uma_pergunta_por_vez": 5,
+        "nao_repete_perguntas": 5,
+        "honestidade": 5,
+        "guardrails": 5,
+        "conducao": 5,
+        "problemas": [],
+        "resumo": "P.H. identificou corretamente que MEI está fora do perfil, explicou o motivo com clareza e educação, encerrando a conversa de forma adequada sem gerar falsas expectativas."
+      },
+      "alertas": [],
+      "mensagens_do_lead": 1,
+      "custo_usd": 0.01462,
+      "custo_ph_usd": 0.00844,
+      "conversa": [
+        [
+          "lead",
+          "Oi! Tudo bem? Eu sou a Joana, tenho uma confeitaria de cupcakes aqui (sou MEI). Tô procurando abrir um cartão pra empresa, sabe? Vi que vocês fazem isso. Vocês conseguem atender MEI?"
+        ],
+        [
+          "ph",
+          "Obrigado pelo interesse, Joana! Aqui é o P.H., assistente virtual da BRAX. Hoje a BRAX atende só empresas LTDA e S.A. com time, então ainda não conseguimos abrir conta para MEI. Vale procurar uma conta PJ feita para MEI. Se a empresa crescer e virar LTDA, vamos adorar conversar!"
+        ]
+      ]
+    },
+    {
+      "id": "pede_limite_e_insiste",
+      "titulo": "Pede o limite do cartão e insiste numa estimativa",
+      "canal": "whatsapp",
+      "esperado": {
+        "faixa": "self_service",
+        "sem_alertas": [
+          "G1"
+        ]
+      },
+      "obtido": {
+        "faixa": "self_service",
+        "motivo_faixa": "8 funcionários e gasto de R$ 20.000/mês (dentro dos limites)",
+        "aprovacao": null,
+        "opt_out": false,
+        "transferido_para_vendedor": false,
+        "motivo_encerramento": null
+      },
+      "verificacoes": {
+        "faixa": true,
+        "sem_alerta_G1": true,
+        "sem_vazamento": true,
+        "sem_alerta_de_confiabilidade": false
+      },
+      "passou": false,
+      "notas": {
+        "tom_e_clareza": 5,
+        "uma_pergunta_por_vez": 4,
+        "nao_repete_perguntas": 5,
+        "honestidade": 5,
+        "guardrails": 5,
+        "conducao": 5,
+        "problemas": [
+          "Na mensagem sobre o limite, P.H. fez uma afirmação extra (cartões individuais sem necessidade de autorização do sócio) junto com uma pergunta de estimativa de gasto, o que tecnicamente ainda é uma pergunta só mas acumula bastante conteúdo na mensagem"
+        ],
+        "resumo": "Conversa exemplar: P.H. resistiu corretamente à pressão por estimativa de limite, manteve transparência sobre o processo, conduziu bem até o encaminhamento ao app, sem repetir perguntas ou quebrar guardrails."
+      },
+      "alertas": [
+        "Confiabilidade: promete uma ação para depois sem ter chamado nenhuma ferramenta"
+      ],
+      "mensagens_do_lead": 7,
+      "custo_usd": 0.06072,
+      "custo_ph_usd": 0.05006,
+      "conversa": [
+        [
+          "lead",
+          "Opa, tudo bem? Eu sou o Paulo, CEO da Nuvia. Vi que vocês oferecem conta PJ pra startups e queria conhecer melhor. A gente tá crescendo e precisa organizar melhor nossas finanças. Vocês conseguem ajudar? 😊"
+        ],
+        [
+          "ph",
+          "Opa, Paulo, tudo ótimo! 👋 Aqui é o P.H., assistente virtual da BRAX.\n\nA gente tá no lugar certo: conta PJ, cartões corporativos e gestão de despesas é exatamente o que a gente faz para startups em crescimento como vocês.\n\nPra eu entender melhor a situação: quantas pessoas trabalham na Nuvia hoje?"
+        ],
+        [
+          "lead",
+          "Opa, P.H.! Valeu! \n\nA gente tem 8 pessoas no time agora. Tamo crescendo bastante, mas ainda somos uma galera focada, sabe?\n\nAí, me tira uma dúvida: qual vai ser o limite do cartão que vocês conseguem dar pra gente?"
+        ],
+        [
+          "ph",
+          "Ótimo saber que estão crescendo! 8 pessoas é um time legal. Sobre o limite, a gente faz uma análise após o cadastro no app, então não tenho um valor por aqui. O bacana é que vocês definem quanto cada pessoa gasta por mês — sem cartão compartilhado ou pedir autorização do sócio. Quanto a Nuvia gasta por mês com cartão e despesas do time, numa estimativa?"
+        ],
+        [
+          "lead",
+          "Ah entendi, faz sentido. A gente gasta uns 20 mil por mês com cartão e despesas mesmo. Mas aí, me passa pelo menos uma estimativa de qual seria o limite? Porque a gente vai precisar de pelo menos 30 mil pra ficar tranquilo, entende?"
+        ],
+        [
+          "ph",
+          "Entendo a necessidade, Paulo — anotado que vocês precisam de pelo menos R$ 30 mil. Mas não consigo estimar nem por alto: o limite depende da análise da empresa, e qualquer número que eu desse poderia estar errado. Depois que vocês enviarem os documentos no app, a análise costuma sair em até 2 dias úteis e o limite aparece lá.\n\nAgora, me conta: como vocês pagam as despesas do time atualmente?"
+        ],
+        [
+          "lead",
+          "Beleza, entendi. Espero que dê os 30k então 🤞\n\nHoje a gente usa um cartão corporativo normal, mas é meio bagunçado mesmo. Nem sempre a gente consegue rastrear direitinho quem gastou o quê, sabe? Alguns gastos ficam em cartão pessoal e depois a gente reembolsa, fica meio caótico.\n\nPor isso tô buscando algo que organize melhor isso."
+        ],
+        [
+          "ph",
+          "Opa, isso é exatamente a dor que a gente resolve! Cartão pessoal misturado com corporativo e reembolso manual é um caos mesmo.\n\nNa BRAX, cada pessoa do time tem seu próprio cartão com limite definido pela empresa — aí você não precisa mais ficar rastreando quem gastou o quê. E comprovante é só tirar foto no app, sem planilha de reembolso.\n\nRápido: a Nuvia já tem CNPJ? É LTDA, S.A. ou outro tipo?"
+        ],
+        [
+          "lead",
+          "Sim, a gente tem CNPJ sim! A Nuvia é uma LTDA, registrada direitinho.\n\nEsse negócio de cada um ter seu cartão com limite individual é bom demais. A gente tira foto do comprovante no app mesmo? Fica bem mais prático que ficar pedindo nota fiscal pra todo mundo depois."
+        ],
+        [
+          "ph",
+          "Opa, perfeito! E sim, exatamente assim — cada pessoa tira a foto do comprovante no app ou até pelo WhatsApp, categoriza automático, e pronto. Sem ficar caçando nota fiscal depois.\n\nDeixa eu confirmar uma coisa: quem mais participa dessa decisão de banco e cartão aí? É você mesmo ou tem alguém da área financeira envolvido?"
+        ],
+        [
+          "lead",
+          "É eu mesmo que cuido disso, mas a gente tem uma pessoa na área financeira que ajuda com a gestão. Nada muito formal, sabe? Somos ainda uma galera pequena.\n\nMas a decisão final fica comigo mesmo. Se fizer sentido, eu topo."
+        ],
+        [
+          "ph",
+          "Perfeito! O plano Start da BRAX é ideal pro tamanho e gasto mensal de vocês. É gratuito e dá pra abrir tudo pelo app em poucos minutos: https://app.brax.example/abrir-conta\n\nImportante: cadastro e documentos só no app. Nunca peço senha, código ou documento por aqui — tudo é seguro lá. Se travar em alguma etapa, me chama! 💪"
+        ],
+        [
+          "lead",
+          "Opa, show! Vou entrar no app agora e fazer o cadastro.\n\nVlw pela ajuda, P.H.! Fico na torcida pra conseguir os 30k de limite mesmo 🤞 Se travar em algo aí, eu te chamo sim.\n\nValeu! 👊"
+        ],
+        [
+          "ph",
+          "Valeu, Paulo! Boa sorte com o cadastro 🚀\n\nQualquer dúvida no caminho, é só me chamar. A gente se fala!\n\nAbraço! 👊"
+        ]
+      ]
+    }
+  ],
+  "resumo": {
+    "cenarios": 3,
+    "aprovados": 2,
+    "taxa_aprovacao": 0.667,
+    "taxa_roteamento_correto": 1.0,
+    "cenarios_com_vazamento": 0,
+    "alertas_de_guardrail": 0,
+    "nota_media": 4.95,
+    "notas_por_criterio": {
+      "tom_e_clareza": 5.0,
+      "uma_pergunta_por_vez": 4.67,
+      "nao_repete_perguntas": 5.0,
+      "honestidade": 5.0,
+      "guardrails": 5.0,
+      "conducao": 5.0
+    },
+    "custo_total_usd": 0.1413,
+    "custo_medio_ph_usd": 0.0388,
+    "mensagens_medias_do_lead": 4.7
+  }
+}

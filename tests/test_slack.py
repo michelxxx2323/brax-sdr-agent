@@ -253,3 +253,74 @@ def test_resumo_recebe_a_disponibilidade_mais_recente():
     pedido = cliente.chamadas[0]
     assert "Disponibilidade informada pelo lead agora: sexta de manhã" in pedido["messages"][0]["content"]
     assert pedido["model"] == config.MODELO_AVANCADO and pedido["thinking"] == {"type": "disabled"}
+
+
+# --- Pausa do P.H. durante o atendimento humano (decisão 036) ---
+
+def test_transferencia_pausa_o_ph_e_mensagens_seguintes_vao_para_a_thread(tmp_path):
+    # Caso real do Diego: depois de transferir, o P.H. seguiu respondendo ("Tranquilo! A gente se fala em breve").
+    from anthropic.types import ToolUseBlock
+
+    slack_falso = SlackFalso()
+    slack = _slack(slack_falso)
+    cliente = ClaudeFalso([])
+    cliente.textos = None
+    respostas = [
+        Message(id="a", type="message", role="assistant", model="claude-haiku-4-5", stop_reason="tool_use", stop_sequence=None,
+                usage=Usage(input_tokens=1, output_tokens=1),
+                content=[ToolUseBlock(type="tool_use", id="t1", name="transferir_para_humano", input={"motivo": "pediu uma pessoa"})]),
+        Message(id="b", type="message", role="assistant", model="claude-haiku-4-5", stop_reason="end_turn", stop_sequence=None,
+                usage=Usage(input_tokens=1, output_tokens=1),
+                content=[TextBlock(type="text", text="Uma pessoa do time vai continuar a conversa com você.")]),
+    ]
+    cliente.create = lambda **kwargs: (cliente.chamadas.append(kwargs), respostas.pop(0))[1]
+    agente = Agente(client=cliente, pasta_leads=tmp_path, alerta_humano=slack.alerta_humano,
+                    aviso_em_atendimento=slack.mensagem_em_atendimento)
+    lead = memoria.carregar(TELEFONE, pasta=tmp_path)
+    lead.mensagens = [{"role": "user", "content": "oi"}, {"role": "assistant", "content": "Oi! Sou o P.H., assistente virtual."}]
+    memoria.salvar(lead, pasta=tmp_path)
+
+    agente.responder(TELEFONE, "Quero falar com uma pessoa real")
+    salvo = memoria.carregar(TELEFONE, pasta=tmp_path)
+    assert salvo.atendimento_humano is True
+    assert salvo.slack["alerta"]["ts"] == "1700.1"
+    assert slack_falso.postadas[0]["blocks"][-1]["elements"][0]["action_id"] == "brax_devolver"
+
+    chamadas_antes = len(cliente.chamadas)
+    resposta = agente.responder(TELEFONE, "Ok, aguardo")
+    assert resposta.texto is None and resposta.motivo_silencio == "atendimento_humano"
+    assert len(cliente.chamadas) == chamadas_antes  # a IA não é chamada durante a pausa
+    assert slack_falso.postadas[1]["thread_ts"] == "1700.1" and "Ok, aguardo" in slack_falso.postadas[1]["text"]
+    assert memoria.carregar(TELEFONE, pasta=tmp_path).mensagens[-1] == {"role": "user", "content": "Ok, aguardo"}
+
+
+def test_devolver_ao_ph_despausa_e_atualiza_o_alerta(tmp_path):
+    from brax_sdr.slack_brax import devolver_ao_ph
+
+    slack_falso = SlackFalso()
+    lead_pendente(tmp_path, atendimento_humano=True, slack={"alerta": {"canal": "C123", "ts": "1700.9", "motivo": "pediu uma pessoa"}})
+    agente = Agente(client=ClaudeFalso([]), pasta_leads=tmp_path)
+    assert devolver_ao_ph(TELEFONE, "U1", agente, _slack(slack_falso)) == "devolvido ao P.H."
+    assert memoria.carregar(TELEFONE, pasta=tmp_path).atendimento_humano is False
+    assert "Devolvido ao P.H." in slack_falso.atualizadas[0]["blocks"][-1]["elements"][0]["text"]
+    assert devolver_ao_ph(TELEFONE, "U2", agente, _slack(slack_falso)) == "já estava com o P.H."
+
+
+def test_botao_devolver_chama_a_funcao_certa():
+    from brax_sdr.slack_brax import ACAO_DEVOLVER
+
+    app, devolvidos = AppFalso(), []
+    registrar_acoes(app, lambda *args: None, lambda *args: devolvidos.append(args))
+    app.acoes[ACAO_DEVOLVER](ack=lambda: None, body={"actions": [{"value": TELEFONE}], "user": {"id": "U1"}})
+    assert devolvidos == [(TELEFONE, "U1")]
+
+
+def test_followup_nao_envia_lembrete_durante_atendimento_humano():
+    from datetime import datetime, timedelta, timezone
+
+    from brax_sdr.followup import numero_do_followup_devido
+
+    ontem = datetime(2026, 9, 30, 13, 0, tzinfo=timezone.utc)
+    lead = Lead(id="ana@x.example", canal="email", aguardando_lead=True, ultima_resposta_em=ontem.isoformat(),
+                email_contexto={"thread_id": "t"}, atendimento_humano=True)
+    assert numero_do_followup_devido(lead, ontem + timedelta(days=2)) is None

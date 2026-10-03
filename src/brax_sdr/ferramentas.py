@@ -242,6 +242,9 @@ def _solicitar_aprovacao(lead: Lead, entrada: dict, aprovador: Aprovador | None)
 
 def _transferir_para_humano(lead: Lead, entrada: dict, alerta_humano: AlertaHumano | None) -> dict:
     lead.registrar_evento("transferencia_humano", entrada["motivo"])
+    # Pausa o P.H. para este lead (decisão 036): achado no teste do Diego, o P.H. seguiu respondendo depois de
+    # transferir, e na vida real falaria ao mesmo tempo que a pessoa do time.
+    lead.atendimento_humano = True
     if alerta_humano:
         try:
             alerta_humano(lead, entrada["motivo"])  # Slack: alguém do time assume (decisão 034)

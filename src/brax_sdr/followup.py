@@ -30,7 +30,7 @@ def em_horario_comercial(momento: datetime) -> bool:
 
 def numero_do_followup_devido(lead: Lead, agora: datetime) -> int | None:
     """Qual lembrete (1 ou 2) este lead deve receber agora, ou None. Todas as travas ficam aqui."""
-    if lead.opt_out or lead.encerrada or lead.bloqueio or lead.sem_resposta:
+    if lead.opt_out or lead.encerrada or lead.bloqueio or lead.sem_resposta or lead.atendimento_humano:
         return None
     if lead.faixa == "fora_do_icp" or not lead.aguardando_lead or not lead.ultima_resposta_em:
         return None

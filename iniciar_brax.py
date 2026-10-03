@@ -49,7 +49,7 @@ if config.SLACK_BOT_TOKEN and config.SLACK_APP_TOKEN and config.SLACK_CANAL_APRO
     from slack_bolt import App
     from slack_bolt.adapter.socket_mode import SocketModeHandler
 
-    from brax_sdr.slack_brax import Entregador, SlackBrax, processar_decisao, registrar_acoes
+    from brax_sdr.slack_brax import Entregador, SlackBrax, devolver_ao_ph, processar_decisao, registrar_acoes
 
     app_slack = App(token=config.SLACK_BOT_TOKEN)
     slack = SlackBrax(app_slack.client, crm=crm)
@@ -58,7 +58,8 @@ else:
     print("         As aprovações de executivo vão aparecer AQUI no terminal.")
 
 if slack:
-    agente = Agente(aprovador=slack.aprovador, crm=crm, alerta_humano=slack.alerta_humano)
+    agente = Agente(aprovador=slack.aprovador, crm=crm, alerta_humano=slack.alerta_humano,
+                    aviso_em_atendimento=slack.mensagem_em_atendimento)
     entregador = Entregador(gmail=gmail, envio_whatsapp=envio_whatsapp)
 
     def ao_decidir(lead_id: str, decisao: str, observacao: str, usuario: str) -> None:
@@ -67,7 +68,13 @@ if slack:
         except Exception as erro:
             print(f"[Slack] ERRO ao processar a decisão para {lead_id}: {type(erro).__name__}: {erro}", flush=True)
 
-    registrar_acoes(app_slack, ao_decidir)
+    def ao_devolver(lead_id: str, usuario: str) -> None:
+        try:
+            print(f"[Slack] {lead_id}: {devolver_ao_ph(lead_id, usuario, agente, slack)}", flush=True)
+        except Exception as erro:
+            print(f"[Slack] ERRO ao devolver {lead_id} ao P.H.: {type(erro).__name__}: {erro}", flush=True)
+
+    registrar_acoes(app_slack, ao_decidir, ao_devolver)
     SocketModeHandler(app_slack, config.SLACK_APP_TOKEN).connect()  # conecta em segundo plano
     print(f"  Slack: ligado (canal {config.SLACK_CANAL_APROVACAO})")
 else:

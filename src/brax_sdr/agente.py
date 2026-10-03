@@ -104,12 +104,15 @@ class Agente:
         pasta_leads=config.PASTA_LEADS,
         crm=None,
         alerta_humano=None,
+        aviso_em_atendimento=None,
     ):
         self.client = client or anthropic.Anthropic()
         self.aprovador = aprovador
         self.pasta_leads = pasta_leads
         self.crm = crm  # HubSpot (Fase 5); None = sem CRM
         self.alerta_humano = alerta_humano  # Slack (Fase 5); None = só registra o evento
+        # Repassa ao time as mensagens que o lead manda enquanto uma pessoa o atende (Slack, decisão 036).
+        self.aviso_em_atendimento = aviso_em_atendimento
         self.cerebro = carregar_cerebro()
 
     def _encurtar(self, texto: str, uso: dict) -> str:
@@ -182,6 +185,18 @@ class Agente:
             lead.registrar_evento("mensagem_apos_opt_out", "não respondida; encaminhar a humano se necessário")
             memoria.salvar(lead, pasta=self.pasta_leads)
             return Resposta(texto=None, lead=lead, motivo_silencio="opt_out")
+
+        # Em atendimento humano, o P.H. fica pausado (decisão 036): guarda a mensagem e avisa o time, sem chamar a IA.
+        if lead.atendimento_humano:
+            lead.mensagens.append({"role": "user", "content": texto})
+            lead.registrar_evento("mensagem_em_atendimento_humano", texto[:120])
+            if self.aviso_em_atendimento:
+                try:
+                    self.aviso_em_atendimento(lead, texto)
+                except Exception as erro:
+                    lead.registrar_evento("alerta_humano_erro", str(erro)[:200])
+            memoria.salvar(lead, pasta=self.pasta_leads)
+            return Resposta(texto=None, lead=lead, motivo_silencio="atendimento_humano")
 
         # Proteção de custo e encerramento (decisão 021): decide sem chamar a API.
         protecao = verificar_antes_da_api(lead, texto)

@@ -10,8 +10,11 @@ Os arquivos do PC não são apagados.
 
 import json
 import sys
+from pathlib import Path
 
-from brax_sdr import config, supabase_leads
+sys.path.insert(0, str(Path(__file__).parent / "src"))
+
+from brax_sdr import config, supabase_leads  # noqa: E402
 
 
 def main() -> None:

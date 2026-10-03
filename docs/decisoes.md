@@ -711,6 +711,10 @@ respondendo. Na vida real, o robô e a pessoa do time falariam ao mesmo tempo co
   histórico (inclusive o que foi dito durante a pausa). No terminal, o comando `/devolver` faz o mesmo papel.
 - O follow-up não envia lembretes a leads em atendimento humano.
 
+- **Pedido explícito por uma pessoa é reconhecido pelo código** antes de chamar a IA ("falar com uma pessoa",
+  "atendente", "não quero falar com robô"...): a transferência acontece sempre, com mensagem padronizada. Achado no teste do
+  Fabio, que pediu duas vezes enquanto o modelo seguia qualificando.
+
 **Fica para depois:** responder ao lead **de dentro do Slack** (a pessoa escreve na thread e a mensagem vai para o
 WhatsApp ou e-mail). Exige permissões extras no app do Slack (ler mensagens do canal) e eventos de mensagem.
 

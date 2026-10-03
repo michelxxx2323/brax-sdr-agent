@@ -71,3 +71,16 @@ alerta chegou ao Slack e o lead foi avisado de que uma pessoa do time continua e
 - **Agenda real ligada ao CRM** (reuniões do HubSpot): possível, deixada de fora por privacidade (decisão 035).
 - **Busca de empresas com consistência eventual:** com vários processos (hospedagem), a proteção contra duplicadas exigiria
   uma trava ou uma chave única, como o domínio da empresa.
+
+## Teste 6: "Fabio, Linxe": reteste da transferência para humano
+
+**Resultado: a pausa nem foi exercitada, porque a transferência não aconteceu.**
+
+| Problema | Causa | Correção |
+|---|---|---|
+| O lead pediu "quero falar com uma pessoa" **duas vezes** e o P.H. seguiu qualificando ("antes de eu te conectar, deixa eu entender melhor...") | O modelo priorizou o roteiro de qualificação sobre a regra G4 (no teste do Diego, ele tinha transferido) | O **código reconhece o pedido** antes de chamar a IA e transfere: alerta no Slack, pausa e mensagem padronizada (decisão 036) |
+| O retorno da aprovação disse de novo "Um executivo da BRAX vai te ligar" | A regra da decisão 035 estava só na instrução | Trava no código: retorno que menciona ligação, vídeo ou reunião presencial cai na mensagem padronizada |
+
+**Aprendizado:** a mesma regra pode funcionar num teste (Diego) e falhar no seguinte (Fabio). Um teste que passa não prova que
+o modelo sempre obedece; regras inegociáveis (como o G4) precisam de garantia em código. Na Fase 6, os evals vão medir com
+que frequência isso acontece.

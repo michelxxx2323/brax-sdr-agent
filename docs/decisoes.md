@@ -38,6 +38,7 @@
 | 030 | WhatsApp validado com um simulador da Meta, sem número de telefone | Aceita | 2026-10-02 |
 | 031 | Hospedagem depois da Fase 5 (Slack e HubSpot) | Aceita | 2026-10-02 |
 | 032 | Integração real com a Meta só no recebimento; envio desligado por padrão | Aceita | 2026-10-03 |
+| 033 | HubSpot sincronizado pelo código após cada resposta, sem travar a conversa | Aceita | 2026-10-03 |
 
 ---
 
@@ -621,3 +622,28 @@ número pessoal. O número de teste só entrega mensagens a números cadastrados
 
 **Motivo:** comprova a parte mais arriscada da integração (endereço público, verificação, assinatura, formato real da Meta)
 sem expor nenhum número. Ligar o envio real depois é mudar uma linha no `.env` e cadastrar um número na lista da Meta.
+
+---
+
+## 033: HubSpot sincronizado pelo código após cada resposta, sem travar a conversa
+
+**Contexto:** a Fase 5 leva para o CRM tudo o que o P.H. descobre. O HubSpot oferece SDK e API REST; as chaves de app
+privado viraram "legado", e a forma recomendada para um programa acessar uma conta é a **chave de serviço**.
+
+**Decisões:**
+- **Chave de serviço** com escopos mínimos (ler e criar contatos, empresas e negócios, e criar os campos da BRAX).
+- **API REST com `httpx`**, já instalado, em vez de mais um SDK: são poucas rotas, e o código fica explícito.
+- **O que vai para o CRM:** contato (nome, e-mail ou telefone, cargo), empresa (nome, funcionários, gasto, setor),
+  e um **negócio** no funil próprio "BRAX Inbound" (Qualificado – app · Reunião solicitada · Reunião aprovada · Perdido),
+  além de campos da BRAX (faixa, motivo, prioridade, sinais, motivo da perda, opt-out).
+- **A etapa do funil é uma função pura** (`etapa_do_negocio`), como o roteamento (decisão 013): previsível e testada.
+  Fora do perfil não vira negócio (só contato e empresa, com o motivo); "sem interesse", "sem resposta" e opt-out
+  levam um negócio existente para "Perdido".
+- **Mesma empresa, outro contato:** antes de criar uma empresa, o código procura uma com o mesmo nome e reaproveita.
+  Resolve a pendência registrada na Fase 2 (Sara e Ricardo, ambos da Lumen).
+- **Sincronização depois de salvar a conversa, sem travar:** se o HubSpot falhar, o lead é marcado como pendente e a
+  próxima resposta (ou `sincronizar_crm.py`) tenta de novo. O cliente nunca espera pelo CRM.
+- **Sem token, sem CRM:** os programas funcionam como antes; o HubSpot liga sozinho quando a chave existe no `.env`.
+
+**Motivo:** o CRM é a fonte de verdade do time comercial, e o valor de um SDR automatizado está em registrar tudo, sempre,
+sem digitação manual. Ao mesmo tempo, um CRM fora do ar não pode custar uma conversa com um lead.

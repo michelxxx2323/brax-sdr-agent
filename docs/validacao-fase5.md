@@ -20,3 +20,18 @@ As 4 conversas da Lumen (inclusive a Ana do WhatsApp) ficaram associadas a **uma
 **Aprendizado:** APIs de CRM costumam ter **consistência eventual** na busca: "procurar antes de criar" não basta quando
 dois registros chegam juntos. Em produção, com vários processos, a proteção completa exigiria uma trava ou uma chave única
 (ex.: domínio da empresa); fica anotado para a hospedagem (5b).
+
+## Teste 2: aprovação pelo Slack de ponta a ponta (WhatsApp simulado + Slack + HubSpot)
+
+Lead "Bruno, Vetra" (40 pessoas, R$ 90 mil/mês), pelo programa único `iniciar_brax.py`.
+
+**O que funcionou:** roteamento para executivo; pedido no Slack com resumo e botões; aprovação clicada 14 segundos depois;
+retorno escrito pela IA com o link de agenda, enviado 2 segundos após o clique; HubSpot atualizado.
+
+| Problema | Causa | Correção |
+|---|---|---|
+| O lead "não recebeu" o retorno da aprovação | O retorno **foi enviado**, mas o simulador só olhava as mensagens logo depois de o lead escrever. Uma mensagem proativa nunca aparecia (e era marcada como vista no "E aí?" seguinte) | O simulador passa a vigiar as mensagens o tempo todo e mostra na hora qualquer mensagem do P.H. |
+| Ao "E aí?", o P.H. disse "Deixa eu confirmar com o time... Já retorno por aqui!", com a reunião já aprovada | O modelo não tinha, no contexto do lead, um sinal claro de que a reunião estava aprovada e o link já enviado | O contexto passa a trazer o link já enviado quando a reunião está aprovada, com a regra de reenviá-lo. O alerta de confiabilidade reconhece "deixa eu confirmar" e "já retorno" |
+
+**Aprendizado:** com aprovação assíncrona, o P.H. precisa saber em que pé está cada pendência. Antes, o resultado chegava
+na mesma rodada; agora pode chegar entre duas mensagens do lead, e o contexto precisa refletir isso.

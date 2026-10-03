@@ -75,7 +75,7 @@ class SlackBrax:
 
     def aprovador(self, lead: Lead, resumo_do_ph: str, disponibilidade: str) -> tuple[str, str]:
         """Usado pela ferramenta solicitar_aprovacao_executivo: publica o pedido e devolve "pendente" na hora."""
-        resumo = self.resumidor(lead)
+        resumo = self.resumidor(lead, disponibilidade)
         resposta = self.cliente.chat_postMessage(
             channel=self.canal, text=f"Lead para executivo: {_rotulo_do_lead(lead)}",
             blocks=blocos_de_aprovacao(lead, resumo, disponibilidade),

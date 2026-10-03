@@ -43,7 +43,7 @@ def resumo_sem_ia(lead: Lead) -> str:
     ])
 
 
-def gerar_resumo(lead: Lead, client: anthropic.Anthropic | None = None) -> str:
+def gerar_resumo(lead: Lead, disponibilidade: str = "", client: anthropic.Anthropic | None = None) -> str:
     try:
         client = client or anthropic.Anthropic()
         resposta = client.messages.create(
@@ -51,7 +51,11 @@ def gerar_resumo(lead: Lead, client: anthropic.Anthropic | None = None) -> str:
             max_tokens=2048,
             thinking={"type": "disabled"},  # tarefa curta e objetiva: sem raciocínio estendido (mais barato)
             system=INSTRUCOES,
-            messages=[{"role": "user", "content": f"Dados registrados: {lead.dados}\n\nConversa:\n{_transcricao(lead)}"}],
+            messages=[{"role": "user", "content": (
+                f"Dados registrados: {lead.dados}\n\nConversa:\n{_transcricao(lead)}"
+                # A última mensagem do lead ainda não está no histórico quando o resumo é pedido (achado no teste da Elisa).
+                + (f"\n\nDisponibilidade informada pelo lead agora: {disponibilidade}" if disponibilidade else "")
+            )}],
         )
         texto = "\n".join(b.text for b in resposta.content if b.type == "text").strip()
         return texto or resumo_sem_ia(lead)

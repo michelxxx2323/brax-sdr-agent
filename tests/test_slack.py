@@ -53,7 +53,7 @@ class ClaudeFalso:
 
 
 def _slack(falso=None):
-    return SlackBrax(falso or SlackFalso(), canal="C123", resumidor=lambda lead: "Ana · Lumen · 28 pessoas · R$ 70 mil/mês")
+    return SlackBrax(falso or SlackFalso(), canal="C123", resumidor=lambda lead, disponibilidade="": "Ana · Lumen · 28 pessoas · R$ 70 mil/mês")
 
 
 def lead_pendente(pasta, **mudancas) -> Lead:
@@ -242,3 +242,14 @@ def test_deixa_eu_confirmar_sem_ferramenta_gera_alerta():
 
     frase = "Opa, Bruno! Deixa eu confirmar com o time se quinta à tarde ainda tá disponível. Já retorno por aqui!"
     assert checar_confiabilidade(frase, []) == ["Confiabilidade: promete uma ação para depois sem ter chamado nenhuma ferramenta"]
+
+
+def test_resumo_recebe_a_disponibilidade_mais_recente():
+    # Achado no teste da Elisa: o resumo dizia "aguardando dia e período" porque a última mensagem ainda não estava salva.
+    from brax_sdr.resumo import gerar_resumo
+
+    cliente = ClaudeFalso(["Elisa, da Kora · disponibilidade: sexta de manhã"])
+    gerar_resumo(Lead(id="x", dados={"empresa": "Kora"}), "sexta de manhã", client=cliente)
+    pedido = cliente.chamadas[0]
+    assert "Disponibilidade informada pelo lead agora: sexta de manhã" in pedido["messages"][0]["content"]
+    assert pedido["model"] == config.MODELO_AVANCADO and pedido["thinking"] == {"type": "disabled"}

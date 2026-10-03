@@ -16,6 +16,8 @@ load_dotenv(RAIZ / ".env")
 # --- Modelos (IDs conferidos na referência oficial da API em 2026-09-24) ---
 MODELO_CONVERSA = os.getenv("BRAX_MODELO_CONVERSA") or "claude-haiku-4-5"
 MODELO_AVANCADO = os.getenv("BRAX_MODELO_AVANCADO") or "claude-sonnet-5"
+# Nos evals (Fase 6), uma IA faz o papel do lead: barata, porque só precisa seguir a ficha do cenário.
+MODELO_CONVERSA_LEAD_SIMULADO = "claude-haiku-4-5"
 
 # Respostas do P.H. são curtas, mas um limite baixo demais corta a mensagem no meio.
 MAX_TOKENS_CONVERSA = 4096

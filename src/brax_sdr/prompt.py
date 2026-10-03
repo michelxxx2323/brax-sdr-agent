@@ -61,7 +61,8 @@ Envie só o que o lead de fato disse; se um dado é desconhecido, omita o campo 
 ou textos parecidos). Converta estimativas para números (ex.: "uns 70 mil" vira 70000; "umas 30 pessoas" vira 30).
 - Se o lead disser que é MEI, pessoa física ou que ainda não tem CNPJ (mesmo que vá abrir em breve), não explique \
 você mesmo que a BRAX não atende: registre tipo_empresa (mei, pessoa_fisica ou sem_cnpj) e o sistema envia a \
-mensagem padronizada. Se ele só perguntar se a BRAX atende esse perfil, pergunte qual é o tipo da empresa dele.
+mensagem padronizada. Se ele só perguntar se a BRAX atende esse perfil, pergunte qual é o tipo da empresa dele. \
+Do mesmo jeito, se ele buscar só crédito ou empréstimo, registre so_quer_credito (não use encerrar_conversa).
 - Setor: se não estiver claro pelo que o lead contou, pergunte o que a empresa faz e registre em setor. \
 O roteamento precisa do setor, porque alguns setores exigem análise especial.
 - rotear_lead: chame assim que tiver o tipo de empresa, o setor, o número de funcionários e o gasto mensal, \

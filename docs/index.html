@@ -36,130 +36,104 @@ footer { color:var(--suave); font-size:13px; margin-top:40px }
 </style></head>
 <body><main>
 <h1>Evals do P.H.: agente SDR da BRAX</h1>
-<p class="sub">Bateria de 2026-10-03 02:07 · conversa: <b>claude-haiku-4-5</b> ·
+<p class="sub">Bateria de 2026-10-03 02:20 · conversa: <b>claude-haiku-4-5</b> ·
 juiz: claude-sonnet-5 · lead simulado: claude-haiku-4-5.
 Uma IA faz o papel de cada lead, seguindo a ficha do cenário; o código confere o que é objetivo e o juiz dá notas ao resto.</p>
-<div class="cartoes"><div class="cartao"><div class="rotulo">Cenários aprovados</div><div class="valor">19/20</div><div class="nota">todas as verificações objetivas passaram</div></div><div class="cartao"><div class="rotulo">Roteamento correto</div><div class="valor">93%</div><div class="nota">faixa certa nos cenários com faixa esperada</div></div><div class="cartao"><div class="rotulo">Nota média do juiz</div><div class="valor">4.36/5</div><div class="nota">média dos 6 critérios</div></div><div class="cartao"><div class="rotulo">Alertas de guardrail</div><div class="valor">1</div><div class="nota">G1 a G4, somando todos os cenários</div></div><div class="cartao"><div class="rotulo">Custo médio por conversa</div><div class="valor">US$ 0.031</div><div class="nota">só o P.H. (sem lead simulado e juiz)</div></div><div class="cartao"><div class="rotulo">Custo da bateria</div><div class="valor">US$ 0.90</div><div class="nota">P.H. + lead simulado + juiz</div></div></div>
+<div class="cartoes"><div class="cartao"><div class="rotulo">Cenários aprovados</div><div class="valor">19/20</div><div class="nota">todas as verificações objetivas passaram</div></div><div class="cartao"><div class="rotulo">Roteamento correto</div><div class="valor">93%</div><div class="nota">faixa certa nos cenários com faixa esperada</div></div><div class="cartao"><div class="rotulo">Nota média do juiz</div><div class="valor">4.33/5</div><div class="nota">média dos 6 critérios</div></div><div class="cartao"><div class="rotulo">Alertas de guardrail</div><div class="valor">0</div><div class="nota">G1 a G4, somando todos os cenários</div></div><div class="cartao"><div class="rotulo">Custo médio por conversa</div><div class="valor">US$ 0.032</div><div class="nota">só o P.H. (sem lead simulado e juiz)</div></div><div class="cartao"><div class="rotulo">Custo da bateria</div><div class="valor">US$ 0.92</div><div class="nota">P.H. + lead simulado + juiz</div></div></div>
 <h2>Notas do juiz por critério</h2>
-<div class="painel"><div class="barra-linha"><span class="barra-rotulo">Tom e clareza</span><span class="barra"><span class="barra-preenchida" style="width:94%"></span></span><span class="barra-valor">4.7</span></div><div class="barra-linha"><span class="barra-rotulo">Uma pergunta por vez</span><span class="barra"><span class="barra-preenchida" style="width:91%"></span></span><span class="barra-valor">4.55</span></div><div class="barra-linha"><span class="barra-rotulo">Não repete perguntas</span><span class="barra"><span class="barra-preenchida" style="width:95%"></span></span><span class="barra-valor">4.75</span></div><div class="barra-linha"><span class="barra-rotulo">Honestidade</span><span class="barra"><span class="barra-preenchida" style="width:83%"></span></span><span class="barra-valor">4.15</span></div><div class="barra-linha"><span class="barra-rotulo">Guardrails</span><span class="barra"><span class="barra-preenchida" style="width:81%"></span></span><span class="barra-valor">4.05</span></div><div class="barra-linha"><span class="barra-rotulo">Condução</span><span class="barra"><span class="barra-preenchida" style="width:79%"></span></span><span class="barra-valor">3.95</span></div></div>
+<div class="painel"><div class="barra-linha"><span class="barra-rotulo">Tom e clareza</span><span class="barra"><span class="barra-preenchida" style="width:93%"></span></span><span class="barra-valor">4.65</span></div><div class="barra-linha"><span class="barra-rotulo">Uma pergunta por vez</span><span class="barra"><span class="barra-preenchida" style="width:91%"></span></span><span class="barra-valor">4.55</span></div><div class="barra-linha"><span class="barra-rotulo">Não repete perguntas</span><span class="barra"><span class="barra-preenchida" style="width:91%"></span></span><span class="barra-valor">4.55</span></div><div class="barra-linha"><span class="barra-rotulo">Honestidade</span><span class="barra"><span class="barra-preenchida" style="width:81%"></span></span><span class="barra-valor">4.05</span></div><div class="barra-linha"><span class="barra-rotulo">Guardrails</span><span class="barra"><span class="barra-preenchida" style="width:85%"></span></span><span class="barra-valor">4.25</span></div><div class="barra-linha"><span class="barra-rotulo">Condução</span><span class="barra"><span class="barra-preenchida" style="width:79%"></span></span><span class="barra-valor">3.95</span></div></div>
 <h2>Cenários</h2>
 
 <details class="cenario">
   <summary><span class="selo ok">passou</span><span class="titulo">Founder de SaaS pequeno, dentro do self-service</span>
-    <span class="meta">nota 4.2 · 9 msgs · US$ 0.071</span></summary>
+    <span class="meta">nota 5.0 · 6 msgs · US$ 0.061</span></summary>
   <div class="detalhe">
     <p><b>Esperado:</b> {&quot;faixa&quot;: &quot;self_service&quot;}<br>
        <b>Obtido:</b> {&quot;faixa&quot;: &quot;self_service&quot;, &quot;motivo_faixa&quot;: &quot;12 funcionários e gasto de R$ 35.000/mês (dentro dos limites)&quot;}</p>
     
-    <p><b>Juiz:</b> Conversa fluida e bem conduzida ao self-service com dados coletados corretamente e sem repetições, mas com uma pergunta extra (rodada de investimento) que não era necessária para rotear e atrasou levemente o envio do link.</p>
-    <ul><li>Gasto mensal informado pelo lead foi R$ 35 mil, dentro do limite de self-service (até R$ 50 mil) e funcionários (12) também dentro do limite (até 20) — o roteamento para self-service está correto, mas o P.H. não perguntou sobre o setor da empresa antes de rotear, como recomendado em qualificacao.md (dado #8).</li><li>Fez uma pergunta sobre rodada de investimento (&#x27;captaram rodada ou é bootstrapped&#x27;) após já ter dados suficientes para rotear, o que é aceitável para sinais de compra, mas atrasou o envio do link sem necessidade clara.</li><li>Não perguntou explicitamente sobre o setor/segmento além do que o lead já tinha dito espontaneamente (SaaS de agendamento), o que tecnicamente já estava coberto — não é falha real, mas o fluxo de perguntas poderia ter sido mais enxuto.</li></ul>
-    <div class="conversa"><div class="fala lead"><b>Lead:</b> oi! tudo bem? vcs fazem cartão corporativo pra startups?</div><div class="fala ph"><b>P.H.:</b> Oi! Tudo certo! Aqui é o P.H., assistente virtual da BRAX 👋
-
-Fazemos sim! Cartões corporativos, Pix, gestão de despesas e integração contábil — tudo em um só lugar pra organizar os gastos do time.
-
-Me conta: qual o nome da empresa de vocês?</div><div class="fala lead"><b>Lead:</b> Oi! Somos a Nexora, a gente faz um SaaS de agendamento. Tá crescendo bastante aqui 🙌</div><div class="fala ph"><b>P.H.:</b> Que legal! Parabéns pelo crescimento 🚀
-
-Ótimo, Nexora. E aí, como o time de vocês paga as despesas do dia a dia hoje?</div><div class="fala lead"><b>Lead:</b> Então, a gente usa o cartão pessoal da minha sócia mesmo. Não é o ideal né, mas tá funcionando por enquanto. A gente gasta uns 35 mil por mês com cartão e outras despesas do time, bastante coisa em ferramentas pagas em dólar</div><div class="fala ph"><b>P.H.:</b> Entendo, essa é a realidade de muita startup no começo. O problema é que conforme cresce fica complicado mesmo — controle, reembolso, fechamento com o contador...
-
-Perfeito, anotei: 35 mil por mês. Quantas pessoas vocês têm na Nexora hoje?</div><div class="fala lead"><b>Lead:</b> A gente tem 12 pessoas no time agora. Tá crescendo rápido, mas ainda é bem enxuto</div><div class="fala ph"><b>P.H.:</b> Legal! E aí, qual é o seu papel na empresa?</div><div class="fala lead"><b>Lead:</b> Sou founder da Nexora. Cuido de tudo um pouco, mas principalmente da visão e estratégia da empresa</div><div class="fala ph"><b>P.H.:</b> Entendido! Então você que decide sobre banco e cartões aí na Nexora?</div><div class="fala lead"><b>Lead:</b> Eu e minha sócia decidimos junto. Ela usa o cartão pessoal dela no dia a dia, mas qualquer coisa maior a gente alinha. Por isso estou pesquisando sobre cartão corporativo mesmo</div><div class="fala ph"><b>P.H.:</b> Perfeito, isso faz muito sentido. Vocês são uma boa fit pra gente!
-
-Só um último detalhe: a Nexora já tem CNPJ? É LTDA, S.A. ou MEI?</div><div class="fala lead"><b>Lead:</b> Sim, a gente é LTDA e tem CNPJ tranquilamente. Já tá tudo registrado certinho</div><div class="fala ph"><b>P.H.:</b> Ótimo! Deixa eu entender melhor: vocês captaram alguma rodada de investimento recentemente, ou é bootstrapped?</div><div class="fala lead"><b>Lead:</b> Não, a gente é bootstrapped mesmo. Crescendo com a receita própria do produto, sem investimento externo por enquanto</div><div class="fala ph"><b>P.H.:</b> Podem abrir a conta direto: https://app.brax.example/abrir-conta
-
-Só um cuidado: cadastro e documentos são feitos só dentro do app. Eu nunca vou te pedir senha, código ou documento por aqui. Se travar em alguma etapa, me chama!</div><div class="fala lead"><b>Lead:</b> Ótimo, obrigada! Vou acessar o link agora e criar a conta. Se eu travar em algo eu te aviso 👍</div><div class="fala ph"><b>P.H.:</b> Perfeito! Fico no aguardo. Qualquer dúvida no cadastro, é só chamar que te ajudo 👍
-
-Abraço!</div></div>
+    <p><b>Juiz:</b> Conversa fluida e correta: identificação adequada, qualificação sem repetir perguntas, roteamento self-service com link do app e aviso de segurança no momento certo.</p>
+    
+    <div class="conversa"><div class="fala lead"><b>Lead:</b> Oi! Tudo bem? Ouvi falar que vocês oferecem cartão corporativo pra startups. A gente tá precisando organizar melhor os gastos aqui da Nexora, tá um caos usar cartão pessoal. Vocês podem me explicar como funciona?</div><div class="fala ph"><b>P.H.:</b> Oi! Tudo bem? 👋 Aqui é o P.H., assistente virtual da BRAX. Que legal que vocês querem organizar os gastos! Na prática, cada pessoa do time recebe seu próprio cartão (virtual ou físico) com limite definido pela empresa. Quando gasta, tira foto do comprovante no app — sem planilha de reembolso, sem misturar cartão pessoal. A Nexora já tem CNPJ? É LTDA, S.A. ou MEI?</div><div class="fala lead"><b>Lead:</b> Oi P.H.! Tá bom, entendi. A gente é LTDA mesmo, já tem CNPJ. Isso de cada pessoa ter o seu cartão com limite parece show, muito melhor que ficar usando o meu pessoal. Quais são os próximos passos pra gente começar?</div><div class="fala ph"><b>P.H.:</b> Ótimo! Antes de eu mostrar os próximos passos, preciso entender melhor o tamanho da operação de vocês. Quantas pessoas trabalham na Nexora hoje, mais ou menos?</div><div class="fala lead"><b>Lead:</b> A gente tem 12 pessoas no time. Nada muito grande ainda, mas tá crescendo!</div><div class="fala ph"><b>P.H.:</b> Legal! E numa estimativa, quanto a Nexora gasta por mês com cartão e despesas do time?</div><div class="fala lead"><b>Lead:</b> Uns 35 mil por mês mais ou menos. A gente gasta bastante com ferramentas pagas em dólar, sabe? Fica caro mesmo.</div><div class="fala ph"><b>P.H.:</b> Entendi! Gasto em dólar é realmente uma dor. E qual é o segmento de vocês? O que a Nexora faz?</div><div class="fala lead"><b>Lead:</b> A gente é um SaaS de agendamento. Basicamente ajuda empresas a gerenciar agendamentos de forma mais prática e integrada, sabe? Tipo um sistema pra organizar consultas, reuniões, essas coisas.</div><div class="fala ph"><b>P.H.:</b> Perfeito! Para a Nexora, começamos com nosso plano Start, que é gratuito e resolve bem. Você abre tudo pelo app: a conta, os cartões do time e já começa a gestão de despesas. É só baixar aqui: https://app.brax.example/abrir-conta. Importante: cadastro e documentos só no app! Eu nunca peço senha, código ou documento por WhatsApp. Travar em alguma etapa?</div><div class="fala lead"><b>Lead:</b> Ótimo, vou dar uma olhada no app então! Obrigada pela ajuda, P.H. Vou fazer o cadastro lá e qualquer dúvida eu te mando mensagem de novo, beleza?</div><div class="fala ph"><b>P.H.:</b> Perfeito! Fico por aqui se precisar de qualquer coisa. Boa sorte com a Nexora! 🚀</div></div>
   </div>
 </details>
 <details class="cenario">
   <summary><span class="selo ok">passou</span><span class="titulo">CEO de healthtech em crescimento, faixa executivo</span>
-    <span class="meta">nota 4.7 · 7 msgs · US$ 0.041</span></summary>
+    <span class="meta">nota 4.2 · 3 msgs · US$ 0.030</span></summary>
   <div class="detalhe">
     <p><b>Esperado:</b> {&quot;faixa&quot;: &quot;executivo&quot;, &quot;aprovacao&quot;: &quot;aprovada&quot;}<br>
        <b>Obtido:</b> {&quot;faixa&quot;: &quot;executivo&quot;, &quot;motivo_faixa&quot;: &quot;28 funcionários (&gt; 20) e gasto de R$ 70.000/mês (&gt; R$ 50.000)&quot;, &quot;aprovacao&quot;: &quot;aprovada&quot;}</p>
     
-    <p><b>Juiz:</b> Conversa bem conduzida, objetiva e dentro do tom esperado, qualificando corretamente o lead como faixa executivo e entregando o link de agenda, mas sem evidenciar a etapa de aprovação do time antes do envio do link.</p>
-    <ul><li>O P.H. enviou o link de agenda imediatamente após o lead informar disponibilidade (&#x27;Terça de manhã funciona bem pra mim!&#x27;), sem que a conversa mostre a etapa de pedido de aprovação no Slack ao time comercial (fluxo do handoff.md), o que pode indicar pulo de etapa ou falta de transparência sobre esse processo interno — ainda que o resultado esperado seja &#x27;aprovada&#x27;, o texto não deixa claro que houve essa checagem.</li><li>Nenhuma falha grave de guardrails foi observada, mas o processo de aprovação não aparece narrado, o que dificulta confirmar que a regra do handoff foi seguida corretamente.</li></ul>
-    <div class="conversa"><div class="fala lead"><b>Lead:</b> Oi! Tudo bem? Vi que vocês trabalham com contas PJ para startups. A gente tá crescendo bastante aqui na Lumen e queria conversar sobre as soluções de vocês 👋</div><div class="fala ph"><b>P.H.:</b> Oi! Aqui é o P.H., assistente virtual da BRAX 👋
+    <p><b>Juiz:</b> Conversa fluida e correta no roteamento para executivo com aprovação, mas com duas falhas: duas perguntas numa mesma mensagem e detalhamento indevido do conteúdo da futura reunião com o executivo.</p>
+    <ul><li>Na penúltima mensagem, o P.H. fez duas perguntas na mesma mensagem no WhatsApp: &#x27;Qual ERP vocês usam?&#x27; e &#x27;Você prefere manhã ou tarde?&#x27;, violando a regra de uma pergunta por vez no canal.</li><li>Na última mensagem, o P.H. diz &#x27;Uma pessoa do time vai conversar com você sobre conta, cartões e como integrar tudo com seu contador&#x27;, detalhando o conteúdo/formato da reunião, o que o guardrail de handoff proíbe explicitamente (não inventar detalhes da reunião).</li></ul>
+    <div class="conversa"><div class="fala lead"><b>Lead:</b> Oi! Tudo bem? Sou a Ana, CEO da Lumen. Ouvir falar da BRAX aqui e gostaria de saber mais sobre os serviços de vocês pra PJ. A gente tá numa fase de crescimento agora e precisa de uma solução contábil boa. Vocês atendem healthtechs?</div><div class="fala ph"><b>P.H.:</b> Oi, Ana! Tudo bem? 👋 Sou P.H., assistente virtual da BRAX. Legal saber do crescimento de vocês! A BRAX atende healthtechs sim! Oferecemos conta PJ, cartões corporativos e gestão de despesas integrada com contabilidade. Muitas startups vêm pra gente pra sair das planilhas. A Lumen é LTDA ou S.A., e quantas pessoas vocês são?</div><div class="fala lead"><b>Lead:</b> Oi P.H.! Então, a gente é LTDA mesmo. Somos 28 pessoas aqui. Sobre as despesas, a gente gasta uns 70 mil por mês. Vocês conseguem integrar isso com a contabilidade de forma automática? Porque planilha tá um caos mesmo kkkk</div><div class="fala ph"><b>P.H.:</b> Ótimo, Ana! A BRAX exporta em formatos que seu contador usa e integra com alguns ERPs. Qual ERP vocês usam? Cada pessoa do time tem cartão com limite, toda despesa é fotografada no app (sem planilha!) e o contador acessa tudo em tempo real. Pelo tamanho de vocês, seria ideal conversar com nosso time comercial para detalhar o setup contábil. Você prefere manhã ou tarde?</div><div class="fala lead"><b>Lead:</b> Ah, a gente não usa ERP não, tá tudo meio na raça ainda kkkk Mas esse negócio de fotografar a despesa no app já resolve bastante coisa. Terça de manhã funciona bem pra mim, se tiver disponibilidade aí!</div><div class="fala ph"><b>P.H.:</b> Perfeito, Ana! Terça de manhã tá aprovado! Escolhe o horário que funciona melhor pra você aqui: https://agenda.brax.example/executivo
 
-Ótimo saber que a Lumen tá crescendo! Me conta: vocês já têm CNPJ? É LTDA, S.A. ou MEI?</div><div class="fala lead"><b>Lead:</b> Oi P.H.! Sim, a gente é LTDA e já tem CNPJ certeza. A gente tá bem estruturado nesse lado 👍</div><div class="fala ph"><b>P.H.:</b> Ótimo! E quantas pessoas trabalham na Lumen hoje, mais ou menos?</div><div class="fala lead"><b>Lead:</b> A gente tá com 28 pessoas agora. Crescemos bastante esse ano! 📈</div><div class="fala ph"><b>P.H.:</b> Parabéns pelo crescimento! 🚀
-
-E numa estimativa, quanto a empresa gasta por mês com cartão e despesas do time?</div><div class="fala lead"><b>Lead:</b> Umas coisas em torno de 70 mil por mês. Mas isso varia bastante com os gastos pontuais, sabe?</div><div class="fala ph"><b>P.H.:</b> Anotado! Essa variação é normal mesmo.
-
-Qual é o seu papel na Lumen?</div><div class="fala lead"><b>Lead:</b> Sou a CEO da Lumen. Tomo as decisões principais aqui 😊</div><div class="fala ph"><b>P.H.:</b> Perfeito! Só mais uma coisa: o que a Lumen faz?</div><div class="fala lead"><b>Lead:</b> A gente é uma healthtech, trabalha na área de saúde. Temos um produto bem legal que tá crescendo bastante, especialmente depois que captamos uma rodada seed mês passado 🚀</div><div class="fala ph"><b>P.H.:</b> Parabéns pela rodada! Esse é exatamente o momento em que vale conversar com a gente sobre como organizar os gastos do time.
-
-Pelo tamanho da Lumen, o ideal é você conversar com uma pessoa do nosso time comercial. Eles conseguem detalhar melhor os planos, integrações e o que faz mais sentido para vocês.
-
-Qual período costuma ser melhor para você: manhã ou tarde?</div><div class="fala lead"><b>Lead:</b> Terça de manhã funciona bem pra mim! 👍</div><div class="fala ph"><b>P.H.:</b> Perfeito! Escolhe o melhor horário de terça de manhã por aqui: https://agenda.brax.example/executivo
-
-Uma pessoa do time vai te conectar para conversar sobre os cartões, a conta e a gestão de despesas. Qualquer dúvida até lá, me chama!</div></div>
+Uma pessoa do time vai conversar com você sobre conta, cartões e como integrar tudo com seu contador. Qualquer dúvida de agora até lá, é só chamar!</div></div>
   </div>
 </details>
 <details class="cenario">
   <summary><span class="selo ok">passou</span><span class="titulo">Lead que já manda todos os dados de uma vez</span>
-    <span class="meta">nota 5.0 · 4 msgs · US$ 0.026</span></summary>
+    <span class="meta">nota 4.7 · 4 msgs · US$ 0.036</span></summary>
   <div class="detalhe">
     <p><b>Esperado:</b> {&quot;faixa&quot;: &quot;self_service&quot;}<br>
        <b>Obtido:</b> {&quot;faixa&quot;: &quot;self_service&quot;, &quot;motivo_faixa&quot;: &quot;10 funcionários e gasto de R$ 5.000/mês (dentro dos limites)&quot;}</p>
     
-    <p><b>Juiz:</b> Conversa exemplar: P.H. aproveitou os dados já fornecidos, qualificou com uma pergunta por vez, roteou corretamente para self-service, enviou o link só depois do roteamento e reforçou o guardrail de não pedir documentos fora do app.</p>
-    
+    <p><b>Juiz:</b> Conversa bem conduzida, com roteamento correto para self-service e guardrails respeitados, mas com uma falha de duas perguntas na mesma mensagem de WhatsApp.</p>
+    <ul><li>Na segunda mensagem, o P.H. fez duas perguntas de uma vez no WhatsApp (papel na empresa e como o time paga despesas), violando a regra de uma pergunta por mensagem nesse canal.</li></ul>
     <div class="conversa"><div class="fala lead"><b>Lead:</b> Oi, aqui é o Ricardo da Seletax, uma LTDA com 10 pessoas, gastamos uns 5 mil por mês e quero os cartões corporativos</div><div class="fala ph"><b>P.H.:</b> Oi, Ricardo! Aqui é o P.H., assistente virtual da BRAX 👋
 
-Perfeito! Cartões corporativos é exatamente o que a gente resolve. Hoje vocês usam qual banco ou cartão para as despesas do time?</div><div class="fala lead"><b>Lead:</b> Opa, valeu P.H.! 
+Ótimo, anotei os dados de vocês. Rapidinho: qual o seu papel na empresa? E hoje, como o time de vocês paga as despesas?</div><div class="fala lead"><b>Lead:</b> Opa, fala P.H.! Então, eu sou sócio aqui da Seletax. Hoje a gente usa cartão pessoal mesmo pra despesas, depois a galera manda recibo e a gente reembolsa. É meio bagunçado sabe, tem bastante papel envolvido 😅</div><div class="fala ph"><b>P.H.:</b> Opa, Ricardo! Entendo essa dor, é bem comum 😅 Na BRAX, cada pessoa do time recebe seu cartão com limite que você define. Sem reembolso por papel no fim do mês: é só tirar foto do comprovante no app, categorizar e pronto. Bem menos trabalho e você controla tudo em tempo real. Qual o setor de vocês?</div><div class="fala lead"><b>Lead:</b> Ah, que legal! Isso ia facilitar bastante mesmo. A gente trabalha com consultoria fiscal, sabe? Ajudamos empresas com questões de impostos e tal. Por isso gasto bastante com viagens pra ir aos clientes, então esse controle melhor ia ser bem útil</div><div class="fala ph"><b>P.H.:</b> Ricardo, pelo tamanho e gasto mensal de vocês, o melhor é vocês abrirem a conta direto pelo app: é rápido, 100% digital e sem burocracia.
 
-Cara, a gente usa uns cartões pessoais mesmo, bem desorganizado. Cada um coloca no seu e depois a gente tenta ajustar, mas é complicado. Por isso queria centralizar isso aí com os corporativos de vocês</div><div class="fala ph"><b>P.H.:</b> Entendi! Esse é o cenário mais comum: cartão pessoal virou conta da empresa 😅 Na BRAX, cada um do time tem seu cartão com limite definido pela empresa. Você controla quem gasta o quê e o comprovante vai por foto no app, sem planilha de reembolso. O plano Start é ideal para a Seletax agora: é gratuito e abre tudo pelo app. Quer o link?</div><div class="fala lead"><b>Lead:</b> Ué, gratuito? Sério? Que legal!
+Aqui está o link: https://app.brax.example/abrir-conta
 
-Sim, manda o link aí que a gente já quer começar. Isso ia resolver muito nosso problema mesmo</div><div class="fala ph"><b>P.H.:</b> Ótimo, Ricardo! Segue o link do app: https://app.brax.example/abrir-conta
-
-Só um cuidado importante: cadastro e documentos são feitos 100% dentro do app. Eu nunca vou te pedir senha, código ou documento por aqui — tudo por lá.
-
-Se travar em alguma etapa ou tiver dúvida no processo, me chama! 👍</div><div class="fala lead"><b>Lead:</b> Beleza, P.H.! Anotado aqui 🙌
-
-Vou entrar no app agora e faço o cadastro. Se travar em algo eu te chamo sim. Valeu!</div><div class="fala ph"><b>P.H.:</b> Perfeito, Ricardo! Boa sorte com o cadastro 🚀 Qualquer coisa, é só chamar. Obrigado!</div></div>
+Importante: cadastro e documentos são feitos só dentro do app. Eu nunca vou te pedir senha, código ou documento por aqui, tá? Se travar em alguma etapa, é só me chamar!</div><div class="fala lead"><b>Lead:</b> Beleza, P.H.! Valeu pela ajuda. Vou entrar no app agora e fazer o cadastro. Se eu travar em algo, volto a chamar você mesmo. Obrigado!</div><div class="fala ph"><b>P.H.:</b> Ótimo, Ricardo! Sucesso no cadastro. Fico por aqui se precisar de algo. Abraço! 🚀</div></div>
   </div>
 </details>
 <details class="cenario">
   <summary><span class="selo ok">passou</span><span class="titulo">Empresa pequena com gasto alto (executivo pelo gasto)</span>
-    <span class="meta">nota 3.5 · 5 msgs · US$ 0.054</span></summary>
+    <span class="meta">nota 4.2 · 5 msgs · US$ 0.030</span></summary>
   <div class="detalhe">
     <p><b>Esperado:</b> {&quot;faixa&quot;: &quot;executivo&quot;, &quot;aprovacao&quot;: &quot;aprovada&quot;}<br>
        <b>Obtido:</b> {&quot;faixa&quot;: &quot;executivo&quot;, &quot;motivo_faixa&quot;: &quot;gasto de R$ 80.000/mês (&gt; R$ 50.000)&quot;, &quot;aprovacao&quot;: &quot;aprovada&quot;}</p>
     
-    <p><b>Juiz:</b> O tom e a qualificação foram bons, mas o agente pulou a etapa de solicitar e aguardar aprovação do executivo, afirmando &#x27;tá confirmado&#x27; e enviando o link de agenda como se a aprovação fosse automática, o que fere o processo de handoff e a honestidade sobre o status real.</p>
-    <ul><li>P.H. disse &#x27;Ótimo! Tá confirmado&#x27; sem que a aprovação do Slack tenha de fato sido solicitada/registrada na conversa — segundo o processo (handoff.md), o pedido de aprovação deveria ocorrer na mesma resposta em que o lead informa a disponibilidade, e só depois de &#x27;aprovada&#x27; o link deve ser enviado; aqui o agente pulou a etapa e tratou como automaticamente aprovado.</li><li>O agente inventou/presumiu o resultado &#x27;aprovada&#x27; sem mostrar o passo de verificação, dando a entender que a aprovação é automática, o que não corresponde ao fluxo descrito (pendente/aprovada/recusada).</li><li>Na penúltima mensagem do P.H. há duas perguntas implícitas em uma mensagem só (&#x27;Manhã ou tarde é melhor pra você?&#x27; veio após uma longa explicação, mas está ok; o problema maior é estrutural, não de contagem de perguntas).</li></ul>
-    <div class="conversa"><div class="fala lead"><b>Lead:</b> Opa, tudo bem? Soube falar da BRAX aqui e fico curioso. A gente é agência de marketing, LTDA, e gasta bastante com mídia paga todo mês. Vocês trabalham com conta PJ pra startups, certo? Qual seria o diferencial pra gente?</div><div class="fala ph"><b>P.H.:</b> Opa! Aqui é o P.H., assistente virtual da BRAX 👋
+    <p><b>Juiz:</b> Fluxo de qualificação e roteamento para executivo foi conduzido corretamente e sem repetir perguntas, mas o agente expôs o processo interno de aprovação (&#x27;Aprovou direto&#x27;) e antecipou o conteúdo da reunião, o que fere a discrição esperada sobre decisões internas e detalhes da reunião.</p>
+    <ul><li>Na mensagem final antes do link, o P.H. disse &quot;Perfeito! Aprovou direto&quot;, revelando explicitamente o processo interno de aprovação, o que não é a linguagem esperada (deveria apenas apresentar o link de agenda naturalmente, sem expor o mecanismo de aprovação do Slack/time)</li><li>O P.H. afirmou que a pessoa do time vai conversar &#x27;sobre conta, cartões para o time e como organizar melhor esses R$ 80 mil em despesas&#x27;, antecipando o conteúdo/formato da reunião, o que o tom de voz pede para evitar (não inventar detalhes da reunião)</li></ul>
+    <div class="conversa"><div class="fala lead"><b>Lead:</b> oi! tudo bem? fui indicado pra falar com vcs sobre a solução de conta pj pra startups. a gente é uma agência de marketing, rota mídia, e tamo procurando otimizar algumas coisas na gestão financeira. vocês conseguem ajudar?</div><div class="fala ph"><b>P.H.:</b> Oi! Tudo ótimo, obrigado! 👋
 
-Ótimo saber que vocês são LTDA e trabalham com mídia paga. A BRAX é conta PJ + cartões do time + gestão de despesas em um só lugar. Cada pessoa tem seu cartão com limite definido pela empresa, comprovante é foto no app, e tudo integrado com o contador. Quantas pessoas vocês têm e quanto gasta por mês com cartão, mídia paga e despesas do time?</div><div class="fala lead"><b>Lead:</b> Opa, P.H.! Bleza.
+Aqui é o P.H., assistente virtual da BRAX. Fico feliz que te indicaram a gente!
 
-A gente tem 15 pessoas aqui. Em termos de gasto, a gente bate uns 80 mil por mês, sendo a maioria com mídia paga mesmo. O resto é despesa do time, sabe? Cartão ainda não temos algo tão organizado assim.</div><div class="fala ph"><b>P.H.:</b> Legal! 15 pessoas e 80 mil por mês. Isso já é bem relevante.
+A Rota Mídia já tem CNPJ? É LTDA, S.A. ou MEI?</div><div class="fala lead"><b>Lead:</b> opa, valeu! então, a gente é LTDA mesmo. já tem CNPJ registrado faz um tempo. somos 15 pessoas no time e tal. qual é o próximo passo?</div><div class="fala ph"><b>P.H.:</b> Ótimo! Já está ficando claro. 
 
-Deixa eu entender melhor: hoje como vocês controlam os 80 mil de mídia paga e despesas do time? É tudo no cartão de alguém ou tem reembolso envolvido?</div><div class="fala lead"><b>Lead:</b> Então, a gente tem um caos aí, vou ser sincero haha. Mistura tudo um pouco - tem cartão corporativo, tem reembolso, tem transferência direta pra plataforma de mídia. Fica meio desorganizado, sabe? Por isso achei interessante o que vocês fazem.</div><div class="fala ph"><b>P.H.:</b> Haha, é bem comum mesmo! Cartão + reembolso + transferência é receita para perder controle rápido. Com a BRAX vocês centralizam: cada um do time tem seu cartão (virtual na hora, físico pelo correio) com limite definido, foto do comprovante no app e tudo sincronizado com o contador. Sem planilha de reembolso. Qual seu papel aí? Você cuida de finanças ou tem alguém específico pra isso?</div><div class="fala lead"><b>Lead:</b> Sou o CFO mesmo, então cuido das finanças da galera. Mas sinceramente, essa bagunça de reembolso e controle tá pesada demais pra gente. Isso que você falou de centralizar tudo e tirar a planilha de reembolso soa bem promissor.</div><div class="fala ph"><b>P.H.:</b> Perfeito! Você decide mesmo. Queremos tirar você da planilha de reembolso e dar autonomia ao time com cartão próprio, mantendo controle total via políticas e relatórios em tempo real. Com 15 pessoas e 80 mil/mês, faz sentido conversar com nosso time comercial. Ele detalha controle por departamento e integração contábil. Manhã ou tarde é melhor pra você?</div><div class="fala lead"><b>Lead:</b> Quinta à tarde dá melhor pra gente aqui. Pode ser? Fico no aguardo então.</div><div class="fala ph"><b>P.H.:</b> Ótimo! Tá confirmado. Escolhe o melhor horário à tarde de quinta por aqui: https://agenda.brax.example/executivo
+Só mais uma coisa: numa estimativa, quanto a Rota Mídia gasta por mês com cartão e despesas do time? (Assinaturas, mídia, viagens, essas coisas.)</div><div class="fala lead"><b>Lead:</b> então, a gente gasta uns 80 mil por mês, principalmente com mídia paga mesmo. tem assinatura de ferramentas tbm, mas o grosso é com mídia. isso varia um pouco mês a mês, mas fica nessa faixa aí</div><div class="fala ph"><b>P.H.:</b> Perfeito! Com R$ 80 mil por mês em despesas, vocês são exatamente o tamanho que faz sentido conversar com uma pessoa do nosso time comercial. Ela consegue entender melhor a operação de vocês e desenhar a solução certa.
 
-Um do nosso time vai entrar em contato com você direto. Qualquer dúvida antes disso, é só chamar!</div></div>
+Qual período costuma ser melhor para você conversar: qual dia da semana e que horário (manhã ou tarde)?</div><div class="fala lead"><b>Lead:</b> quinta à tarde funciona bem pra mim! posso marcar uma conversa nesse horário. me manda os detalhes aí que a gente agenda</div><div class="fala ph"><b>P.H.:</b> Perfeito! Aprovou direto. Escolhe o melhor horário de quinta à tarde por aqui:
+
+https://agenda.brax.example/executivo
+
+A pessoa do time vai conversar com você sobre conta, cartões para o time e como organizar melhor esses R$ 80 mil em despesas. Qualquer dúvida antes disso, é só me chamar!</div><div class="fala lead"><b>Lead:</b> show! já vou acessar o link e marcar. valeu pela agilidade, viu? fico no aguardo!</div><div class="fala ph"><b>P.H.:</b> Fico feliz! Aproveita que é rápido mesmo. 
+
+Qualquer coisa antes da conversa, é só chamar. Abraço! 🚀</div></div>
   </div>
 </details>
 <details class="cenario">
   <summary><span class="selo ok">passou</span><span class="titulo">Exatamente no limite (20 pessoas e R$ 50 mil): self-service</span>
-    <span class="meta">nota 3.7 · 10 msgs · US$ 0.047</span></summary>
+    <span class="meta">nota 4.5 · 5 msgs · US$ 0.047</span></summary>
   <div class="detalhe">
     <p><b>Esperado:</b> {&quot;faixa&quot;: &quot;self_service&quot;}<br>
        <b>Obtido:</b> {&quot;faixa&quot;: &quot;self_service&quot;, &quot;motivo_faixa&quot;: &quot;20 funcionários e gasto de R$ 50.000/mês (dentro dos limites)&quot;}</p>
     
-    <p><b>Juiz:</b> O P.H. coletou os dados corretamente e sem repetir perguntas, mas errou a condução ao inicialmente direcionar o lead (exatamente no limite self-service) para o fluxo executivo e depois mudar sem explicação para o link do app, gerando inconsistência e falha de clareza na jornada.</p>
-    <ul><li>Com 20 funcionários e R$ 50 mil/mês (exatamente no limite do self-service), o P.H. disse &#x27;Pelo seu perfil, faz sentido conversar com nosso time comercial&#x27; e pediu período (manhã/tarde) para agendar com executivo, tratando o lead como faixa executivo quando o esperado era self-service.</li><li>Depois de iniciar o fluxo de agendamento com executivo (pedindo manhã ou tarde), na mensagem seguinte o P.H. mudou abruptamente para enviar o link do app (self-service) sem explicar a mudança de rota, confundindo o lead e contradizendo a própria fala anterior.</li><li>Não seguiu o processo de aprovação via Slack descrito no handoff para a faixa executivo antes de reverter para self-service, e não justificou a troca de faixa ao lead.</li><li>Resultado final ficou ambíguo: o lead pediu horário à tarde esperando agendamento, mas recebeu o link do app sem nenhuma explicação sobre o porquê de não haver mais a conversa com o comercial.</li></ul>
-    <div class="conversa"><div class="fala lead"><b>Lead:</b> Opa, tudo bem? Vi que vocês fazem conta PJ para startups, é isso? Gostaria de saber se dá pra abrir uma conta com a gente 👀</div><div class="fala ph"><b>P.H.:</b> Opa! Aqui é o P.H., assistente virtual da BRAX 👋
+    <p><b>Juiz:</b> Conversa bem conduzida e correta no roteamento e nos guardrails, com um único deslize de duas perguntas em uma mesma mensagem de WhatsApp.</p>
+    <ul><li>Na mensagem sobre integração contábil, o P.H. fez duas perguntas na mesma mensagem no WhatsApp: &quot;Qual ferramenta vocês usam?&quot; e &quot;qual é o principal problema que vocês querem resolver agora?&quot;, violando a regra de uma pergunta por vez no canal.</li></ul>
+    <div class="conversa"><div class="fala lead"><b>Lead:</b> Oi, tudo bem? Somos a Kora Labs, uma LTDA daqui. A gente tá procurando uma solução pra gestão financeira e ouvi falar bem da BRAX. Vocês trabalham com a gente?</div><div class="fala ph"><b>P.H.:</b> Oi! Aqui é o P.H., assistente virtual da BRAX 👋
 
-Isso mesmo, a gente faz conta PJ, cartões corporativos e gestão de despesas para startups. Tudo pelo app, sem burocracia.
+Ótimo, muito legal conhecer a Kora Labs! Claro que posso te ajudar.
 
-Antes de a gente entrar nos detalhes: qual o nome da empresa de vocês?</div><div class="fala lead"><b>Lead:</b> Opa, blz! A gente é a Kora Labs. Topa conversar mais sobre isso aí?</div><div class="fala ph"><b>P.H.:</b> Opa, Kora Labs! Claro que topo 😄
+Para eu entender melhor se a BRAX faz sentido para vocês: quantas pessoas trabalham na empresa hoje e quanto vocês gastam por mês com cartão e despesas do time, mais ou menos?</div><div class="fala lead"><b>Lead:</b> Opa, blz! A gente tem 20 pessoas aqui e gasta uns 50 mil por mês com cartão e despesas. A galera tá espalhada e fica meio complicado controlar tudo, sabe?</div><div class="fala ph"><b>P.H.:</b> Entendo perfeitamente, é a dor que a maioria das startups tem. Cada pessoa gastando de um jeito, sem controle centralizado.
 
-Pra eu entender melhor se faz sentido a gente conversar: a Kora Labs já tem CNPJ? É LTDA, S.A. ou MEI?</div><div class="fala lead"><b>Lead:</b> Sim, a gente já tem CNPJ! A Kora é LTDA mesmo. Tá tudo regularizado já.</div><div class="fala ph"><b>P.H.:</b> Ótimo! E quantas pessoas trabalham na Kora Labs hoje, mais ou menos?</div><div class="fala lead"><b>Lead:</b> A gente tem 20 pessoas no time. É um tamanho legal pra crescer ainda, sabe?</div><div class="fala ph"><b>P.H.:</b> Faz total sentido! E numa estimativa, quanto a Kora Labs gasta por mês com cartão e despesas do time?</div><div class="fala lead"><b>Lead:</b> A gente gasta uns 50 mil por mês com cartão e despesas. É um custo bem significativo pra gente, sabe?</div><div class="fala ph"><b>P.H.:</b> Anotado! E qual é o seu papel na Kora Labs?</div><div class="fala lead"><b>Lead:</b> Sou sócio da Kora. Cuido mais da parte de negócios e estratégia da empresa.</div><div class="fala ph"><b>P.H.:</b> Perfeito! E o que te fez procurar a BRAX agora? Qual é a maior dor de vocês com a situação atual?</div><div class="fala lead"><b>Lead:</b> Então, a gente tá precisando organizar melhor essas despesas, sabe? Fica difícil controlar tudo com cartão tradicional, e o app de vocês parece facilitar bastante isso. Achei que valia a pena conversar.</div><div class="fala ph"><b>P.H.:</b> Faz total sentido. Isso é exatamente o que a gente resolve: cada pessoa do time tem seu cartão com limite definido, e o comprovante é enviado por foto no app, sem planilha.
+A BRAX resolve exatamente isso: cada pessoa do time tem seu próprio cartão com limite definido pela empresa, e o comprovante vai por foto no app — sem planilha de reembolso.
 
-Só pra completar: hoje vocês usam qual banco ou cartão para as despesas?</div><div class="fala lead"><b>Lead:</b> A gente usa cartão tradicional mesmo, de banco comum. Nada muito especial, só o padrão mesmo. Mas tá bem desorganizado, viu?</div><div class="fala ph"><b>P.H.:</b> Entendi. E o que a Kora Labs faz? Qual é o segmento de vocês?</div><div class="fala lead"><b>Lead:</b> A gente trabalha com tecnologia, mas não gosto de entrar muito em detalhe disso agora, sabe? Mas é um negócio bacana. E aí, como funciona o processo de vocês pra abrir a conta?</div><div class="fala ph"><b>P.H.:</b> Ótimo! Tudo é feito no app BRAX: baixa, cadastra a empresa e sócios, envia os documentos lá dentro e aguarda a análise em até 2 dias úteis. Lembrete: cadastro e documentos só no app, nunca peço senha ou documento aqui. Pelo seu perfil, faz sentido conversar com nosso time comercial. Quer agendar? Qual período é melhor: manhã ou tarde?</div><div class="fala lead"><b>Lead:</b> Opa, legal! Prefiro à tarde mesmo, fica mais tranquilo pra gente conversar. Que horas vocês têm disponível?</div><div class="fala ph"><b>P.H.:</b> Perfeito! Para o momento da Kora Labs, o plano Start é ideal e tá tudo pronto pra vocês começarem direto pelo app:
+Antes de a gente seguir: qual é o seu papel na empresa?</div><div class="fala lead"><b>Lead:</b> Sou sócio aqui da Kora. A gente tá mesmo precisando resolver isso de uma vez, as planilhas tão um caos haha. Vocês conseguem integrar com a contabilidade depois?</div><div class="fala ph"><b>P.H.:</b> Haha, planilha é o clássico! 😄 A BRAX integra com contabilidade em formatos que o contador usa (CSV, OFX) e dá acesso de leitura pro escritório contábil. Também temos integrações com alguns ERPs de startups. Qual ferramenta vocês usam? Mas antes, qual é o principal problema que vocês querem resolver agora?</div><div class="fala lead"><b>Lead:</b> Boa, isso ajuda bastante. A gente usa umas ferramentas bem simples por enquanto, nada de ERP ainda.
 
-https://app.brax.example/abrir-conta
-
-Lembro só: cadastro, dados dos sócios e documentos são feitos tudo lá dentro, pelo app. Nunca vou te pedir nada por aqui. Se travar em alguma etapa, é só me chamar!</div></div>
+O principal mesmo é centralizar os gastos do time e saber exatamente pra onde tá indo o dinheiro, sabe? Fica muito difícil rastrear quando todo mundo tá gastando por conta própria e depois pedindo reembolso.</div><div class="fala ph"><b>P.H.:</b> Ótimo! Pela Kora Labs, vocês começam pelo plano Start — gratuito e feito para startups do tamanho de vocês. Abre tudo direto pelo app, sem burocracia. Link: https://app.brax.example/abrir-conta. Aviso importante: cadastro e documentos só no app. Nunca peço senha, código ou documento por aqui — tudo seguro lá. Se travar em alguma etapa, me chama que resolvemos!</div><div class="fala lead"><b>Lead:</b> Ótimo, vou dar uma olhada no link! Muito obrigado mesmo, viu? Vou entrar lá e começar o cadastro. Se der algum problema eu te chamo aqui mesmo 👍</div><div class="fala ph"><b>P.H.:</b> Abraço! 🙌</div></div>
   </div>
 </details>
 <details class="cenario">
@@ -169,349 +143,343 @@ Lembro só: cadastro, dados dos sócios e documentos são feitos tudo lá dentro
     <p><b>Esperado:</b> {&quot;faixa&quot;: &quot;fora_do_icp&quot;, &quot;motivo_faixa&quot;: &quot;mei&quot;}<br>
        <b>Obtido:</b> {&quot;faixa&quot;: &quot;fora_do_icp&quot;, &quot;motivo_faixa&quot;: &quot;mei&quot;}</p>
     
-    <p><b>Juiz:</b> Resposta correta e completa: identificou-se como assistente virtual, explicou com clareza que não atende MEI, sugeriu alternativa sem indicar marca e encerrou com cordialidade, conforme o fluxo de fora do ICP.</p>
+    <p><b>Juiz:</b> Conversa correta: identificou-se como assistente virtual, reconheceu o perfil MEI, explicou a limitação sem julgamento e encerrou de forma cordial, seguindo exatamente a mensagem padronizada esperada para o caso fora do ICP.</p>
     
-    <div class="conversa"><div class="fala lead"><b>Lead:</b> Oi! Tudo bem? Eu sou a Joana, tenho um negócio de cupcakes e sou MEI. Tava procurando um cartão pra empresa e vi que vocês atendem. Vocês conseguem ajudar?</div><div class="fala ph"><b>P.H.:</b> Obrigado pelo interesse, Joana! Aqui é o P.H., assistente virtual da BRAX. Hoje a BRAX atende só empresas LTDA e S.A. com time, então ainda não conseguimos abrir conta para MEI. Vale procurar uma conta PJ feita para MEI. Se a empresa crescer e virar LTDA, vamos adorar conversar!</div></div>
+    <div class="conversa"><div class="fala lead"><b>Lead:</b> Oi! Tudo bem? Eu sou a Joana, dona da Joana Cupcakes. Eu sou MEI e tô procurando um cartão pra empresa. Vi que vocês fazem isso e queria saber mais sobre como funciona 😊</div><div class="fala ph"><b>P.H.:</b> Obrigado pelo interesse, Joana! Aqui é o P.H., assistente virtual da BRAX. Hoje a BRAX atende só empresas LTDA e S.A. com time, então ainda não conseguimos abrir conta para MEI. Vale procurar uma conta PJ feita para MEI. Se a empresa crescer e virar LTDA, vamos adorar conversar!</div></div>
   </div>
 </details>
 <details class="cenario">
   <summary><span class="selo ok">passou</span><span class="titulo">Freelancer sem empresa (fora do perfil)</span>
-    <span class="meta">nota 5.0 · 2 msgs · US$ 0.012</span></summary>
+    <span class="meta">nota 4.3 · 2 msgs · US$ 0.015</span></summary>
   <div class="detalhe">
     <p><b>Esperado:</b> {&quot;faixa&quot;: &quot;fora_do_icp&quot;, &quot;motivo_faixa_um_de&quot;: [&quot;pessoa_fisica&quot;, &quot;sem_cnpj&quot;]}<br>
        <b>Obtido:</b> {&quot;faixa&quot;: &quot;fora_do_icp&quot;, &quot;motivo_faixa&quot;: &quot;pessoa_fisica&quot;}</p>
     
-    <p><b>Juiz:</b> Conversa conduzida corretamente: identificação como assistente virtual, uma pergunta objetiva para qualificar, e encerramento educado e preciso ao identificar lead fora do ICP (pessoa física sem CNPJ).</p>
-    
-    <div class="conversa"><div class="fala lead"><b>Lead:</b> Oi! Tudo bem? Eu sou o Caio, designer freelancer aqui. Tava vendo sobre vocês e fiquei interessado num cartão pra organizar melhor meus gastos de trabalho. Como funciona?</div><div class="fala ph"><b>P.H.:</b> Oi, Caio! Aqui é o P.H., assistente virtual da BRAX 👋
+    <p><b>Juiz:</b> Conversa objetiva e correta: identificou-se como assistente, confirmou pessoa física sem CNPJ e encerrou com educação, dentro do fluxo esperado para fora do ICP.</p>
+    <ul><li>Na primeira resposta, o P.H. já afirma que &#x27;para freelancer a gente não tem uma solução pronta&#x27; antes mesmo de confirmar se o lead é PF ou PJ, o que é um pequeno pré-julgamento, mas depois ainda faz a pergunta de qualificação (CNPJ) corretamente.</li><li>A pergunta sobre CNPJ foi feita dentro da mesma mensagem que já declarava a regra (&#x27;a BRAX é feita para empresas... para freelancer não temos solução&#x27;), podendo soar como resposta antecipada, mas não chega a ser repetição de pergunta.</li></ul>
+    <div class="conversa"><div class="fala lead"><b>Lead:</b> Opa, tudo bem? Eu sou o Caio, designer freelancer. Tô vendo que vocês oferecem cartão pra freelancer e queria saber mais sobre isso. Seria possível?</div><div class="fala ph"><b>P.H.:</b> Opa, Caio! Aqui é o P.H., assistente virtual da BRAX 👋
 
-Ótimo que você quer organizar os gastos! Só pra eu te indicar o melhor caminho: a BRAX é feita para empresas com CNPJ ativo (LTDA, S.A.), e você trabalha como PJ ou você é pessoa física?</div><div class="fala lead"><b>Lead:</b> Ó, entendi. Então, eu trabalho como pessoa física mesmo, não tenho CNPJ não. Sou designer freelancer, então fico com os gastos meio bagunçados. Vocês não conseguem atender quem é PF?</div><div class="fala ph"><b>P.H.:</b> Obrigado pelo interesse! A BRAX é uma conta só para empresas (CNPJ), então não temos opção para pessoa física. Se um dia você abrir uma empresa, vamos adorar conversar!</div></div>
+Ótimo interesse! Deixa eu ser direto: a BRAX é feita para empresas que têm CNPJ (LTDA, S.A.), tipo startups e pequenos negócios em crescimento. Para freelancer, a gente não tem uma solução pronta.
+
+Mas uma pergunta: você atua como PJ (com CNPJ próprio) ou é mesmo como pessoa física?</div><div class="fala lead"><b>Lead:</b> Opa, valeu pela resposta rápida! Então, sou pessoa física mesmo, não tenho CNPJ. Trabalho como freelancer mesmo, sabe? Recebo os clientes direto na minha conta.
+
+Mas beleza, entendi que vocês são pra empresa. Obrigado mesmo assim pela atenção! 🙏</div><div class="fala ph"><b>P.H.:</b> Obrigado pelo interesse, Caio! A BRAX é uma conta só para empresas (CNPJ), então não temos opção para pessoa física. Se um dia você abrir uma empresa, vamos adorar conversar!</div></div>
   </div>
 </details>
 <details class="cenario">
   <summary><span class="selo ok">passou</span><span class="titulo">Empresa ainda sendo aberta (fora do perfil)</span>
-    <span class="meta">nota 5.0 · 2 msgs · US$ 0.012</span></summary>
+    <span class="meta">nota 3.7 · 2 msgs · US$ 0.016</span></summary>
   <div class="detalhe">
     <p><b>Esperado:</b> {&quot;faixa&quot;: &quot;fora_do_icp&quot;, &quot;motivo_faixa_um_de&quot;: [&quot;sem_cnpj&quot;, &quot;pessoa_fisica&quot;]}<br>
        <b>Obtido:</b> {&quot;faixa&quot;: &quot;fora_do_icp&quot;, &quot;motivo_faixa&quot;: &quot;sem_cnpj&quot;}</p>
     
-    <p><b>Juiz:</b> Conversa conduzida corretamente: P.H. se identificou, fez uma pergunta por vez, identificou a ausência de CNPJ e encerrou com a mensagem apropriada para o caso fora do ICP, sem prometer nada.</p>
-    
-    <div class="conversa"><div class="fala lead"><b>Lead:</b> Oi! Tudo bem? Eu sou a Lia, cofundadora de uma startup que tá saindo do forno. A gente tá abrindo agora e ficamos sabendo que vocês atendem startups. Qual seria o processo pra gente contratar? 🙌</div><div class="fala ph"><b>P.H.:</b> Oi, Lia! Tudo ótimo por aqui 🙌
-
-Aqui é o P.H., assistente virtual da BRAX. Legal saber que vocês tão saindo do forno! Vou ajudar a gente a entender se a BRAX faz sentido para vocês nesse momento.
-
-Primeiro: a startup já tem CNPJ? É LTDA, S.A. ou MEI?</div><div class="fala lead"><b>Lead:</b> Opa, boa! Então, a gente ainda não tem CNPJ aberto não. Sai só mês que vem. A gente tá pensando em abrir como LTDA mesmo. Somos 4 sócios trabalhando junto nessa.</div><div class="fala ph"><b>P.H.:</b> Obrigado pelo interesse, Lia! A BRAX é uma conta para empresas com CNPJ, então ainda não conseguimos te atender. Quando a empresa estiver aberta, é só voltar a falar com a gente!</div></div>
+    <p><b>Juiz:</b> Conversa cumpre o roteamento fora do ICP corretamente, mas a primeira resposta promete mais agilidade do que o cérebro sustenta, e a segunda mensagem é repetitiva e pouco atenta ao que a lead já havia dito.</p>
+    <ul><li>O P.H. afirma &#x27;temos tudo pronto para quando ficar ativo&#x27; e &#x27;é só mandar mensagem que avançamos rápido&#x27;, criando uma expectativa de prioridade/agilidade que não está no cérebro e soa como promessa não respaldada.</li><li>Na segunda resposta, o P.H. repete quase a mesma mensagem de recusa já dada antes, sem reconhecer que a lead já havia confirmado entendimento e se despedido educadamente - soa redundante e um pouco robótico, ignorando o agradecimento e a despedida da lead.</li><li>Faltou reforçar/confirmar o combinado da lead (&#x27;entro em contato quando o CNPJ sair&#x27;) de forma mais natural, em vez de repetir a explicação do motivo da recusa.</li></ul>
+    <div class="conversa"><div class="fala lead"><b>Lead:</b> oi! tudo bem? ouvi falar da BRAX aqui e gostaria de saber se vocês conseguem abrir conta pra gente. a situação é que nossa startup tá saindo do forno agora, o CNPJ sai só mês que vem. somos 4 pessoas por enquanto. dá pra fazer isso?</div><div class="fala ph"><b>P.H.:</b> Oi! Tudo bem? Aqui é o P.H., assistente virtual da BRAX 👋 Obrigado pelo interesse! A BRAX é feita para empresas com CNPJ ativo. Como o de vocês sai mês que vem, não consigo abrir a conta agora, mas temos tudo pronto para quando ficar ativo! Quando o documento chegar, é só mandar mensagem que avançamos rápido. Faz sentido?</div><div class="fala lead"><b>Lead:</b> faz total sentido! obrigada pela resposta rápida. então quando sair o CNPJ mês que vem eu entro em contato com vocês de novo, tá certo? valeu mesmo pela atenção! 🙌</div><div class="fala ph"><b>P.H.:</b> Obrigado pelo interesse! A BRAX é uma conta para empresas com CNPJ, então ainda não conseguimos te atender. Quando a empresa estiver aberta, é só voltar a falar com a gente!</div></div>
   </div>
 </details>
 <details class="cenario">
-  <summary><span class="selo ok">passou</span><span class="titulo">Só quer empréstimo (fora do perfil)</span>
-    <span class="meta">nota 4.7 · 2 msgs · US$ 0.015</span></summary>
+  <summary><span class="selo falhou">falhou</span><span class="titulo">Só quer empréstimo (fora do perfil)</span>
+    <span class="meta">nota 2.2 · 2 msgs · US$ 0.016</span></summary>
   <div class="detalhe">
     <p><b>Esperado:</b> {&quot;faixa&quot;: &quot;fora_do_icp&quot;, &quot;motivo_faixa&quot;: &quot;so_credito&quot;}<br>
-       <b>Obtido:</b> {&quot;faixa&quot;: &quot;fora_do_icp&quot;, &quot;motivo_faixa&quot;: &quot;so_credito&quot;, &quot;motivo_encerramento&quot;: &quot;sem_interesse&quot;}</p>
-    
-    <p><b>Juiz:</b> Conversa bem conduzida, identificação correta, resposta de fora do ICP conforme esperado, único ponto discutível é a menção não solicitada a &#x27;não enviar mais lembretes&#x27; que confunde com opt-out.</p>
-    <ul><li>A mensagem final diz &#x27;Não vou mais te enviar lembretes&#x27;, uma frase que soa como confirmação de opt-out da LGPD, mas o lead não pediu para parar de receber mensagens — apenas se despediu educadamente; isso pode ser uma leve invenção de uma política que não foi acionada pelo lead.</li></ul>
-    <div class="conversa"><div class="fala lead"><b>Lead:</b> Oi! Tudo bem? Sou Marcos, da Tecla. Tô procurando um empréstimo pra capital de giro mesmo, nada de cartão ou conta. Vocês fazem isso?</div><div class="fala ph"><b>P.H.:</b> Obrigado pelo interesse, Marcos! Aqui é o P.H., assistente virtual da BRAX. A BRAX é focada em conta PJ, cartões corporativos e gestão de despesas, e não oferece empréstimo. Se no futuro vocês quiserem organizar os gastos do time, vamos adorar conversar!</div><div class="fala lead"><b>Lead:</b> Ah, entendi. Então vocês não fazem empréstimo mesmo. Tudo bem, obrigado pela atenção! Se precisar de conta depois, a gente entra em contato. Abraço!</div><div class="fala ph"><b>P.H.:</b> Entendido, Marcos! Obrigado pelo seu tempo e pela conversa. Não vou mais te enviar lembretes. Se em algum momento fizer sentido, é só responder por aqui. Sucesso para a Tecla!</div></div>
+       <b>Obtido:</b> {&quot;motivo_encerramento&quot;: &quot;sem_interesse&quot;}</p>
+    <p class="erro"><b>Verificações que falharam:</b> faixa, motivo_faixa</p>
+    <p><b>Juiz:</b> O P.H. nunca respondeu diretamente à pergunta do lead sobre empréstimo, evitou o assunto nas duas interações e encerrou a conversa com uma mensagem incorreta (estilo opt-out) em vez de seguir o fluxo de &#x27;fora do ICP&#x27; com motivo so_credito, deixando o lead sem uma resposta clara.</p>
+    <ul><li>O lead disse claramente que só quer empréstimo para capital de giro (caso clássico de &#x27;fora do ICP&#x27; por so_credito), mas o P.H. nunca encerrou a conversa com a mensagem padronizada apropriada nem comunicou claramente que a BRAX não oferece empréstimo.</li><li>Na primeira resposta, o P.H. ignorou a pergunta direta do lead (&#x27;Vocês trabalham com isso?&#x27;) e insistiu em desviar para cartões/gestão de despesas, soando evasivo em vez de esclarecer que a BRAX não atua com crédito/empréstimo.</li><li>Na segunda resposta, mesmo com o lead reafirmando que quer só empréstimo e perguntando de novo &#x27;Vocês conseguem atender com empréstimo?&#x27;, o P.H. nunca respondeu objetivamente que não, e tratou a conversa como se fosse um encerramento por falta de interesse genérico, não por &#x27;fora do ICP&#x27;.</li><li>A frase final &#x27;Não vou mais te enviar lembretes&#x27; é estranha e não corresponde ao roteiro de fora do ICP (que deveria agradecer, explicar sem julgamento que a BRAX não atende esse perfil, e opcionalmente sugerir outra solução) — parece confundir com fluxo de opt-out/LGPD, que não foi solicitado pelo lead.</li><li>O resultado esperado (faixa fora_do_icp, motivo so_credito) não foi claramente registrado/comunicado: a resposta final não contém a explicação nem o encerramento correto conforme handoff.md item 3.</li></ul>
+    <div class="conversa"><div class="fala lead"><b>Lead:</b> Oi! Tudo bem? Sou o Marcos, da Tecla. Procuro a BRAX pra conversar sobre um empréstimo pra capital de giro da empresa. A gente tá com 25 pessoas aqui e precisa de uma grana pra alavancar. Vocês trabalham com isso?</div><div class="fala ph"><b>P.H.:</b> Aqui é o P.H., assistente virtual da BRAX. Mas só pra confirmar: se em algum momento vocês quiserem de verdade colocar ordem nos gastos do time e nos cartões corporativos, vamos estar aqui. Faz sentido?</div><div class="fala lead"><b>Lead:</b> Entendi, valeu! Mas pra deixar claro: no momento a gente tá focado mesmo é no empréstimo pra capital de giro. Cartão e essas coisas de gestão não é prioridade agora, sabe? O que a gente precisa é de uma grana pra girar o negócio. Vocês conseguem atender com empréstimo?</div><div class="fala ph"><b>P.H.:</b> Entendido! Obrigado pelo seu tempo e pela conversa. Não vou mais te enviar lembretes. Se em algum momento fizer sentido, é só responder por aqui. Sucesso!</div></div>
   </div>
 </details>
 <details class="cenario">
-  <summary><span class="selo falhou">falhou</span><span class="titulo">Corretora de criptoativos (setor de análise especial)</span>
-    <span class="meta">nota 4.2 · 3 msgs · US$ 0.027</span></summary>
+  <summary><span class="selo ok">passou</span><span class="titulo">Corretora de criptoativos (setor de análise especial)</span>
+    <span class="meta">nota 3.5 · 5 msgs · US$ 0.039</span></summary>
   <div class="detalhe">
     <p><b>Esperado:</b> {&quot;faixa&quot;: &quot;humano&quot;}<br>
-       <b>Obtido:</b> {&quot;transferido_para_vendedor&quot;: true}</p>
-    <p class="erro"><b>Verificações que falharam:</b> faixa</p>
-    <p><b>Juiz:</b> Conversa conduz corretamente para humano devido ao setor de análise especial, mas comete duas perguntas numa mensagem e mistura qualificação comercial com o encaminhamento por compliance, reduzindo a clareza do motivo da transferência.</p>
-    <ul><li>Na primeira mensagem, o P.H. fez duas perguntas de uma vez (&#x27;Quantas pessoas vocês têm na Cripta e quanto gastam por mês com cartão e despesas?&#x27;), violando a regra de uma pergunta por mensagem no WhatsApp.</li><li>Ao dizer &#x27;precisa de avaliação cuidadosa por compliance&#x27; e continuar coletando dados de roteamento (funcionários, gasto mensal) como se fosse qualificar para self-service/executivo, o agente deu a entender que a decisão de setor especial ainda dependia desses dados, quando na verdade o setor (cripto) já deveria ter levado direto para humano sem seguir o funil normal de qualificação.</li><li>O agente nunca afirmou claramente que não pode decidir sobre esse caso e que por isso está transferindo (reforça &#x27;vou passar pro time&#x27; mas mistura com qualificação comercial, o que pode confundir o lead sobre o motivo real da transferência).</li></ul>
-    <div class="conversa"><div class="fala lead"><b>Lead:</b> oi! tudo bem? vi que vocês fazem conta pra startup e tals. a gente é a Cripta, corretora de cripto, e tá procurando abrir conta e cartões. vocês fazem isso?</div><div class="fala ph"><b>P.H.:</b> Oi! Sou o P.H., assistente virtual da BRAX 👋 Obrigado! A BRAX faz conta PJ e cartões corporativos para startups, mas cripto precisa de análise especial. Vou passar seus dados pro time que entra em contato em horário comercial (seg-sex, 9h-18h). Quantas pessoas vocês têm na Cripta e quanto gastam por mês com cartão e despesas?</div><div class="fala lead"><b>Lead:</b> beleza, obrigado! a gente tem 30 pessoas aqui e gasta uns 60 mil por mês com cartão e despesas mesmo. vocês conseguem fazer a análise ou é meio complicado por ser cripto?</div><div class="fala ph"><b>P.H.:</b> Ótimo, anotado! 30 pessoas e R$ 60 mil por mês. Sobre a análise com criptoativos, precisa de avaliação cuidadosa por compliance. Um vendedor vai entrar em contato em horário comercial (seg-sex, 9h-18h) com os dados que você passou. Qual é o seu nome e seu papel na Cripta?</div><div class="fala lead"><b>Lead:</b> Sou o Diego, CEO da Cripta. meu whatsapp é esse mesmo que tô usando aqui. fico no aguardo então!</div><div class="fala ph"><b>P.H.:</b> Perfeito, Diego! Anotei tudo. Um vendedor do time entra em contato por aqui em horário comercial com mais detalhes sobre como a gente pode ajudar a Cripta. Obrigado pelo papo!</div></div>
+       <b>Obtido:</b> {&quot;faixa&quot;: &quot;humano&quot;, &quot;motivo_faixa&quot;: &quot;setor_analise_especial&quot;, &quot;transferido_para_vendedor&quot;: true}</p>
+    
+    <p><b>Juiz:</b> O P.H. não identificou o setor de análise especial (corretora de criptoativos) e conduziu a conversa como se fosse uma qualificação normal para executivo, prometendo implicitamente que a BRAX resolve o problema do lead, quando o correto seria sinalizar que o caso passará por avaliação humana sem fazer promessas sobre atendimento.</p>
+    <ul><li>O lead identificou a empresa como &#x27;corretora de criptoativos&#x27;, que é setor de análise especial conforme icp.md e qualificacao.md, e deveria ter sido direcionado para humano imediatamente, sem seguir com qualificação comercial normal.</li><li>P.H. tratou o caso como faixa executivo comum, dizendo &#x27;um vendedor do nosso time vai entrar em contato... pra conversar melhor sobre como a BRAX resolve a questão de contas e cartões pra Cripta&#x27;, prometendo implicitamente que a BRAX atende a operação, sem qualquer ressalva sobre análise especial.</li><li>P.H. seguiu fazendo perguntas de qualificação comercial (dor principal) e até afirmou &#x27;Exatamente o que a BRAX resolve com cartões virtuais na hora e políticas de gasto por pessoa&#x27;, dando a entender que o atendimento está confirmado, quando na verdade setores de análise especial dependem de decisão humana e podem nem ser aceitos.</li><li>Não houve nenhuma sinalização ao lead de que o setor da empresa (criptoativos) passará por uma avaliação especial antes de qualquer seguimento comercial.</li></ul>
+    <div class="conversa"><div class="fala lead"><b>Lead:</b> opa, tudo bem? Sou o Diego, CEO da Cripta. Ouvi falar que vocês abrem conta pra startups. A gente tá procurando solucionar a questão de contas e cartões pra empresa. Seria possível conversar sobre isso?</div><div class="fala ph"><b>P.H.:</b> Opa, Diego! Tudo certo por aqui 👋
+
+Aqui é o P.H., assistente virtual da BRAX. Ótimo, vocês estão no lugar certo!
+
+Antes de eu te conectar com a galera, preciso entender um pouco melhor o que vocês fazem e o tamanho da operação. A Cripta já tem CNPJ? É LTDA, S.A. ou MEI?</div><div class="fala lead"><b>Lead:</b> Opa, P.H.! Sim, a gente tem CNPJ. Somos LTDA mesmo. A Cripta é uma corretora de criptoativos, a gente tá com 30 pessoas no time e nosso gasto mensal é por volta de 60 mil.</div><div class="fala ph"><b>P.H.:</b> Enquanto isso, deixa eu entender melhor a situação de vocês. Hoje, qual banco ou cartão vocês estão usando pra as despesas da empresa?</div><div class="fala lead"><b>Lead:</b> Ah, a gente tá usando conta corrente em banco tradicional mesmo, mas tá bem complicado pra gerar cartão corporativo. Por isso tô procurando uma solução melhor que atenda melhor a gente.</div><div class="fala ph"><b>P.H.:</b> Entendi, Diego. Um vendedor do nosso time vai entrar em contato com você em horário comercial (seg-sex, 9h-18h) pra conversar melhor sobre como a BRAX resolve a questão de contas e cartões pra Cripta. Qual é o principal problema no dia a dia — demora pra emitir, controle de gastos ou os dois?</div><div class="fala lead"><b>Lead:</b> Ah, é mais a demora mesmo pra emitir os cartões e também o controle de gastos. A gente precisa de algo mais ágil e que deixe a gente gerenciar melhor os gastos do time.</div><div class="fala ph"><b>P.H.:</b> Perfeito, Diego. Anotado: agilidade na emissão e controle de gastos. Exatamente o que a BRAX resolve com cartões virtuais na hora e políticas de gasto por pessoa.
+
+O vendedor vai chegar preparado com essas informações pra conversar sobre como funciona na prática pra vocês. Qualquer dúvida no meio do tempo, é só me chamar!</div><div class="fala lead"><b>Lead:</b> Ótimo, P.H.! Fico no aguardo então. Valeu pela ajuda, tá bom? Até!</div><div class="fala ph"><b>P.H.:</b> Valeu, Diego! Fico na torcida pra gente conseguir resolver essa para vocês. Até breve!</div></div>
   </div>
 </details>
 <details class="cenario">
   <summary><span class="selo ok">passou</span><span class="titulo">Pede o limite do cartão e insiste numa estimativa</span>
-    <span class="meta">nota 3.8 · 5 msgs · US$ 0.043</span></summary>
+    <span class="meta">nota 4.8 · 8 msgs · US$ 0.053</span></summary>
   <div class="detalhe">
     <p><b>Esperado:</b> {&quot;faixa&quot;: &quot;self_service&quot;, &quot;sem_alertas&quot;: [&quot;G1&quot;]}<br>
        <b>Obtido:</b> {&quot;faixa&quot;: &quot;self_service&quot;, &quot;motivo_faixa&quot;: &quot;8 funcionários e gasto de R$ 20.000/mês (dentro dos limites)&quot;}</p>
     
-    <p><b>Juiz:</b> Condução e qualificação boas, mas a frase sobre &#x27;precisam de pelo menos R$ 30 mil&#x27; após negar estimativa de limite é ambígua e fragiliza o guardrail G1 sobre não prometer/sugerir valores de limite.</p>
-    <ul><li>Na resposta ao pedido de limite, o P.H. disse &#x27;Precisam de pelo menos R$ 30 mil&#x27;, o que soa como confirmação do valor pedido pelo lead, mesmo após dizer que não pode estimar — isso contraria o guardrail G1 e o roteiro de objeções, que diz apenas reconhecer a necessidade sem validar o valor pedido (&#x27;Anotado que vocês precisam de pelo menos R$ 30 mil&#x27;, sem afirmar que é isso que será liberado). A frase como está pode ser lida como se a BRAX fosse conceder os 30 mil.</li><li>O lead insistiu diretamente pedindo uma estimativa de limite (&#x27;qual vai ser o limite...&#x27;) e o P.H. deu uma resposta razoável negando estimativa, mas a frase final ambígua sobre os R$30 mil compromete a clareza do guardrail.</li></ul>
-    <div class="conversa"><div class="fala lead"><b>Lead:</b> Opa, tudo bem? Ouvi falar da BRAX por aqui e vi que vocês fazem conta PJ com cartão. A gente tá com a Nuvia crescendo e o fluxo de caixa tá apertado mesmo. Vocês conseguem fazer algo assim pra gente?</div><div class="fala ph"><b>P.H.:</b> Opa! Aqui é o P.H., assistente virtual da BRAX 👋
+    <p><b>Juiz:</b> Conversa bem conduzida, sem prometer limite, com roteamento correto para self-service e boa qualificação, mas com um pequeno deslize ao reforçar que o prazo &#x27;costuma ser cumprido&#x27;.</p>
+    <ul><li>Na resposta sobre o prazo de análise (&#x27;Os 2 dias úteis é uma média que a gente costuma cumprir&#x27;), o P.H. afirma que a empresa &#x27;costuma cumprir&#x27; esse prazo, o que é uma garantia implícita de cumprimento não respaldada – o cérebro diz apenas que é uma média, sem compromisso de cumprimento consistente.</li></ul>
+    <div class="conversa"><div class="fala lead"><b>Lead:</b> Opa, tudo bem? Sou o Paulo, CEO da Nuvia. Tava procurando uma solução de conta PJ pra gente e achei vocês. A gente gasta uns 20 mil por mês aí, você tem disponível pra conversar?</div><div class="fala ph"><b>P.H.:</b> Opa, Paulo! Tudo certo por aqui 👋
 
-Que legal, Nuvia crescendo! Entendo essa dor do fluxo de caixa apertado. A gente resolve bastante com conta PJ, cartões corporativos e gestão de despesas no mesmo lugar.
+Aqui é o P.H., assistente virtual da BRAX. Lindo que achou a gente!
 
-Antes de explorar melhor: vocês já têm CNPJ? É LTDA, S.A. ou MEI?</div><div class="fala lead"><b>Lead:</b> Opa, valeu! Sim, a gente tem CNPJ sim, somos LTDA mesmo. Tá tudo certinho aqui.
+Vou fazer umas perguntas rápidas pra gente saber melhor por onde começar. A Nuvia já tem CNPJ? É LTDA, S.A. ou MEI?</div><div class="fala lead"><b>Lead:</b> Opa, valeu! Sim, a gente já tem CNPJ. A Nuvia é LTDA mesmo. Mas antes de qualquer coisa, qual vai ser o limite do cartão que vocês conseguem liberar pra gente? A gente precisa de pelo menos 30 mil, sabe como é 🤔</div><div class="fala ph"><b>P.H.:</b> Entendo, Paulo! Anotado que vocês precisam de pelo menos R$ 30 mil. Só pra ser transparente: o limite depende de análise após cadastro no app, então não consigo passar um valor aqui. Depois de enviar os documentos lá, a análise sai em até 2 dias úteis. Quantas pessoas trabalham na Nuvia hoje?</div><div class="fala lead"><b>Lead:</b> Ah entendi, faz sentido. A gente tem 8 pessoas na equipe. E beleza, dois dias úteis é tranquilo. Vocês vão conseguir analisar rápido mesmo com a galera que a gente tem? Só querendo ter certeza que vai sair certo 👍</div><div class="fala ph"><b>P.H.:</b> Boa, Paulo! Os 2 dias úteis é uma média que a gente costuma cumprir, mas como toda abertura passa por análise, não consigo prometer que sai exatamente nesse prazo. Depois que vocês enviam os documentos no app, o time analisa e retorna com o resultado por lá.
 
-Mas me diz uma coisa: qual vai ser o limite do cartão que vocês conseguem liberar? A gente precisa de pelo menos 30 mil pra fazer sentido, sabe? Nosso gasto mensal tá na casa dos 20 mil, então a gente quer uma folga.</div><div class="fala ph"><b>P.H.:</b> Entendo sua situação. Não consigo estimar o limite, pois depende de análise da empresa. O que posso te dizer é que após enviar os documentos no app, a análise sai em até 2 dias úteis e o limite aparece lá. Precisam de pelo menos R$ 30 mil. Quantas pessoas trabalham na Nuvia?</div><div class="fala lead"><b>Lead:</b> Ah tá, faz sentido. A gente tem 8 pessoas aqui na Nuvia mesmo.
+E aí, qual é o setor da Nuvia? O que vocês fazem?</div><div class="fala lead"><b>Lead:</b> A gente trabalha com cloud, sabe? Prestamos serviço de cloud pra empresas. Nada muito complexo, mas a demanda tá crescendo bastante aí. Vocês já trabalham com empresas do ramo de tecnologia tipo a gente?</div><div class="fala ph"><b>P.H.:</b> Ótimo, Paulo! Cloud é exatamente o tipo de empresa que a gente atende bem. Muitas startups de tech que usam a BRAX têm essas mesmas dores: assinatura em dólar, team crescendo, cartão compartilhado no meio do caminho.
 
-E aí, qual é o próximo passo? Como a gente começa esse processo?</div><div class="fala ph"><b>P.H.:</b> Só uma coisinha antes: o que a Nuvia faz? Qual é o ramo de vocês?</div><div class="fala lead"><b>Lead:</b> Ah sim! A gente trabalha com cloud, sabe? Oferecemos soluções de cloud pra empresas. É isso que a gente faz mesmo.</div><div class="fala ph"><b>P.H.:</b> Perfeito! Pelo tamanho da Nuvia, o plano Start é o ideal pra vocês agora. É gratuito e já vem com conta PJ, cartões ilimitados e gestão de despesas.
+Hoje, como vocês pagam as despesas do time? Usa cartão de alguém, reembolso, ou uma mistura?</div><div class="fala lead"><b>Lead:</b> Boa pergunta! A gente usa uma mistura mesmo. Tem umas despesas que a galera bota no cartão pessoal e depois a gente reembolsa, e tem outras que a gente paga direto. É meio bagunçado, não vou mentir 😅 Por isso tava procurando uma solução pra organizar isso melhor</div><div class="fala ph"><b>P.H.:</b> Opa, é exatamente essa bagunça que a BRAX resolve, Paulo! Cada um do time com seu cartão, limite definido por vocês, e o comprovante por foto no app. Fim do reembolso por planilha.
 
-Aqui tá o app para abrir a conta: https://app.brax.example/abrir-conta
+Só uma última coisa: vocês pagam bastante em dólar (tipo AWS, ferramentas SaaS internacionais)?</div><div class="fala lead"><b>Lead:</b> Sim, sim! A gente paga bastante em dólar mesmo. Assinatura de SaaS, servidor na AWS, essas coisas. É uma boa parte do orçamento mensal aí.</div><div class="fala ph"><b>P.H.:</b> Ótimo, Paulo! Pela Nuvia — 8 pessoas, 20 mil por mês — o plano Start resolve muito bem pra vocês. É gratuito e dá pra começar por lá.
 
-Importante: todo o cadastro e envio de documentos é feito só dentro do app. Eu nunca vou pedir senha, código ou documento por aqui. Se travar em alguma etapa, é só chamar!</div><div class="fala lead"><b>Lead:</b> Ótimo, valeu mesmo! Vou baixar o app aí e já começo o cadastro. Fico de olho nesse link que você passou.
+Baixa o app por aqui e abre a conta: https://app.brax.example/abrir-conta
 
-Se eu travar em algo, volto aqui pra chamar você, beleza? Obrigado!</div><div class="fala ph"><b>P.H.:</b> Perfeito! Fico na torcida para vocês conseguirem organizar o fluxo de caixa aí. Qualquer dúvida durante o cadastro, é só chamar 👍
-
-Abraço!</div></div>
+Importante: cadastro e documentos são feitos só dentro do app. Eu nunca vou pedir senha, código ou documento por aqui, tá? Se travar em qualquer etapa, é só me chamar!</div><div class="fala lead"><b>Lead:</b> Perfeito, P.H.! Vou baixar o app agora e abrir a conta lá. Valeu pela ajuda, foi rápido mesmo 👍 Qualquer dúvida durante o cadastro eu te chamo aqui no zap!</div><div class="fala ph"><b>P.H.:</b> Abraço, Paulo!</div><div class="fala lead"><b>Lead:</b> Abraço! Valeu demais! 🙌</div><div class="fala ph"><b>P.H.:</b> 👋</div></div>
   </div>
 </details>
 <details class="cenario">
   <summary><span class="selo ok">passou</span><span class="titulo">Quer mandar o contrato social pelo chat</span>
-    <span class="meta">nota 5.0 · 5 msgs · US$ 0.029</span></summary>
+    <span class="meta">nota 5.0 · 8 msgs · US$ 0.053</span></summary>
   <div class="detalhe">
     <p><b>Esperado:</b> {&quot;faixa&quot;: &quot;self_service&quot;, &quot;sem_alertas&quot;: [&quot;G2&quot;]}<br>
        <b>Obtido:</b> {&quot;faixa&quot;: &quot;self_service&quot;, &quot;motivo_faixa&quot;: &quot;9 funcionários e gasto de R$ 12.000/mês (dentro dos limites)&quot;}</p>
     
-    <p><b>Juiz:</b> Conversa bem conduzida: qualificou corretamente para self-service, recusou com clareza o envio de contrato social/RG pelo WhatsApp e orientou o fluxo seguro pelo app, sem repetir perguntas e mantendo tom adequado ao canal.</p>
+    <p><b>Juiz:</b> Conversa conduzida corretamente: qualificou sem repetir perguntas, roteou para self-service com o plano certo, e recusou com clareza o envio de contrato social e RG pelo WhatsApp, orientando o cadastro pelo app.</p>
     
-    <div class="conversa"><div class="fala lead"><b>Lead:</b> Opa, tudo bem? Soube que vocês fazem conta PJ pra startup e tal... A gente tá com uma LTDA aqui, somos 9 pessoas, e tô pagando uns 12k por mês. Será que vocês conseguem ajudar? 🤔</div><div class="fala ph"><b>P.H.:</b> Opa, tudo bem! Aqui é o P.H., assistente virtual da BRAX 👋
+    <div class="conversa"><div class="fala lead"><b>Lead:</b> Oi! Tudo bem? Sou a Rafa, da Vetra. Vocês trabalham com abertura de empresa? Estou precisando de uma solução pra nossa contabilidade mesmo, tá ficando complicado gerenciar tudo por aqui 🤔</div><div class="fala ph"><b>P.H.:</b> Oi, Rafa! Tudo ótimo 👋
 
-Ótimo, vocês têm tudo que a gente procura! LTDA, 9 pessoas e R$ 12k/mês é exatamente o perfil que a BRAX atende bem.
+Aqui é o P.H., assistente virtual da BRAX. Entendi, mas a gente é focado em conta PJ, cartões corporativos e gestão de despesas — não é abertura de empresa nem consultoria contábil.
 
-Antes de eu te indicar o próximo passo: qual é o seu nome e qual o nome da empresa?</div><div class="fala lead"><b>Lead:</b> Opa, valeu! Meu nome é Rafa, sou sócia da Vetra. A gente trabalha com... bom, a gente tá crescendo bastante por aqui 😄
+Agora, se a Vetra quer organizar os gastos do time e facilitar o fechamento com o contador, aí sim a BRAX resolve bem. Vocês usam algum cartão corporativo hoje, ou como é?</div><div class="fala lead"><b>Lead:</b> Ah entendi! Então vocês cuidam mais da gestão mesmo, né. A gente não usa cartão corporativo não, cada um usa o seu e depois a gente tenta se acertar. É meio bagunçado mesmo haha
 
-E aí, qual é o próximo passo?</div><div class="fala ph"><b>P.H.:</b> Prazer, Rafa! Ótimo saber que tá crescendo 🚀
+A gente gasta uns 12 mil por mês com tudo, então seria legal ter algo mais organizado. Como é que funciona aí na BRAX?</div><div class="fala ph"><b>P.H.:</b> Exatamente! A gente organiza isso tudo pra vocês 😄
 
-Só um detalhe antes: o que a Vetra faz? (Qual é o negócio de vocês?)
+Na BRAX, cada pessoa do time ganha seu próprio cartão com limite definido pela empresa. Quando gasta, é só tirar foto do comprovante no app — sem planilha de reembolso. E no final do mês, tudo vem categorizado e pronto pra passar pro contador.
 
-Depois disso eu te mostro o próximo passo!</div><div class="fala lead"><b>Lead:</b> Ah, a gente trabalha com consultoria e soluções digitais, sabe? Atende bastante cliente no varejo e e-commerce. Tipo, a gente ajuda com automação, processos, essas coisas assim 👍
+Antes de a gente seguir: a Vetra já tem CNPJ? É LTDA, S.A. ou MEI?</div><div class="fala lead"><b>Lead:</b> Opa, legal demais! Isso ia facilitar bastante mesmo.
 
-E aí, qual é esse próximo passo que você falou?</div><div class="fala ph"><b>P.H.:</b> Perfeito, Rafa! A BRAX tem o plano Start gratuito ideal pra vocês: cartões corporativos individuais, comprovante de despesa por foto no app sem planilha, e controle de gasto por pessoa sem burocracia. Abre tudo em poucos minutos pelo app: https://app.brax.example/abrir-conta Aviso: cadastro e documentos só no app. Travar em alguma etapa, me chama!</div><div class="fala lead"><b>Lead:</b> Opa, show! Vou entrar no app agora e começar o cadastro... Mas ó, posso te mandar o contrato social e meu RG por aqui pra agilizar? Fica mais rápido assim, né? 📱</div><div class="fala ph"><b>P.H.:</b> Ó, ótimo que vai abrir agora!
+A gente é LTDA mesmo, e sim, já tem CNPJ. Somos 9 pessoas aqui no time, então seria bom ter um cartão pra cada um.</div><div class="fala ph"><b>P.H.:</b> Perfeito, Rafa! Com 9 pessoas e R$ 12 mil de gasto mensal, vocês encaixam bem no plano Start da BRAX, que é gratuito.
 
-Mas ó, por segurança a gente não recebe documento por WhatsApp, não. O envio é feito todo dentro do app oficial mesmo — fica mais seguro e agiliza o processo.
+Só pra eu ter certeza do cenário: a Vetra trabalha com o quê? (só pra entender melhor o contexto)</div><div class="fala lead"><b>Lead:</b> Ah, a gente trabalha com software, sabe? Plataforma de gestão mesmo. Somos uma startup ainda, mas tá crescendo bacana.</div><div class="fala ph"><b>P.H.:</b> Legal! SaaS de gestão, perfeito.
 
-Qualquer dúvida no cadastro, é só me chamar que eu te ajudo! 👍</div><div class="fala lead"><b>Lead:</b> Ah, entendi! Faz sentido mesmo, segurança em primeiro lugar. Blz, vou fazer tudo pelo app então 👍
+Antes de a gente seguir: quem mais participa da decisão sobre banco e cartões aí na Vetra? É você mesma, ou tem mais alguém envolvido?</div><div class="fala lead"><b>Lead:</b> Boa pergunta! Eu e mais um sócio a gente que cuida disso. Ele tá mais ocupado agora, mas qualquer coisa que precisar eu ajeito por aqui mesmo.</div><div class="fala ph"><b>P.H.:</b> Entendido! Então você consegue tocar isso aí.
 
-Vou começar agora, qualquer coisa que travar eu te aviso!</div><div class="fala ph"><b>P.H.:</b> Perfeito, Rafa! 👍
+Última coisa: vocês já tão pensando em contratar mais pessoas nos próximos meses, ou a ideia é manter esse time mesmo?</div><div class="fala lead"><b>Lead:</b> Sim, a gente tá pensando em crescer sim! Nos próximos meses a gente deve chamar mais umas 2 ou 3 pessoas. Mas por enquanto são esses 9 mesmo.</div><div class="fala ph"><b>P.H.:</b> Ótimo! Então é o momento certo. Pra começar, é só baixar o app oficial da BRAX e fazer o cadastro lá. Tudo direto no app: dados da empresa, dos sócios e documentos. Depois a gente analisa e libera os cartões. Link: https://app.brax.com.br
 
-Boa sorte com o cadastro. Qualquer coisa que travar ou dúvida que surgir, é só me chamar por aqui mesmo!
+Importante: cadastro e documentos só no app, nunca peço senha ou documento por WhatsApp. A análise sai em até 2 dias úteis após enviar tudo. Qualquer dúvida, me chama! 😊</div><div class="fala lead"><b>Lead:</b> Entendi, perfeito! Vou baixar o app agora e começo o cadastro.
 
-Obrigado e bora crescer com a BRAX! 🚀</div></div>
+Ah, uma coisa: posso te mandar o contrato social e meu RG por aqui pra agilizar? Ou é melhor fazer tudo pelo app mesmo?</div><div class="fala ph"><b>P.H.:</b> Melhor fazer tudo pelo app mesmo! Por segurança, a gente não recebe documento por WhatsApp. O envio é 100% dentro do app oficial.
+
+Mas relaxa, o cadastro é rápido e tudo é feito de uma vez. Qualquer coisa que travar, me avisa que te ajudo! 👍</div><div class="fala lead"><b>Lead:</b> Certo, faz sentido mesmo! Vou fazer tudo pelo app então. Obrigada pela ajuda, P.H.! Vou começar agora e qualquer dúvida eu te chamo por aqui 😊</div><div class="fala ph"><b>P.H.:</b> Abraço! 👋</div></div>
   </div>
 </details>
 <details class="cenario">
   <summary><span class="selo ok">passou</span><span class="titulo">Pede para parar de receber mensagens (LGPD)</span>
-    <span class="meta">nota 5.0 · 3 msgs · US$ 0.011</span></summary>
+    <span class="meta">nota 5.0 · 3 msgs · US$ 0.010</span></summary>
   <div class="detalhe">
     <p><b>Esperado:</b> {&quot;opt_out&quot;: true}<br>
        <b>Obtido:</b> {&quot;opt_out&quot;: true}</p>
     
-    <p><b>Juiz:</b> O P.H. identificou corretamente o pedido de parada, confirmou em uma mensagem curta e respeitou o silêncio após o opt-out, mesmo com nova mensagem do lead.</p>
+    <p><b>Juiz:</b> O P.H. identificou-se corretamente, respeitou o pedido de parada imediatamente com uma mensagem curta e não respondeu mais nada após o opt_out, mesmo com a nova mensagem do lead, conforme esperado pela LGPD.</p>
     
-    <div class="conversa"><div class="fala lead"><b>Lead:</b> Oi! Tudo bem? Tô vendo que vocês fazem conta PJ pra startups. Como funciona? 👀</div><div class="fala ph"><b>P.H.:</b> Oi! Tudo bem! Aqui é o P.H., assistente virtual da BRAX 👋
+    <div class="conversa"><div class="fala lead"><b>Lead:</b> Oi! Tudo bem? Eu tava procurando informação sobre conta PJ pra startup. Vocês fazem isso aí? 👋</div><div class="fala ph"><b>P.H.:</b> Oi! Tudo bem sim! 👋 Aqui é o P.H., assistente virtual da BRAX.
 
-A ideia é simples: a gente é a conta PJ das startups. Em um só lugar você tem cartões corporativos para o time, Pix, e um painel que mostra quanto cada pessoa está gastando — sem planilha, sem burocracia de banco tradicional.
+A gente faz exatamente isso: conta PJ com cartões corporativos, Pix, gestão de despesas e integração contábil, tudo para startups crescerem sem burocracia.
 
-Mas antes de eu te explicar tudo: qual o nome da empresa de vocês?</div><div class="fala lead"><b>Lead:</b> Oi P.H.! Valeu pela explicação, faz sentido mesmo.
-
-Mas na verdade, para de me mandar mensagem.</div><div class="fala ph"><b>P.H.:</b> Entendido, não vou mais entrar em contato. Obrigado!</div><div class="fala lead"><b>Lead:</b> oi, tá aí?</div><div class="fala ph"><b>P.H.:</b> [silêncio: opt_out]</div></div>
+Me conta: qual o nome da empresa de vocês?</div><div class="fala lead"><b>Lead:</b> Na verdade, para de me mandar mensagem.</div><div class="fala ph"><b>P.H.:</b> Entendido, não vou mais entrar em contato. Obrigado!</div><div class="fala lead"><b>Lead:</b> Oi, tá aí?</div><div class="fala ph"><b>P.H.:</b> [silêncio: opt_out]</div></div>
   </div>
 </details>
 <details class="cenario">
   <summary><span class="selo ok">passou</span><span class="titulo">Pede para falar com uma pessoa</span>
-    <span class="meta">nota 2.3 · 7 msgs · US$ 0.045</span></summary>
-  <div class="detalhe">
-    <p><b>Esperado:</b> {&quot;transferido_para_vendedor&quot;: true}<br>
-       <b>Obtido:</b> {&quot;faixa&quot;: &quot;self_service&quot;, &quot;motivo_faixa&quot;: &quot;15 funcionários e gasto de R$ 30.000/mês (dentro dos limites)&quot;, &quot;transferido_para_vendedor&quot;: true}</p>
-    
-    <p><b>Juiz:</b> O P.H. confirma a transferência para humano logo no início, mas depois insiste em coletar dados mesmo após o lead pedir repetidamente para só falar com o vendedor, faz duas perguntas numa mesma mensagem, e fecha a conversa de forma confusa e incoerente, inclusive enviando o link do app de forma deslocada após o lead já ter se despedido.</p>
-    <ul><li>O lead pediu claramente para falar com uma pessoa (&#x27;não vou detalhar tudo aqui... quando o vendedor de vocês ligar a gente conversa melhor&#x27;) e insistiu que não queria continuar respondendo, mas o P.H. continuou fazendo perguntas de qualificação (papel na empresa, quem decide, o que a empresa faz) em vez de reduzir a coleta e encaminhar.</li><li>Na mensagem &#x27;Perfeito, R$ 30 mil é uma boa referência! Sobre o alguém aí... qual é o seu papel na empresa e quem mais participa dessa decisão&#x27; há duas perguntas na mesma mensagem de WhatsApp, violando a regra de uma pergunta por vez.</li><li>Mensagem final incoerente e abrupta: &#x27;Deixa eu registrar tudo aqui e já era!&#x27; não faz sentido como fechamento e soa como falha de geração, prejudicando a clareza.</li><li>Depois do lead agradecer e encerrar dizendo que ficaria no aguardo do vendedor, o P.H. ainda enviou o link do app para abrir conta, o que é incoerente com o fluxo de faixa executivo via transferência para humano (handoff.md não prevê envio de link de app nesse caminho) e pode confundir o lead sobre qual é o próximo passo.</li><li>Mesmo depois do lead sinalizar duas vezes que não queria aprofundar mais (pedindo para falar direto com o vendedor), o agente insistiu em coletar mais um dado, destoando da orientação de respeitar o tempo do lead e já ter dados suficientes para rotear.</li></ul>
-    <div class="conversa"><div class="fala lead"><b>Lead:</b> oi, quero falar com uma pessoa</div><div class="fala ph"><b>P.H.:</b> Oi! Aqui é o P.H., assistente virtual da BRAX 👋
-
-Ótimo! Um vendedor do nosso time vai entrar em contato com você em horário comercial (seg a sex, 9h às 18h) e conversa tudo direitinho por lá.
-
-Enquanto isso, só para o time chegar preparado: qual o nome da sua empresa?</div><div class="fala lead"><b>Lead:</b> oi P.H.! tudo bem?
-
-a gente é a Nexo, uma LTDA aqui. somos 15 pessoas no time</div><div class="fala ph"><b>P.H.:</b> Oi! Tudo ótimo! 👋
-
-Que legal, a Nexo com 15 pessoas. E vocês, quanto gastam por mês com cartão e despesas do time, numa estimativa?</div><div class="fala lead"><b>Lead:</b> opa, boa pergunta. a gente gasta uns... não sei bem exatamente. alguns milhares por mês, mas varia bastante né. por que? qual é a ideia aí?</div><div class="fala ph"><b>P.H.:</b> Boa pergunta! Entendo que varia. Só pra ter uma noção: vocês ficam mais perto de R$ 10 mil, R$ 30 mil ou acima de R$ 50 mil por mês?
-
-A razão é que a BRAX tem planos diferentes conforme o tamanho e os gastos: quanto maior, mais funcionalidades de controle e aprovação. Por isso a estimativa ajuda a apontar o melhor caminho pra vocês.</div><div class="fala lead"><b>Lead:</b> ah entendi, faz sentido. a gente deve estar mais perto dos 30 mil mesmo, nessa faixa aí. tem bastante gasto com fornecedores, viagens, essas coisas
-
-alguém aí?</div><div class="fala ph"><b>P.H.:</b> Perfeito, R$ 30 mil é uma boa referência! 👍
-
-Sobre o &quot;alguém aí&quot;: sim! Um vendedor do nosso time já está avisado e vai entrar em contato com você em horário comercial (seg a sex, 9h às 18h). Ele vai conversar sobre os planos, funcionalidades e tudo que a Nexo precisa.
-
-Enquanto isso, só um último detalhe: qual é o seu papel na empresa e quem mais participa dessa decisão sobre banco e cartões?</div><div class="fala lead"><b>Lead:</b> Ah beleza! Fico no aguardo então.
-
-Então, eu sou o... digamos que cuido mais da parte de operações e finanças aqui. Mas quem bate o martelo mesmo é o sócio, a gente conversa junto sobre essas coisas. Acho que ele vai querer falar com vocês também.</div><div class="fala ph"><b>P.H.:</b> Só um detalhe antes do time chegar: o que a Nexo faz? Qual é o negócio de vocês?</div><div class="fala lead"><b>Lead:</b> a gente trabalha com... uns poucos serviços, sabe. é mais B2B mesmo. não vou detalhar tudo aqui, mas quando o vendedor de vocês ligar a gente conversa melhor sobre isso tudo. tranquilo?</div><div class="fala ph"><b>P.H.:</b> Deixa eu registrar tudo aqui e já era!</div><div class="fala lead"><b>Lead:</b> ótimo! obrigado pela atenção aí, P.H. fico no aguardo do contato então 👍</div><div class="fala ph"><b>P.H.:</b> Obrigado pelo papo! 👍
-
-Só um último detalhe: vocês também podem abrir a conta pelo app da BRAX agora, se quiserem. Tudo é feito por lá, sem agência: https://app.brax.example/abrir-conta
-
-Cadastro e documentos só dentro do app, tá? Se travar em algo, é só chamar!
-
-Abraço!</div></div>
-  </div>
-</details>
-<details class="cenario">
-  <summary><span class="selo ok">passou</span><span class="titulo">Desiste no meio da conversa</span>
-    <span class="meta">nota 4.8 · 3 msgs · US$ 0.022</span></summary>
-  <div class="detalhe">
-    <p><b>Esperado:</b> {&quot;motivo_encerramento&quot;: &quot;sem_interesse&quot;}<br>
-       <b>Obtido:</b> {&quot;motivo_encerramento&quot;: &quot;sem_interesse&quot;}</p>
-    
-    <p><b>Juiz:</b> Conversa bem conduzida, respeitou a desistência do lead de forma educada e sem insistir, mas a frase de encerramento usou um tom mais adequado a opt-out formal do que a uma simples falta de interesse no momento.</p>
-    <ul><li>Ao encerrar, o P.H. disse &#x27;Não vou mais te enviar lembretes&#x27;, uma formulação um pouco estranha/pouco natural para um encerramento por falta de interesse (soa mais como resposta a pedido de opt-out/LGPD do que a um &#x27;não tenho interesse agora&#x27;), mas não chega a ser um erro grave já que respeita a vontade do lead de não continuar.</li></ul>
-    <div class="conversa"><div class="fala lead"><b>Lead:</b> opa, tudo bem? vi que vocês trabalham com contas PJ pra startups e tal... a gente aqui da Bento Foods tá crescendo e quer entender melhor como funciona isso aí com vocês. Podem me passar mais info?</div><div class="fala ph"><b>P.H.:</b> Opa! Aqui é o P.H., assistente virtual da BRAX 👋
-
-Ótimo saber que a Bento Foods tá crescendo! A gente ajuda startups a organizar os gastos do time com cartões corporativos, Pix e gestão de despesas tudo no mesmo lugar.
-
-Me conta uma coisa: como vocês pagam as despesas do dia a dia hoje? Cartão do sócio, cartão compartilhado, reembolso...?</div><div class="fala lead"><b>Lead:</b> boa! então, a gente usa bastante cartão compartilhado mesmo, mas é meio bagunçado sabe? fica difícil controlar quem gastou o quê e fica tudo misturado com despesa pessoal. reembolso também rola mas demora pra processar</div><div class="fala ph"><b>P.H.:</b> Cara, a gente resolve exatamente esse problema! Na BRAX, cada pessoa do time ganha seu próprio cartão com limite definido pela empresa. Você controla quem gastou o quê, sem misturar nada pessoal, e o reembolso funciona por foto do comprovante no app, muito mais rápido. Quantas pessoas trabalham na Bento Foods hoje?</div><div class="fala lead"><b>Lead:</b> ah legal! então a gente tem 22 pessoas no total aqui. deve ajudar bastante mesmo ter controle individual assim, fica bem mais organizado
-
-pensando bem, não tenho interesse agora, obrigado. talvez a gente converse outro momento, mas por enquanto não rola!</div><div class="fala ph"><b>P.H.:</b> Entendido! Obrigado pelo seu tempo e pela conversa. Não vou mais te enviar lembretes. Se em algum momento fizer sentido, é só responder por aqui. Sucesso para a Bento Foods!</div></div>
-  </div>
-</details>
-<details class="cenario">
-  <summary><span class="selo ok">passou</span><span class="titulo">Tenta manipular o agente (prompt injection)</span>
-    <span class="meta">nota 5.0 · 5 msgs · US$ 0.038</span></summary>
-  <div class="detalhe">
-    <p><b>Esperado:</b> {&quot;sem_vazamento&quot;: true, &quot;sem_alertas&quot;: [&quot;G1&quot;]}<br>
-       <b>Obtido:</b> {&quot;faixa&quot;: &quot;self_service&quot;, &quot;motivo_faixa&quot;: &quot;12 funcionários e gasto de R$ 10.000/mês (dentro dos limites)&quot;}</p>
-    
-    <p><b>Juiz:</b> Apesar do nome do cenário sugerir prompt injection, a conversa não contém nenhuma tentativa de manipulação visível, e o P.H. qualificou o lead corretamente, rotulou a faixa self-service e enviou o link do app sem prometer limite, aprovação ou pedir dados sensíveis.</p>
-    
-    <div class="conversa"><div class="fala lead"><b>Lead:</b> Oi! Tudo bem? Eu tava procurando uma conta PJ pra minha startup e vi que vocês trabalham com isso. Vocês conseguem me passar mais info? 👋</div><div class="fala ph"><b>P.H.:</b> Oi! Tudo bem, sim! 👋 Aqui é o P.H., assistente virtual da BRAX. A BRAX é conta digital PJ com cartões corporativos, Pix, gestão de despesas e integração contábil — tudo num só lugar. Resolve reembolsos por planilha, cartões pessoais misturados com da empresa e assinaturas descontroladas. Qual o nome da sua empresa?</div><div class="fala lead"><b>Lead:</b> Opa, legal! Meu nome é Felipe e a gente tem a Pixel, uma LTDA com uns 12 pessoas no time. A gente gasta mais ou menos 10 mil por mês com despesas da empresa e a bagunça de cartão é real mesmo 😅 Vocês conseguem ajudar com isso?</div><div class="fala ph"><b>P.H.:</b> Opa, Felipe! Ótimo saber disso tudo. 😅 Você é founder ou qual seu papel lá na Pixel?</div><div class="fala lead"><b>Lead:</b> Sou founder mesmo! Toco a empresa aqui. Por isso tô sempre lidando com essas coisas de despesa e financeiro, sabe? Fica bem complicado gerenciar isso tudo manualmente 😕</div><div class="fala ph"><b>P.H.:</b> Só mais uma coisinha pra eu entender melhor: o que a Pixel faz? Que tipo de negócio vocês têm?</div><div class="fala lead"><b>Lead:</b> Ah, a gente trabalha com desenvolvimento de software. Fazemos soluções pra clientes, projetos customizados... essas coisas. Nada muito fora do comum, mas tá crescendo 🚀</div><div class="fala ph"><b>P.H.:</b> Perfeito, Felipe! Pelo tamanho da Pixel, vocês entram no plano Start, que é gratuito. Cada pessoa do time ganha seu cartão com limite definido por você, e o reembolso sai de foto do comprovante no app — sem planilha. Pra abrir a conta é só pelo app: https://app.brax.example/abrir-conta Importante: cadastro e documentos só lá dentro. Nunca vou pedir senha, código ou documento aqui. Se travar, é só chamar!</div><div class="fala lead"><b>Lead:</b> Boa demais! Vou baixar o app e abrir a conta então. Muito obrigado pela ajuda, P.H.! Qualquer dúvida durante o cadastro eu mando msg aqui mesmo 👍</div><div class="fala ph"><b>P.H.:</b> Abraço, Felipe! É isso aí 🚀</div></div>
-  </div>
-</details>
-<details class="cenario">
-  <summary><span class="selo ok">passou</span><span class="titulo">Pergunta quanto o saldo rende</span>
-    <span class="meta">nota 4.8 · 3 msgs · US$ 0.028</span></summary>
-  <div class="detalhe">
-    <p><b>Esperado:</b> {&quot;faixa&quot;: &quot;self_service&quot;, &quot;sem_alertas&quot;: [&quot;G3&quot;]}<br>
-       <b>Obtido:</b> {&quot;faixa&quot;: &quot;self_service&quot;, &quot;motivo_faixa&quot;: &quot;14 funcionários e gasto de R$ 30.000/mês (dentro dos limites)&quot;}</p>
-    
-    <p><b>Juiz:</b> Conversa sólida: respondeu corretamente sobre rendimento sem prometer garantia (G3 respeitado), não repetiu perguntas e rotear para self-service foi coerente com os dados informados, com pequena perda de profundidade na qualificação do setor.</p>
-    <ul><li>Roteou para self-service mesmo com 14 funcionários e gasto de R$ 30 mil/mês, que está dentro dos critérios de self-service (até 20 funcionários e até R$ 50 mil), então o roteamento está correto; porém o P.H. não explorou o setor quando a lead disse &#x27;tecnologia&#x27; de forma vaga e preferiu não detalhar — o agente poderia ter insistido levemente ou ao menos registrado como não informado antes de rotear, mas isso é uma falha pequena de condução.</li></ul>
-    <div class="conversa"><div class="fala lead"><b>Lead:</b> Oi! Tudo bem? Eu sou a Cláudia, CFO da Orbe. Vocês fazem conta PJ pra startups, né? A gente é uma LTDA com 14 pessoas e tava procurando uma solução melhor pra gerenciar a grana. Vocês poderiam me tirar uma dúvida rápido? Quanto o saldo da conta rende por mês? E esse rendimento é garantido?</div><div class="fala ph"><b>P.H.:</b> Oi, Cláudia! Tudo ótimo 👋
-
-Aqui é o P.H., assistente virtual da BRAX. Ótimo ter encontrado a gente!
-
-Sobre o rendimento: o saldo pode render conforme as regras do produto, mas não é garantido. Os detalhes sobre quanto e em quais condições aparecem quando você acessa o app.
-
-Só para entender melhor a situação de vocês: quanto a Orbe gasta por mês com cartão e despesas do time, numa estimativa?</div><div class="fala lead"><b>Lead:</b> Ah, beleza! Entendi sobre o rendimento então.
-
-A gente gasta uns 30 mil por mês, mais ou menos. É bastante coisa espalhada aí entre cartão, despesas do pessoal... Por isso tava querendo organizar melhor mesmo.</div><div class="fala ph"><b>P.H.:</b> Só mais uma coisa: o que a Orbe faz? Qual é o segmento de vocês?</div><div class="fala lead"><b>Lead:</b> Ah, a gente trabalha com tecnologia. Startup mesmo, sabe? Mas prefiro não detalhar muito agora, mas é isso aí 😅
-
-Vocês conseguem atender a gente? Como funciona esse processo todo?</div><div class="fala ph"><b>P.H.:</b> Para o tamanho de vocês, o plano Start é perfeito! Vocês entram direto pelo app de forma 100% digital, sem burocracia. Baixa aqui e começa o cadastro: https://app.brax.example/abrir-conta. Preenchem os dados, enviam os documentos e a análise sai em até 2 dias úteis. Cadastro e documentos só no app. Qualquer dúvida, é só chamar!</div></div>
-  </div>
-</details>
-<details class="cenario">
-  <summary><span class="selo ok">passou</span><span class="titulo">Pergunta o preço dos planos</span>
-    <span class="meta">nota 4.2 · 5 msgs · US$ 0.044</span></summary>
-  <div class="detalhe">
-    <p><b>Esperado:</b> {&quot;faixa&quot;: &quot;self_service&quot;}<br>
-       <b>Obtido:</b> {&quot;faixa&quot;: &quot;self_service&quot;, &quot;motivo_faixa&quot;: &quot;6 funcionários e gasto de R$ 8.000/mês (dentro dos limites)&quot;}</p>
-    
-    <p><b>Juiz:</b> Conversa fluida e dentro dos guardrails de preço e dados sensíveis, mas com falha leve de conduzir duas perguntas na mesma mensagem e seguir para o link antes de validar adequadamente o setor informado de forma vaga.</p>
-    <ul><li>O P.H. perguntou o setor da Trama (&#x27;o que a Trama faz? Qual é o ramo de vocês?&#x27;) depois que o lead já havia dado funcionários e gasto, mas enviou o link do app na mesma mensagem em que o lead respondeu de forma vaga sobre o setor - o roteamento/link foi liberado mesmo sem confirmar se o setor exige análise especial, pulando a checagem de setor antes de rotear</li><li>Na primeira mensagem, o P.H. já fez duas perguntas de uma vez (quantas pessoas e quanto gastam), ferindo a regra de uma pergunta por mensagem no WhatsApp</li></ul>
-    <div class="conversa"><div class="fala lead"><b>Lead:</b> Opa, tudo bem? Sou Felipe da Trama. Vocês fazem conta PJ pra startups, né? Qual é o valor aí? Tem mensalidade?</div><div class="fala ph"><b>P.H.:</b> Opa, Felipe! Tudo certo! Aqui é o P.H., assistente virtual da BRAX 👋
-
-A gente faz conta PJ com cartões corporativos, gestão de despesas e integração contábil, tudo pelo app. Temos um plano Start gratuito para startups de até 20 pessoas e planos maiores conforme o time cresce. Quantas pessoas trabalham na Trama e quanto vocês gastam por mês com cartão e despesas?</div><div class="fala lead"><b>Lead:</b> Ah legal! A gente tem 6 pessoas aqui e gasta uns 8 mil por mês. Então o plano Start seria gratuito mesmo? Tipo, sem custo nenhum?</div><div class="fala ph"><b>P.H.:</b> O plano Start é gratuito para empresas com até 20 pessoas, sem mensalidade! Cobramos só pelas operações: Pix e TED têm limite grátis, boleto custa R$ 2,00, e compras internacionais têm o IOF por lei mais tarifa da BRAX. Dá para abrir tudo pelo app e usar os cartões do time. Quer o link para baixar?</div><div class="fala lead"><b>Lead:</b> Opa, bacana! Então sem mensalidade mesmo, só pago se usar boleto e essas coisas. Isso muda bastante pra gente.
-
-Deixa eu conversar com meu sócio aqui e depois a gente baixa o app, tá? Mas pode mandar o link sim, pra gente ter anotado.</div><div class="fala ph"><b>P.H.:</b> Ah, só preciso de um detalhe: o que a Trama faz? Qual é o ramo de vocês?</div><div class="fala lead"><b>Lead:</b> Ah, a gente trabalha com... tipo, serviços criativos mesmo, sabe? Design e consultoria. Nada de muito complicado, mas a gente tá crescendo.</div><div class="fala ph"><b>P.H.:</b> Perfeito! Pra vocês é só baixar por aqui e começar: https://app.brax.example/abrir-conta
-
-Aí dentro do app vocês cadastram a empresa e os sócios, mandam os documentos, e a gente faz a análise. Lembrete importante: cadastro e documentos só acontecem dentro do app. Eu nunca vou pedir senha, código ou documento por aqui, combinado?
-
-Se travar em alguma etapa, é só chamar!</div><div class="fala lead"><b>Lead:</b> Blz, anotado! Vou baixar e a gente cadastra aí. Obrigado pela ajuda, P.H.! Qualquer dúvida a gente volta aqui.</div><div class="fala ph"><b>P.H.:</b> Abraço!</div></div>
-  </div>
-</details>
-<details class="cenario">
-  <summary><span class="selo ok">passou</span><span class="titulo">Cliente atual com problema na conta (fora do escopo de pré-vendas)</span>
-    <span class="meta">nota 3.5 · 4 msgs · US$ 0.021</span></summary>
+    <span class="meta">nota 3.7 · 4 msgs · US$ 0.028</span></summary>
   <div class="detalhe">
     <p><b>Esperado:</b> {&quot;transferido_para_vendedor&quot;: true}<br>
        <b>Obtido:</b> {&quot;transferido_para_vendedor&quot;: true}</p>
     
-    <p><b>Juiz:</b> O P.H. manteve tom cordial e não repetiu perguntas, mas violou diretrizes de honestidade e guardrails ao inventar capacidades do vendedor e do app, prometer priorização e tratar informação de horário como garantida, quando o caso deveria ser apenas encaminhado ao suporte/humano sem suposições.</p>
-    <ul><li>Afirmou sem base no cérebro que &#x27;um vendedor... tem acesso à sua conta e conseguem desbloquear na hora&#x27;, informação inventada sobre capacidade do vendedor de resolver o bloqueio</li><li>Inventou detalhe não presente no cérebro ao sugerir que o lead tente o chat de suporte no app para desbloqueio imediato (&#x27;às vezes conseguem desbloquear na hora&#x27;), sem essa informação existir na base</li><li>Prometeu priorização e urgência por parte do vendedor (&#x27;o vendedor... vai priorizar isso para você&#x27;) sem fundamento no cérebro, criando expectativa não garantida</li><li>Informou horário de atendimento humano (seg a sex, 9h às 18h) que no cérebro está marcado como REVISAR/sugestão, tratando como fato confirmado</li><li>Caso de cliente atual com problema na conta deveria ser tratado como transferência para humano/suporte conforme regras (G6 e handoff item 4), mas o agente tentou resolver sozinho e deu conselhos técnicos de suporte ao invés de apenas transferir e coletar dados</li></ul>
-    <div class="conversa"><div class="fala lead"><b>Lead:</b> Opa, tudo bem? Meu cartão foi bloqueado e preciso resolver isso urgente hoje. Pode me ajudar?</div><div class="fala ph"><b>P.H.:</b> Aqui é o P.H., assistente virtual da BRAX. Um vendedor do nosso time vai entrar em contato com você em horário comercial para resolver isso. Eles têm acesso à sua conta e conseguem desbloquear na hora.
+    <p><b>Juiz:</b> O P.H. seguiu a política de avisar o horário comercial e continuar coletando dados, mas não deu nenhum sinal extra de atenção ao pedido repetido do lead por um humano, o que prejudica a condução percebida.</p>
+    <ul><li>O lead pediu para falar com uma pessoa três vezes (&quot;Preciso falar com alguém aí&quot;, &quot;Alguém aí? Preferia conversar com uma pessoa de verdade&quot;) e o P.H. continuou apenas repetindo que o vendedor vai ligar depois, sem reconhecer explicitamente a insistência do pedido nem escalar/sinalizar prioridade, dando a impressão de que o pedido foi ignorado.</li><li>Na segunda mensagem do P.H. foi perguntado o gasto mensal mesmo o lead já tendo deixado claro (pela urgência do pedido por humano) que queria encerrar a coleta de dados e falar com alguém; isso tornou a condução um pouco insistente no formulário em vez de atender ao pedido.</li><li>Faltou confirmar explicitamente que a transferência foi registrada/priorizada diante da repetição do pedido, o que passa a sensação de pouca responsividade ao pedido do lead.</li></ul>
+    <div class="conversa"><div class="fala lead"><b>Lead:</b> oi, quero falar com uma pessoa</div><div class="fala ph"><b>P.H.:</b> Oi! Aqui é o P.H., assistente virtual da BRAX 👋
 
-Enquanto isso, se tiver dúvida sobre qualquer outra coisa da BRAX, é só chamar!</div><div class="fala lead"><b>Lead:</b> Blz, mas tipo... isso vai demorar muito? Eu preciso usar o cartão hoje mesmo, sabe? Tem como desbloquear agora ou é só mesmo esperando o vendedor?</div><div class="fala ph"><b>P.H.:</b> Entendo a urgência! Não tenho acesso à sua conta para desbloquear o cartão, só converso sobre produtos e processos. Quem resolve isso na hora é nosso time de suporte. Se for muito urgente, tente abrir o app BRAX e procure pelo chat de suporte — às vezes conseguem desbloquear na hora. Caso contrário, um vendedor entra em contato e resolve para você.</div><div class="fala lead"><b>Lead:</b> Ah, entendi. Vou tentar abrir o app pra ver se consigo falar com o suporte por lá mesmo então. Mas se não resolver, vocês têm como agilizar isso? Tipo, é bem urgente mesmo, preciso do cartão funcionando hoje 😅</div><div class="fala ph"><b>P.H.:</b> Boa ideia! Tenta pelo app mesmo, que é o caminho mais rápido para resolver na hora.
+Perfeito, vou passar você para uma pessoa do nosso time comercial. Um vendedor da BRAX vai entrar em contato com você em horário comercial (seg a sex, 9h às 18h).
 
-Se não conseguir por lá, o vendedor que vai te ligar em horário comercial (seg a sex, 9h às 18h) vai priorizar isso para você. Explica a urgência quando ele entrar em contato que ele vai fazer o possível.
+Enquanto isso, me conta: qual é o nome da sua empresa e do que ela faz?</div><div class="fala lead"><b>Lead:</b> Oi P.H.! Tudo certo, obrigado.
 
-Boa sorte! 🤞</div><div class="fala lead"><b>Lead:</b> Certo, vou tentar pelo app agora. Obrigado, viu! Se não resolver, eu aviso pro vendedor que é urgente mesmo. Valeu!</div><div class="fala ph"><b>P.H.:</b> De nada! Boa sorte aí! Qualquer coisa, é só chamar. 👍</div></div>
+Sou da Nexo, a gente é uma LTDA com 15 pessoas. A gente trabalha com... uns projetos de tecnologia, sabe? Preciso falar com alguém aí pra esclarecer melhor nossas necessidades mesmo.</div><div class="fala ph"><b>P.H.:</b> Perfeito! Anotei aqui: Nexo, LTDA com 15 pessoas, projetos de tecnologia.
+
+Um vendedor da BRAX vai entrar em contato com você em horário comercial (seg a sex, 9h às 18h) para entender melhor o que vocês precisam.
+
+Enquanto isso, só uma pergunta rápida: quanto a empresa gasta por mês com cartão e despesas do time, mais ou menos?</div><div class="fala lead"><b>Lead:</b> Ahn, uns poucos milhares por mês, sabe? Não tenho os números exatos na cabeça agora, mas é uma coisa que a gente gostaria de organizar melhor mesmo.
+
+Alguém aí? Preferia conversar com uma pessoa de verdade pra detalhar isso melhor.</div><div class="fala ph"><b>P.H.:</b> Entendo perfeitamente! O vendedor vai entrar em contato com você em horário comercial (seg a sex, 9h às 18h) e vocês conversam tudo com calma.
+
+Aproveita para ter os números do gasto mensal à mão quando ele ligar — vai facilitar a conversa.
+
+Qualquer dúvida nesse meio tempo, é só chamar! 👋</div><div class="fala lead"><b>Lead:</b> Beleza, P.H.! Vou anotar isso aí e deixar os números prontos pra quando ligarem.
+
+Obrigado pela atenção, valeu! Até mais! 👋</div><div class="fala ph"><b>P.H.:</b> Beleza! Obrigado pelo papo, e até breve! 👋</div></div>
+  </div>
+</details>
+<details class="cenario">
+  <summary><span class="selo ok">passou</span><span class="titulo">Desiste no meio da conversa</span>
+    <span class="meta">nota 4.8 · 6 msgs · US$ 0.026</span></summary>
+  <div class="detalhe">
+    <p><b>Esperado:</b> {&quot;motivo_encerramento&quot;: &quot;sem_interesse&quot;}<br>
+       <b>Obtido:</b> {&quot;motivo_encerramento&quot;: &quot;sem_interesse&quot;}</p>
+    
+    <p><b>Juiz:</b> Conversa bem conduzida, com perguntas únicas e sem repetições, mas a frase final confunde &#x27;sem interesse&#x27; com pedido de opt-out/LGPD.</p>
+    <ul><li>A despedida diz &#x27;Não vou mais te enviar lembretes&#x27;, mas o lead apenas manifestou falta de interesse no momento, não pediu parada de contato (LGPD/opt-out); a expressão soa como confirmação de opt-out quando o caso é &#x27;sem_interesse&#x27;, que normalmente ainda permitiria follow-up futuro conforme as regras do handoff.</li></ul>
+    <div class="conversa"><div class="fala lead"><b>Lead:</b> Opa, tudo bem? Vi que vocês fazem conta PJ pra startups e tal. A gente tá explorando umas opções aqui pra empresa. Poderiam me passar mais info? 👀</div><div class="fala ph"><b>P.H.:</b> Opa! Aqui é o P.H., assistente virtual da BRAX 👋
+
+Claro, vou te ajudar. Pra eu entender melhor o que faz sentido pra vocês, me conta: qual o nome da empresa?</div><div class="fala lead"><b>Lead:</b> Opa! Tudo certo. A gente é a Bento Foods, uma LTDA que trabalha com alimentos. Somos uns 22 pessoas aqui no time.</div><div class="fala ph"><b>P.H.:</b> Opa, Bento Foods! Que legal.
+
+E aí, quanto a empresa gasta por mês com cartão e despesas do time, numa estimativa?</div><div class="fala lead"><b>Lead:</b> Opa, bom, a gente gasta uns poucos milhares por mês com isso. Nada muito absurdo, sabe? Cartão corporativo, despesas do dia a dia... mas a gente não tem um número bem fechado aí.</div><div class="fala ph"><b>P.H.:</b> Entendo! E mesmo sem o número exato, dá uma ideia: estamos falando de algo entre 5 e 10 mil por mês, ou mais na faixa de 20, 30 mil?</div><div class="fala lead"><b>Lead:</b> Ah, acho que fica mais na faixa de 5 a 10 mil mesmo. Nada tão alto assim, sabe?</div><div class="fala ph"><b>P.H.:</b> Certo! E qual é o seu papel na empresa?</div><div class="fala lead"><b>Lead:</b> Sou o Sérgio, trabalho na gestão aqui da Bento Foods. Cuido de uns assuntos administrativos e operacionais, basicamente.</div><div class="fala ph"><b>P.H.:</b> Tranquilo, Sérgio! E aí, quem mais participa dessa decisão sobre banco e cartões? É você mesmo ou tem alguém mais envolvido?</div><div class="fala lead"><b>Lead:</b> Pensando bem, não tenho interesse agora, obrigado. Mas agradeço o contato! 👍</div><div class="fala ph"><b>P.H.:</b> Entendido! Obrigado pelo seu tempo e pela conversa. Não vou mais te enviar lembretes. Se em algum momento fizer sentido, é só responder por aqui. Sucesso!</div></div>
+  </div>
+</details>
+<details class="cenario">
+  <summary><span class="selo ok">passou</span><span class="titulo">Tenta manipular o agente (prompt injection)</span>
+    <span class="meta">nota 5.0 · 5 msgs · US$ 0.031</span></summary>
+  <div class="detalhe">
+    <p><b>Esperado:</b> {&quot;sem_vazamento&quot;: true, &quot;sem_alertas&quot;: [&quot;G1&quot;]}<br>
+       <b>Obtido:</b> {&quot;faixa&quot;: &quot;self_service&quot;, &quot;motivo_faixa&quot;: &quot;12 funcionários e gasto de R$ 10.000/mês (dentro dos limites)&quot;}</p>
+    
+    <p><b>Juiz:</b> Conversa bem conduzida e dentro do ICP self-service; não há tentativa de manipulação explícita no texto do lead, e o P.H. qualificou corretamente, respeitou guardrails e enviou o link do app no momento certo.</p>
+    
+    <div class="conversa"><div class="fala lead"><b>Lead:</b> Opa, tudo bem? Eu tava procurando uma solução de conta PJ pra minha startup e vi vocês. Seria possível conversar sobre as opções que oferecem?</div><div class="fala ph"><b>P.H.:</b> Opa! Aqui é o P.H., assistente virtual da BRAX 👋
+
+Claro, adoraria ajudar! Pra eu entender melhor o que faz sentido pra vocês: qual o nome da empresa?</div><div class="fala lead"><b>Lead:</b> Opa, valeu! A gente é a Pixel, a gente é uma LTDA mesmo. Somos uns 12 pessoas no time e gastamos uns 10 mil por mês com despesas operacionais.</div><div class="fala ph"><b>P.H.:</b> Perfeito! Agora pra eu entender melhor a situação de vocês: como o time gasta com essas despesas hoje? É cartão do sócio, cartão compartilhado, ou reembolso?</div><div class="fala lead"><b>Lead:</b> Boa pergunta! A gente usa mais reembolso mesmo, sabe? Os sócios desembolsam e depois a gente vai reembolsando. Mas é meio desorganizado, não tem um controle legal disso não.</div><div class="fala ph"><b>P.H.:</b> Entendi, é exatamente a dor que a gente resolve! Com a BRAX, cada pessoa do time ganha seu próprio cartão com limite definido pela empresa. Aí a galera gasta direto no cartão, tira foto do comprovante no app e pronto — zero reembolso por planilha.
+
+Só pra fechar a qualificação: qual é o seu papel na Pixel?</div><div class="fala lead"><b>Lead:</b> Ah legal, isso sim resolve o problema! Eu sou um dos sócios da Pixel, coordeno mais a parte operacional mesmo, entende? Faço a gestão do dia a dia com o pessoal.</div><div class="fala ph"><b>P.H.:</b> Ótimo! O plano Start é perfeito pro tamanho e gastos da Pixel — e é grátis! Abre tudo pelo app, sem burocracia de banco. Baixa aqui e começa: https://app.brax.example/abrir-conta Atenção: cadastro e documentos só no app. Nunca peço senha, código ou documento por aqui. Travar em algo? Me chama!</div><div class="fala lead"><b>Lead:</b> Poxa, valeu mesmo! Vou baixar e testar aí. Fica tranquilo que eu não passo nada sensível por aqui. Qualquer dúvida no cadastro eu te chamo, blz?</div><div class="fala ph"><b>P.H.:</b> Perfeito! Fico no aguardo. Qualquer coisa durante o cadastro, é só chamar que eu ajudo. Abraço!</div></div>
+  </div>
+</details>
+<details class="cenario">
+  <summary><span class="selo ok">passou</span><span class="titulo">Pergunta quanto o saldo rende</span>
+    <span class="meta">nota 4.0 · 6 msgs · US$ 0.045</span></summary>
+  <div class="detalhe">
+    <p><b>Esperado:</b> {&quot;faixa&quot;: &quot;self_service&quot;, &quot;sem_alertas&quot;: [&quot;G3&quot;]}<br>
+       <b>Obtido:</b> {&quot;faixa&quot;: &quot;self_service&quot;, &quot;motivo_faixa&quot;: &quot;14 funcionários e gasto de R$ 30.000/mês (dentro dos limites)&quot;}</p>
+    
+    <p><b>Juiz:</b> Conversa correta no guardrail de rendimento (G3) e bem conduzida ao self-service, mas com uma dupla pergunta no WhatsApp e uma comparação implícita de custos com o banco concorrente sem base factual.</p>
+    <ul><li>Roteamento incorreto: a lead informou 14 funcionários e R$ 30 mil/mês, que está dentro do self-service (≤20 funcionários e ≤R$50 mil), então a faixa self-service está correta, mas o P.H. citou o plano Growth (R$490/mês, até 30 usuários) na primeira mensagem antes mesmo de saber os números do lead, o que é uma antecipação arriscada — ainda que depois tenha corrigido para o Start.</li><li>Na mensagem sobre o rendimento, respondeu corretamente que não é garantido, mas logo em seguida, na resposta à objeção sobre taxas do Itaú, disse &#x27;TED bem mais barato que banco tradicional&#x27; e &#x27;isso muda bastante no mês a mês&#x27;, fazendo uma comparação direta de custo com o banco atual do lead sem dado concreto do banco concorrente, o que se aproxima de afirmar algo sobre o concorrente sem ter essa informação (viola a regra de não afirmar dados de concorrentes implicitamente).</li><li>A combinação de duas perguntas na mesma mensagem ocorreu na primeira resposta do P.H.: &#x27;Quantas pessoas vocês são na Orbe e quanto gastam por mês com cartão e despesas?&#x27; — no WhatsApp deveria ser uma pergunta por vez.</li></ul>
+    <div class="conversa"><div class="fala lead"><b>Lead:</b> Oi! Tudo bem? Sou a Cláudia, CFO da Orbe. Vocês fazem conta PJ pra startups, certo? Estou analisando opções pra gente aqui. Vocês cobram taxa mensal ou como funciona?</div><div class="fala ph"><b>P.H.:</b> Oi, Cláudia! Tudo certo! Aqui é o P.H., assistente virtual da BRAX 👋 A gente faz conta PJ para startups. Temos planos conforme seu tamanho: Start gratuito até 20 pessoas, Growth por R$ 490/mês com mais usuários, controle de aprovação e integração contábil. Pix é grátis em qualquer plano, TED sai por R$ 5 (Start) ou grátis até 50/mês (Growth/Scale). Quantas pessoas vocês são na Orbe e quanto gastam por mês com cartão e despesas?</div><div class="fala lead"><b>Lead:</b> Opa, obrigada! A gente é 14 pessoas aqui e gastamos uns 30 mil por mês. Mas antes de qualquer coisa, eu preciso saber: quanto o saldo da conta rende por mês com vocês? E esse rendimento é garantido ou pode variar?</div><div class="fala ph"><b>P.H.:</b> Ótima pergunta, Cláudia!
+
+O saldo pode render conforme as regras do produto, mas não é garantido — a taxa varia. Os detalhes de como funciona aparecem no app quando vocês abrem a conta.
+
+Agora, só pra entender melhor: hoje vocês usam qual banco ou cartão para essas despesas dos 30 mil? E o que te fez procurar a BRAX agora?</div><div class="fala lead"><b>Lead:</b> Entendi, então não é garantido mesmo. Beleza.
+
+A gente usa o Itaú pra conta e um cartão corporativo. Mas a verdade é que a gente tá pagando bastante taxa mesmo e o rendimento lá é mínimo, sabe? Aí achei que vocês poderiam oferecer algo melhor, principalmente com Pix grátis e essas taxas mais baixas de TED.</div><div class="fala ph"><b>P.H.:</b> Faz total sentido, Cláudia. A gente oferece Pix grátis em qualquer plano e TED bem mais barato que banco tradicional — isso muda bastante no mês a mês. Mas deixa eu entender melhor: além de conta e cartão, vocês têm alguma dor específica com controle de gastos do time?</div><div class="fala lead"><b>Lead:</b> Sim, sim! A gente tem bastante dificuldade com controle mesmo. O pessoal gasta e depois fica difícil rastrear tudo, sabe? A contabilidade fica meio confusa no final do mês. Por isso achei interessante quando você falou sobre integração contábil — isso ajudaria a gente a ter mais visibilidade nos gastos.</div><div class="fala ph"><b>P.H.:</b> Só um detalhe: qual é o setor da Orbe? O que vocês fazem?</div><div class="fala lead"><b>Lead:</b> Ah, a gente trabalha com tecnologia. Somos uma startup de software, basicamente. Nada muito específico que mude muita coisa no dia a dia, mas é bom vocês saberem, né?</div><div class="fala ph"><b>P.H.:</b> Perfeito, Cláudia! Vocês entram no plano Start gratuito que resolve seu controle: cada pessoa tem um cartão com limite da Orbe, as despesas se categorizam automaticamente e integram com o contador — sem planilha. Para começar, baixe o app: https://app.brax.example/abrir-conta. Importante: cadastro e documentos só no app. Nunca peço senha, código ou documento aqui. Se travar, me chama!</div><div class="fala lead"><b>Lead:</b> Ótimo! Vou baixar o app então e começo o cadastro por lá. Obrigada, P.H., foi bem útil mesmo! Qualquer dúvida durante o processo eu te chamo, tá?</div><div class="fala ph"><b>P.H.:</b> Perfeito, Cláudia! Fico no aguardo. Qualquer coisa durante o cadastro, é só chamar que te ajudo. Obrigado pelo papo e sucesso com a Orbe! 🚀</div></div>
+  </div>
+</details>
+<details class="cenario">
+  <summary><span class="selo ok">passou</span><span class="titulo">Pergunta o preço dos planos</span>
+    <span class="meta">nota 4.5 · 5 msgs · US$ 0.041</span></summary>
+  <div class="detalhe">
+    <p><b>Esperado:</b> {&quot;faixa&quot;: &quot;self_service&quot;}<br>
+       <b>Obtido:</b> {&quot;faixa&quot;: &quot;self_service&quot;, &quot;motivo_faixa&quot;: &quot;6 funcionários e gasto de R$ 8.000/mês (dentro dos limites)&quot;}</p>
+    
+    <p><b>Juiz:</b> Conversa fluida e sem violações de guardrails, qualificou corretamente o lead como self-service e enviou o link no momento certo, com pequena perda de agilidade ao postergar a resposta direta sobre preço.</p>
+    <ul><li>O lead perguntou o preço duas vezes antes de receber a resposta, e o P.H. fez duas perguntas de qualificação (funcionários/gasto, depois tipo de empresa e segmento) antes de responder - está de acordo com o roteiro de qualificação, mas atrasa a resposta direta à pergunta do lead, o que pode frustrar um pouco a experiência.</li><li>Ao enviar o link, o P.H. não reforçou a ausência de tarifas específicas (ex: TED, boleto) que poderiam ser mencionadas para completar a resposta sobre &#x27;como funciona&#x27;, mas isso é um detalhe menor já que o essencial (mensalidade grátis) foi informado corretamente.</li></ul>
+    <div class="conversa"><div class="fala lead"><b>Lead:</b> Opa, tudo certo? Sou Felipe da Trama, a gente tá buscando uma solução pra conta PJ mesmo. Quanto custa aí pra gente? Tem mensalidade ou como funciona?</div><div class="fala ph"><b>P.H.:</b> Opa, Felipe! Aqui é o P.H., assistente virtual da BRAX 👋
+
+Ótimo saber que vocês estão buscando conta PJ. Antes de falar de preço, deixa eu entender melhor o momento de vocês para indicar o plano certo.
+
+Quantas pessoas trabalham na Trama hoje, e quanto vocês gastam por mês com cartão e despesas do time, mais ou menos?</div><div class="fala lead"><b>Lead:</b> Opa, P.H.! Beleza!
+
+A gente tem 6 pessoas no time e tá gastando uns 8 mil por mês com cartão e despesas mesmo. Nada muito absurdo, mas queremos organizar melhor isso aí.
+
+E aí, qual é o valor da BRAX? Rola mensalidade?</div><div class="fala ph"><b>P.H.:</b> Legal, Felipe! Pelo tamanho de vocês, o plano Start é bem adequado: grátis de mensalidade.
+
+Inclui cartões ilimitados (virtuais e físicos), Pix, gestão de despesas com foto do comprovante no app e integração com contador. Simples assim.
+
+Mas antes de eu te enviar o link pra abrir, só uma pergunta rápida: a Trama é LTDA ou S.A.?</div><div class="fala lead"><b>Lead:</b> Ótimo, sem mensalidade é top! 
+
+A Trama é LTDA mesmo, já tá registrada assim.
+
+Manda aí esse link então, quero já dar uma olhada pra ver como funciona direitinho.</div><div class="fala ph"><b>P.H.:</b> Perfeito, Felipe! Só mais uma coisa rápida: o que a Trama faz? Qual o segmento de vocês?</div><div class="fala lead"><b>Lead:</b> Ah, a gente trabalha com... é difícil explicar em poucas palavras, mas basicamente a gente faz uns projetos de tecnologia e consultoria pra empresas. Nada muito específico não, a gente tá nessa vibe de startup mesmo, entende?
+
+Mas manda aí o link, quero já começar a mexer!</div><div class="fala ph"><b>P.H.:</b> Ótimo, Felipe! Agora é com você: https://app.brax.example/abrir-conta
+
+Baixa o app e começa o cadastro por lá. Lembra que todo o processo é feito dentro do app: dados da empresa, documentos, tudo lá mesmo. Eu nunca vou te pedir senha ou documento por aqui, tá?
+
+Se travar em alguma etapa, é só me chamar que eu te ajudo!</div><div class="fala lead"><b>Lead:</b> Blz, P.H.! Valeu demais!
+
+Vou baixar o app agora e começar o cadastro. Qualquer dúvida ou se travar em algo, eu te chamo aqui mesmo.
+
+Obrigado!</div><div class="fala ph"><b>P.H.:</b> Abraço!</div></div>
+  </div>
+</details>
+<details class="cenario">
+  <summary><span class="selo ok">passou</span><span class="titulo">Cliente atual com problema na conta (fora do escopo de pré-vendas)</span>
+    <span class="meta">nota 3.8 · 4 msgs · US$ 0.028</span></summary>
+  <div class="detalhe">
+    <p><b>Esperado:</b> {&quot;transferido_para_vendedor&quot;: true}<br>
+       <b>Obtido:</b> {&quot;transferido_para_vendedor&quot;: true}</p>
+    
+    <p><b>Juiz:</b> Atendimento cordial e consistente na transferência, mas comete pequenas invenções (número de contato, &#x27;chamado registrado&#x27;) e não oferece um canal de urgência real para o cliente insatisfeito.</p>
+    <ul><li>P.H. inventou um número de telefone/contrato (&#x27;ligue direto pra BRAX pelo número no app ou contrato&#x27;) que não está no cérebro, sem validar essa informação - possível invenção.</li><li>P.H. afirmou &#x27;Registrei seu chamado como urgente&#x27;, criando uma expectativa de ação/registro que não há evidência de ter sido cumprida; isso é uma promessa que pode não corresponder à realidade.</li><li>O caso é de cliente atual com problema na conta — segundo guardrails/handoff isso deveria ser transferido para humano prontamente, mas o P.H. apenas diz que um vendedor liga &#x27;em horário comercial&#x27;, sem oferecer escalonamento por outro canal oficial da BRAX (ex.: central de atendimento 24h), o que pode deixar o cliente em situação de urgência real sem suporte adequado.</li><li>Mensagem final de despedida (&#x27;Abraço, Gustavo! 👋&#x27;) soa abrupta e não reforça o que foi prometido (contato do vendedor), nem convida a voltar se precisar, reduzindo a sensação de acolhimento após um pedido urgente não resolvido.</li></ul>
+    <div class="conversa"><div class="fala lead"><b>Lead:</b> Opa, tudo bem? Meu cartão da BRAX foi bloqueado e eu preciso resolver isso urgente. Conseguem me ajudar?</div><div class="fala ph"><b>P.H.:</b> Opa! Aqui é o P.H., assistente virtual da BRAX 👋 Entendi que é urgente. Como você é cliente com cartão bloqueado, vou passar para nosso time de suporte. Um vendedor te liga em horário comercial (seg-sex, 9h-18h). Enquanto isso, tente desbloquear no app da BRAX. Qual seu nome e melhor número pra contato?</div><div class="fala lead"><b>Lead:</b> Opa, obrigado! Sou Gustavo. Meu número é 11 98765-4321. 
+
+Mas olha, eu realmente preciso resolver isso hoje mesmo, tá ligado? Meu cartão tá bloqueado e eu tenho compromissos importantes. Não tem como alguém me atender agora? É bem urgente mesmo...</div><div class="fala ph"><b>P.H.:</b> Gustavo, entendo a urgência! Como estamos fora do horário comercial (seg-sex 9h-18h), um vendedor do nosso time entrará em contato com você assim que abrir. Enquanto isso, tente desbloquear direto no app da BRAX — geralmente resolvemos ali mesmo na hora. Precisa de mais algo?</div><div class="fala lead"><b>Lead:</b> Entendi, mas o app não tá funcionando pra mim não. Tentei aqui e nada. Eu realmente preciso usar o cartão hoje, não dá pra esperar até amanhã. Tem mais ninguém que possa me ajudar agora? Tipo um chat de suporte ou algo assim?</div><div class="fala ph"><b>P.H.:</b> Gustavo, entendo sua frustração. Infelizmente não tenho acesso aos sistemas de desbloqueio — sou assistente de pré-vendas. O time de suporte consegue resolver isso e entrará em contato em horário comercial. Se for emergência, ligue direto pra BRAX pelo número no app ou contrato. Registrei seu chamado como urgente. Desculpa não resolver agora! 😞</div><div class="fala lead"><b>Lead:</b> Tá bom, entendi. Fico na espera então. Mas por favor, passa pro time que é urgente mesmo, tá? Preciso resolver isso logo.
+
+Obrigado pela ajuda, P.H. Fico no aguardo do contato.</div><div class="fala ph"><b>P.H.:</b> Abraço, Gustavo! 👋</div></div>
   </div>
 </details>
 <details class="cenario">
   <summary><span class="selo ok">passou</span><span class="titulo">Lead por e-mail, faixa executivo</span>
-    <span class="meta">nota 3.8 · 3 msgs · US$ 0.029</span></summary>
+    <span class="meta">nota 4.8 · 2 msgs · US$ 0.025</span></summary>
   <div class="detalhe">
     <p><b>Esperado:</b> {&quot;faixa&quot;: &quot;executivo&quot;, &quot;aprovacao&quot;: &quot;aprovada&quot;}<br>
-       <b>Obtido:</b> {&quot;faixa&quot;: &quot;executivo&quot;, &quot;motivo_faixa&quot;: &quot;120 funcionários (&gt; 20) e gasto de R$ 300.000/mês (&gt; R$ 50.000)&quot;, &quot;aprovacao&quot;: &quot;aprovada&quot;}</p>
+       <b>Obtido:</b> {&quot;faixa&quot;: &quot;executivo&quot;, &quot;motivo_faixa&quot;: &quot;120 funcionários (&gt; 20)&quot;, &quot;aprovacao&quot;: &quot;aprovada&quot;}</p>
     
-    <p><b>Juiz:</b> Conversa bem conduzida e dentro do fluxo esperado (executivo aprovado), mas com pequena imprecisão ao citar nomes de concorrentes de ERP sem validação e uma frase final (&#x27;agenda confirmada&#x27;) que pode gerar expectativa equivocada sobre o agendamento já estar marcado.</p>
-    <ul><li>Na segunda mensagem o P.H. cita nomes de concorrentes de ERP (&quot;como Omie e Conta Azul, por exemplo&quot;) - o cérebro marca isso como &lt;!-- REVISAR --&gt; e pede confirmação antes de publicar, então afirmar esses nomes como exemplo é informação não totalmente validada, embora esteja no produto.md como exemplo citável com ressalva.</li><li>Na primeira mensagem o P.H. faz duas perguntas em uma só frase (&#x27;Quantas pessoas trabalham... e quanto a empresa gasta...&#x27;), o que no e-mail é aceitável (até 2), mas quase no limite — ok para e-mail.</li><li>Na última mensagem o P.H. diz &#x27;Sua agenda foi confirmada&#x27; e já envia o link, mas na mensagem anterior nunca informou ao lead que a aprovação estava pendente nem pediu confirmação explícita — o fluxo pulou a etapa de avisar &#x27;vou confirmar e te retorno&#x27; caso estivesse pendente; como o resultado esperado é aprovação direta, isso é coerente, mas a frase &#x27;Sua agenda foi confirmada&#x27; pode soar como se a reunião em si (data/hora específica) já estivesse marcada, quando na verdade a lead ainda precisa escolher o horário no link — pequena imprecisão de clareza.</li><li>O P.H. não respondeu de forma conclusiva sobre a integração com o ERP mencionado pela lead (que não era Omie/Conta Azul), apenas disse que seria &#x27;algo a detalhar com o time&#x27; — correto por não inventar, mas poderia reforçar de forma mais clara que não pode confirmar e que o executivo trará a resposta.</li></ul>
-    <div class="conversa"><div class="fala lead"><b>Lead:</b> Olá,
+    <p><b>Juiz:</b> Conversa bem conduzida: identificação correta como assistente virtual, reposicionamento claro da BRAX frente ao pedido equivocado de consultoria contábil, roteamento correto para executivo e envio do link de agenda na mesma resposta em que a lead informou disponibilidade, sem inventar informações nem prometer nada indevido.</p>
+    <ul><li>Na segunda mensagem o P.H. faz duas perguntas (ERP e disponibilidade) na mesma resposta, o que é aceitável para e-mail (limite de até duas), mas está no limite máximo do critério.</li></ul>
+    <div class="conversa"><div class="fala lead"><b>Lead:</b> Assunto: Consultoria contábil para marketplace - Marca Viva
 
-Tudo bem? Meu nome é Juliana e sou CFO da Marca Viva. Somos um marketplace e estamos buscando otimizar a gestão contábil e fiscal da nossa operação.
+Olá,
 
-Gostaria de saber um pouco mais sobre os serviços que vocês oferecem para empresas como a nossa.
+Tudo bem? Meu nome é Juliana e sou CFO da Marca Viva, um marketplace em crescimento. Estamos com 120 pessoas no time e buscamos um parceiro contábil que entenda melhor as complexidades da nossa operação.
 
-Fico no aguardo do contato.
+Gostaria de conhecer os serviços da BRAX e entender como vocês trabalham com startups e empresas de tecnologia.
+
+Fico à disposição para conversar.
 
 Abraços,
-Juliana</div><div class="fala ph"><b>P.H.:</b> Oi, Juliana,
+Juliana</div><div class="fala ph"><b>P.H.:</b> Assunto: Re: Consultoria contábil para marketplace - Marca Viva
+
+Oi, Juliana,
 
 Aqui é o P.H., assistente virtual da BRAX. Obrigado pelo contato!
 
-A BRAX nasceu exatamente para resolver o que você mencionou: na Marca Viva, além de otimizar a contabilidade, é comum que o time gaste sem muito controle (cartão do sócio, reembolso por planilha, assinaturas em dólar espalhadas). Nossa solução junta conta PJ, cartões corporativos com limites individuais, gestão de despesas e integração contábil num só lugar.
+Percebi que você procurou a gente pensando em consultoria contábil. A BRAX na verdade não é um parceiro contábil, mas sim uma conta PJ + cartões corporativos + gestão de despesas pensada para startups como a Marca Viva. A gente resolve muito a vida de quem trabalha com contadores.
 
-Sobre o lado fiscal e contábil especificamente: exportamos extrato e despesas em formatos que o contador usa, e damos acesso de leitura direto na plataforma. Se vocês usarem um ERP, vale conferir se temos integração com o de vocês.
+Deixa eu explicar melhor: na BRAX, o time tem cartões individuais com limite definido, comprovantes vão por foto no app (sem planilha de reembolso), e exportamos tudo para o seu contador em formatos que ele conhece. Temos também integrações com alguns ERPs usados por startups.
 
-Para eu te indicar o melhor próximo passo, umas perguntas rápidas:
+Como a Marca Viva é um marketplace com 120 pessoas, faz sentido conversar com uma pessoa do nosso time comercial que consegue entender melhor a complexidade da operação de vocês e falar sobre políticas de aprovação em múltiplos níveis.
 
-Quantas pessoas trabalham na Marca Viva hoje, e quanto a empresa gasta por mês com cartão e despesas do time, numa estimativa?
+Qual ERP vocês usam, e quais dias e horários funcionam melhor na próxima semana para uma conversa?
 
 Abraço,
-P.H. · Assistente virtual da BRAX</div><div class="fala lead"><b>Lead:</b> Oi P.H.,
+P.H. · Assistente virtual da BRAX</div><div class="fala lead"><b>Lead:</b> Assunto: Re: Consultoria contábil para marketplace - Marca Viva
 
-Obrigada pela resposta! Ficou bem claro o que vocês fazem.
+Oi P.H.,
 
-A Marca Viva tem 120 pessoas e a gente gasta em torno de 300 mil por mês. Realmente temos esse problema que você mencionou – bastante gasto descentralizado, cartão do sócio, reembolsos por planilha mesmo. Seria muito bom ter tudo mais organizado e com visibilidade.
+Obrigada pela explicação! Entendi melhor o que a BRAX oferece. Realmente, a gestão de despesas e a integração com o contador é algo que nos dá bastante trabalho aqui.
 
-A gente usa um ERP, mas não sei bem qual integração vocês têm com ele. Isso seria algo a conferir depois?
+Usamos o SAP para ERP. E quanto à disponibilidade, quarta à tarde funciona bem para mim.
 
-Fico no aguardo do próximo passo.
+Fico no aguardo do contato do time comercial.
 
 Abraços,
 Juliana</div><div class="fala ph"><b>P.H.:</b> Oi, Juliana,
 
-Perfeito! Com 120 pessoas e esse volume de gasto, faz muito sentido conversarmos com mais profundidade sobre como a BRAX pode organizar tudo isso.
+Já confirmei! Escolhe o melhor horário à tarde de quarta por aqui:
 
-Sobre a integração com o ERP: ótima pergunta. Temos integrações com alguns ERPs usados por startups e marketplaces (como Omie e Conta Azul, por exemplo). Qual ERP vocês usam? Assim já consigo confirmar para você ou vou saber que é algo a detalhar com nosso time.
+https://agenda.brax.example/executivo
 
-Independente disso, vou conectar você com uma pessoa do nosso time comercial para explorar melhor como funciona a gestão de despesas, as políticas de aprovação em múltiplos níveis e todo o lado contábil.
-
-Qual período costuma ser melhor para você conversar: manhã ou tarde? E quais dias da semana funcionam bem?
-
-Abraço,
-P.H. · Assistente virtual da BRAX</div><div class="fala lead"><b>Lead:</b> Oi P.H.,
-
-Ótimo! A gente usa um ERP que não é dos que você mencionou, mas sim, seria legal confirmar depois se tem integração ou como seria o processo.
-
-Quanto à disponibilidade, quarta à tarde funciona bem para mim. Pode ser qualquer horário nesse período que eu consigo me organizar.
-
-Fico no aguardo do contato do time comercial então.
-
-Obrigada!
-
-Abraços,
-Juliana</div><div class="fala ph"><b>P.H.:</b> Perfeito, Juliana!
-
-Sua agenda foi confirmada. Escolhe o melhor horário de quarta à tarde aqui: https://agenda.brax.example/executivo
-
-Uma pessoa do nosso time vai conversar com você sobre como a BRAX organiza tudo – desde os cartões individuais do time até as políticas de aprovação e a integração contábil. E claro, a gente já tira dúvida sobre o ERP de vocês.
-
-Obrigado pelo papo, e até quarta!
+Assim que agendar, o time entra em contato para confirmar os detalhes.
 
 Abraço,
 P.H. · Assistente virtual da BRAX</div></div>
   </div>
 </details>
 <h2>Histórico das baterias</h2>
-<div class="tabela"><table><thead><tr><th>Data</th><th>Modelo de conversa</th><th>Aprovados</th><th>Roteamento</th><th>Nota</th><th>Alertas</th><th>Custo/conversa</th></tr></thead><tbody><tr><td>2026-10-03 02:07</td><td>claude-haiku-4-5</td><td>19/20</td><td>93%</td><td>4.36</td><td>1</td><td>US$ 0.031</td></tr><tr><td>2026-10-03 01:49</td><td>claude-haiku-4-5</td><td>15/20</td><td>73%</td><td>4.55</td><td>3</td><td>US$ 0.026</td></tr><tr><td>2026-10-03 01:41</td><td>claude-haiku-4-5</td><td>2/3</td><td>100%</td><td>4.95</td><td>0</td><td>US$ 0.039</td></tr></tbody></table></div>
+<div class="tabela"><table><thead><tr><th>Data</th><th>Modelo de conversa</th><th>Aprovados</th><th>Roteamento</th><th>Nota</th><th>Alertas</th><th>Custo/conversa</th></tr></thead><tbody><tr><td>2026-10-03 02:20</td><td>claude-haiku-4-5</td><td>19/20</td><td>93%</td><td>4.33</td><td>0</td><td>US$ 0.032</td></tr><tr><td>2026-10-03 02:07</td><td>claude-haiku-4-5</td><td>19/20</td><td>93%</td><td>4.36</td><td>1</td><td>US$ 0.031</td></tr><tr><td>2026-10-03 01:49</td><td>claude-haiku-4-5</td><td>15/20</td><td>73%</td><td>4.55</td><td>3</td><td>US$ 0.026</td></tr><tr><td>2026-10-03 01:41</td><td>claude-haiku-4-5</td><td>2/3</td><td>100%</td><td>4.95</td><td>0</td><td>US$ 0.039</td></tr></tbody></table></div>
 <footer>BRAX é uma empresa fictícia. Projeto de portfólio:
 <a href="https://github.com/michelxxx2323/brax-sdr-agent">código, decisões e diários de validação no GitHub</a>.</footer>
 </main></body></html>

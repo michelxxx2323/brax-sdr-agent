@@ -117,7 +117,8 @@ FERRAMENTAS = [
                     "enum": ["proximo_passo_entregue", "fora_do_assunto", "sem_interesse"],
                     "description": (
                         "proximo_passo_entregue exige que rotear_lead já tenha definido a faixa. "
-                        "sem_interesse: o lead disse que não tem interesse (o sistema envia a despedida)."
+                        "sem_interesse: o lead disse que não tem interesse (o sistema envia a despedida). "
+                        "Não use para quem só quer crédito: registre so_quer_credito com registrar_qualificacao."
                     ),
                 }
             },

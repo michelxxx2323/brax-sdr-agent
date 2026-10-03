@@ -19,6 +19,7 @@ from brax_sdr.guardrails import (
     parece_texto_interno,
     tipo_de_evento,
 )
+from brax_sdr.crm import sincronizar_com_seguranca
 from brax_sdr.memoria import Lead
 from brax_sdr.mensagens import mensagem_fora_do_icp, mensagem_sem_interesse
 from brax_sdr.prompt import montar_system
@@ -101,10 +102,12 @@ class Agente:
         client: anthropic.Anthropic | None = None,
         aprovador: Aprovador | None = None,
         pasta_leads=config.PASTA_LEADS,
+        crm=None,
     ):
         self.client = client or anthropic.Anthropic()
         self.aprovador = aprovador
         self.pasta_leads = pasta_leads
+        self.crm = crm  # HubSpot (Fase 5); None = sem CRM
         self.cerebro = carregar_cerebro()
 
     def _encurtar(self, texto: str, uso: dict) -> str:
@@ -287,6 +290,9 @@ class Agente:
             lead.ultima_resposta_em = memoria.agora()
             lead.aguardando_lead = "?" in texto_final
         memoria.salvar(lead, pasta=self.pasta_leads)
+        # CRM depois de salvar: se o HubSpot falhar, a conversa já está guardada e o lead fica pendente (decisão 033).
+        if sincronizar_com_seguranca(self.crm, lead) or lead.crm.get("pendente"):
+            memoria.salvar(lead, pasta=self.pasta_leads)
         if not texto_final and lead.encerrada:
             # Encerrou sem nada a dizer (ex.: o lead só se despediu): silêncio em vez de mensagem vazia.
             resposta.motivo_silencio = "conversa_encerrada"

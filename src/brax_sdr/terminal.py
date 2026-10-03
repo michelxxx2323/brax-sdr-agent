@@ -14,6 +14,7 @@ import anthropic
 
 from brax_sdr import config, memoria
 from brax_sdr.agente import Agente
+from brax_sdr.crm import criar_crm
 from brax_sdr.memoria import Lead
 
 AJUDA = """Comandos:
@@ -102,7 +103,7 @@ def main() -> None:
         print("Falta a chave da API. Copie .env.example para .env e preencha ANTHROPIC_API_KEY.")
         sys.exit(1)
 
-    agente = Agente(aprovador=aprovador_no_terminal)
+    agente = Agente(aprovador=aprovador_no_terminal, crm=criar_crm())
     lead = memoria.carregar(args.lead, canal=args.canal)
     print(f"Conversando com o P.H. | lead: {lead.id} | canal: {args.canal} | modelo: {config.MODELO_CONVERSA}")
     if lead.mensagens:

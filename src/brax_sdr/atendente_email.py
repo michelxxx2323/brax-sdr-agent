@@ -17,6 +17,7 @@ from brax_sdr.canal_email import (
     motivo_para_ignorar,
     texto_para_o_agente,
 )
+from brax_sdr.crm import sincronizar_com_seguranca
 from brax_sdr.followup import numero_do_followup_devido, registrar_followup, texto_do_followup
 
 
@@ -105,6 +106,7 @@ class AtendenteEmail:
                 texto = texto_do_followup(numero, lead)
                 # Registra ANTES de enviar: na dúvida, um lembrete a menos, nunca um repetido.
                 registrar_followup(lead, numero, texto, agora)
+                sincronizar_com_seguranca(self.agente.crm, lead)  # "sem resposta" vira negócio perdido
                 memoria.salvar(lead, pasta=self.agente.pasta_leads)
                 corpo = montar_resposta(email_da_thread(lead.email_contexto), texto)
                 self.servico.users().messages().send(userId="me", body=corpo).execute()

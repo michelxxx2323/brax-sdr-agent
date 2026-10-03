@@ -10,6 +10,7 @@ sys.path.insert(0, str(Path(__file__).parent / "src"))
 
 from brax_sdr.agente import Agente  # noqa: E402
 from brax_sdr.atendente_email import AtendenteEmail  # noqa: E402
+from brax_sdr.crm import criar_crm  # noqa: E402
 from brax_sdr.gmail import conectar  # noqa: E402
 from brax_sdr.terminal import aprovador_no_terminal  # noqa: E402
 
@@ -28,6 +29,6 @@ except Exception as erro:
 
 # A aprovação de executivo continua no terminal (Slack simulado) até a Fase 5.
 try:
-    AtendenteEmail(servico, Agente(aprovador=aprovador_no_terminal)).rodar()
+    AtendenteEmail(servico, Agente(aprovador=aprovador_no_terminal, crm=criar_crm())).rodar()
 except KeyboardInterrupt:
     print("\nAtendimento por e-mail encerrado.")

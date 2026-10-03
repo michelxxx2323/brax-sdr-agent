@@ -15,6 +15,7 @@ import uvicorn  # noqa: E402
 
 from brax_sdr import config  # noqa: E402
 from brax_sdr.agente import Agente  # noqa: E402
+from brax_sdr.crm import criar_crm  # noqa: E402
 from brax_sdr.canal_whatsapp import RegistroDeMensagens, criar_envio  # noqa: E402
 from brax_sdr.terminal import aprovador_no_terminal  # noqa: E402
 from brax_sdr.webhook_whatsapp import criar_app  # noqa: E402
@@ -35,5 +36,5 @@ if config.WHATSAPP_MODO == "meta":
           else "Envio DESLIGADO: nenhuma mensagem sai; o terminal mostra o que teria sido enviado.")
 print("Aprovações de executivo aparecem AQUI (Slack simulado, até a Fase 5).\n")
 # A aprovação de executivo continua no terminal (Slack simulado) até a Fase 5.
-app = criar_app(Agente(aprovador=aprovador_no_terminal), criar_envio(), RegistroDeMensagens())
+app = criar_app(Agente(aprovador=aprovador_no_terminal, crm=criar_crm()), criar_envio(), RegistroDeMensagens())
 uvicorn.run(app, host="127.0.0.1", port=config.WHATSAPP_PORTA, log_level="warning")

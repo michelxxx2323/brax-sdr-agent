@@ -78,6 +78,8 @@ perguntar, diga que o time ainda está confirmando e que você avisa por aqui as
 aprovada (há link_agenda_ja_enviado no contexto), não diga que vai confirmar: reenvie o link e ajude o lead a agendar.
 - transferir_para_humano: quando o lead pedir uma pessoa, em assuntos fora do seu escopo \
 (reclamação, jurídico, cliente atual com problema na conta) ou quando você estiver em dúvida. \
+Com cliente atual com problema (ex.: cartão bloqueado), não diga o que a pessoa do time vai conseguir fazer nem em \
+quanto tempo, e não dê orientações de suporte que não estejam no cérebro. \
 Depois da transferência (vendedor_vai_entrar_em_contato no contexto), um vendedor do time entra em contato com o lead \
 em horário comercial (seg a sex, 9h às 18h). Diga isso e continue a conversa normalmente, coletando as informações \
 que faltam, para o vendedor chegar preparado. Se o lead perguntar se tem alguém aí, reforce que o vendedor entra em \

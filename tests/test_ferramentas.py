@@ -183,3 +183,24 @@ def test_pergunta_com_deixa_eu_confirmar_nao_e_promessa():
     assert checar_confiabilidade(pergunta, []) == []
     promessa = "Deixa eu confirmar com o time se quinta à tarde ainda tá disponível."
     assert checar_confiabilidade(promessa, []) != []
+
+
+def test_setor_especial_e_roteado_na_hora_para_humano():
+    # Achado na 2ª bateria: a IA transferiu a corretora de cripto sem rotear; o CRM ficaria sem a faixa.
+    lead = Lead(id="t")
+    resultado, _ = _executar("registrar_qualificacao", {"empresa": "Cripta", "setor": "corretora de cripto"}, lead)
+    assert resultado["roteamento"]["faixa"] == "humano"
+    assert lead.faixa == "humano" and lead.motivo_faixa == "setor_analise_especial"
+
+
+def test_lead_transferido_e_roteado_sem_link():
+    # Achado na 2ª bateria: o lead esperava o vendedor e recebeu o link do app.
+    lead = Lead(id="t", transferido_para_vendedor=True,
+                dados={"tipo_empresa": "ltda", "funcionarios": 15, "gasto_mensal": 30000, "setor": "B2B"})
+    resultado, _ = _executar("rotear_lead", {}, lead)
+    assert lead.faixa == "self_service" and "link_app" not in resultado
+    assert "vendedor" in resultado["proximo_passo"]
+    # E pode encerrar sem faixa: o próximo passo é do vendedor.
+    lead2 = Lead(id="t2", transferido_para_vendedor=True)
+    _, erro = _executar("encerrar_conversa", {"motivo": "proximo_passo_entregue"}, lead2)
+    assert erro is False and lead2.encerrada

@@ -179,8 +179,9 @@ def _registrar_qualificacao(lead: Lead, entrada: dict) -> dict:
     lead.prioridade = prioridade(lead.dados.get("sinais_de_compra"), lead.dados.get("decisor"))
     lead.registrar_evento("qualificacao", ", ".join(sorted(novos)))
     resultado = {"ok": True, "dados_coletados": lead.dados}
-    # Dado que desqualifica (MEI, sem CNPJ, PF, só crédito): o código roteia na hora (decisão 023).
-    if lead.faixa is None and _rotear_dados(lead).faixa == "fora_do_icp":
+    # Dado que desqualifica (MEI, sem CNPJ, PF, só crédito) ou setor especial: o código roteia na hora (decisões 023 e 040).
+    # Achado na 2ª bateria: a IA transferiu a corretora de cripto sem rotear, e o CRM ficaria sem a faixa "humano".
+    if lead.faixa is None and _rotear_dados(lead).faixa in ("fora_do_icp", "humano"):
         resultado["roteamento"] = _rotear_lead(lead)
     return resultado
 
@@ -219,6 +220,14 @@ def _rotear_lead(lead: Lead) -> dict:
     if resultado.faixa != "dados_insuficientes":
         lead.faixa, lead.motivo_faixa = resultado.faixa, resultado.motivo
         lead.registrar_evento("roteamento", f"{resultado.faixa}: {resultado.motivo}")
+    if lead.transferido_para_vendedor and resultado.faixa in ("self_service", "executivo"):
+        # O vendedor já cuida do próximo passo: a faixa vai para o CRM, mas sem link nem agenda (achado na 2ª bateria:
+        # o lead se despediu esperando o vendedor e recebeu o link do app).
+        resposta["proximo_passo"] = (
+            "O lead já foi transferido para um vendedor, que cuida do próximo passo. Não envie link nem fale de agenda: "
+            "só agradeça e reforce que o vendedor entra em contato em horário comercial."
+        )
+        return resposta
     if resultado.faixa == "self_service":
         resposta["link_app"] = config.LINK_APP
     return resposta
@@ -284,7 +293,7 @@ def _encerrar_conversa(lead: Lead, entrada: dict) -> dict:
     if motivo not in ("proximo_passo_entregue", "fora_do_assunto", "sem_interesse"):
         raise ValueError("motivo deve ser proximo_passo_entregue, fora_do_assunto ou sem_interesse")
     # Achado no teste "mei": encerrar sem rotear deixava o CRM sem faixa nem motivo.
-    if motivo == "proximo_passo_entregue" and lead.faixa is None:
+    if motivo == "proximo_passo_entregue" and lead.faixa is None and not lead.transferido_para_vendedor:
         raise ValueError(
             "o lead ainda não foi roteado: registre os dados com registrar_qualificacao e chame rotear_lead antes de encerrar"
         )

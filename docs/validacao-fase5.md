@@ -35,3 +35,11 @@ retorno escrito pela IA com o link de agenda, enviado 2 segundos após o clique;
 
 **Aprendizado:** com aprovação assíncrona, o P.H. precisa saber em que pé está cada pendência. Antes, o resultado chegava
 na mesma rodada; agora pode chegar entre duas mensagens do lead, e o contexto precisa refletir isso.
+
+## Teste 3: "Carla, Artifact": reteste da aprovação pelo Slack
+
+**Resultado: aprovado.** Aprovação clicada 11 segundos após o pedido; o retorno com o link apareceu sozinho no simulador
+2 segundos depois; após o "Obrigado", a conversa foi encerrada e a despedida seguinte não chamou a API.
+
+**Detalhe corrigido:** o retorno dizia "Uma pessoa do time vai te ligar na hora marcada", um detalhe inventado. Regra
+nova no cérebro e na instrução do retorno: não dizer o formato da reunião (decisão 035).

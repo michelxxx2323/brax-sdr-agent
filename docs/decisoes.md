@@ -40,6 +40,7 @@
 | 032 | Integração real com a Meta só no recebimento; envio desligado por padrão | Aceita | 2026-10-03 |
 | 033 | HubSpot sincronizado pelo código após cada resposta, sem travar a conversa | Aceita | 2026-10-03 |
 | 034 | Aprovação assíncrona no Slack, retorno escrito pela IA com travas, e um programa único | Aceita | 2026-10-03 |
+| 035 | Agenda continua como link fictício (agenda real no CRM fica de fora por privacidade) | Aceita | 2026-10-03 |
 
 ---
 
@@ -675,3 +676,21 @@ humana chega minutos ou horas depois, e precisa virar uma mensagem ao lead pelo 
 
 **Motivo:** fecha a lacuna que impedia a hospedagem (decisão 031): agora toda promessa de retorno tem um mecanismo real
 por trás. As travas no retorno escrito pela IA seguem o padrão do projeto: o modelo escreve, o código garante o essencial.
+
+---
+
+## 035: Agenda do executivo continua como link fictício (agenda real ligada ao CRM fica de fora por privacidade)
+
+**Contexto:** depois da aprovação, o lead recebe um link de agenda. Hoje é um link fictício (`agenda.brax.example`).
+O HubSpot gratuito oferece um agendador de reuniões: com ele, o link seria real e o agendamento ficaria registrado
+sozinho no contato do CRM (inclusive com nome e e-mail do lead já preenchidos no link).
+
+**Opções consideradas:**
+1. Agenda real pelo agendador de reuniões do HubSpot, conectado a um calendário.
+2. Manter o link fictício e documentar o caminho.
+
+**Decisão:** opção 2, por **privacidade**: a agenda real exigiria conectar um calendário pessoal ao projeto. O link
+continua configurável (`BRAX_LINK_AGENDA_EXECUTIVO`): trocar pela agenda real não exige mudança de código.
+
+**Junto:** regra no cérebro (`handoff.md`) e na instrução do retorno para o P.H. não inventar detalhes da reunião
+(ligação, vídeo, presencial, duração). Achado no reteste do Slack: "Uma pessoa do time vai te ligar na hora marcada".

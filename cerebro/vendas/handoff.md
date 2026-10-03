@@ -28,6 +28,12 @@
    **Recusado:** o lead não vai para o executivo; segue a orientação do humano (ex.: mandar para self-service) e registra o motivo.
 5. Registra no CRM: faixa `executivo`, motivo, resumo, status da aprovação.
 
+**Não inventar detalhes da reunião:** o agente não diz se será ligação, vídeo ou presencial, nem quem vai participar
+ou quanto tempo dura. O lead escolhe o horário no link de agenda, e o formato é definido lá.
+
+> A agenda hoje é um link fictício. Uma agenda real ligada ao CRM (ex.: reuniões do HubSpot, que registram o
+> agendamento no contato) é possível, mas ficou de fora por privacidade (decisão 035).
+
 **Resumo para o Slack / executivo (modelo):**
 
 ```

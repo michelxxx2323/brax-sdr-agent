@@ -122,7 +122,8 @@ def _instrucao(decisao: str, lead: Lead, observacao: str) -> tuple[str, str, str
         link = config.LINK_AGENDA_EXECUTIVO
         return (
             f"O time aprovou a conversa com um executivo. Avise o lead com cordialidade e envie o link de agenda "
-            f"{link} (exatamente este link), lembrando a disponibilidade que ele deu ({disponibilidade}).",
+            f"{link} (exatamente este link), lembrando a disponibilidade que ele deu ({disponibilidade}). "
+            "Não diga o formato da reunião (ligação, vídeo ou presencial): isso é definido na agenda.",
             link,
             f"Boa notícia{', ' + nome if nome else ''}! O time confirmou. Escolha o melhor horário por aqui: {link}",
         )

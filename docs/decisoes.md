@@ -49,6 +49,7 @@
 | 041 | Duas etapas finais: painel comercial no Lovable (7) e simulador público do P.H. (8) | Aceita | 2026-10-03 |
 | 042 | Fase 6 encerrada só com o Haiku; comparação de modelos adiada para um Haiku mais novo | Aceita | 2026-10-03 |
 | 043 | Hospedagem no Railway (Hobby) e leads no Supabase, via API REST e com RLS fechada | Aceita | 2026-10-03 |
+| 044 | Programa pronto para a nuvem: porta do Railway, só modo meta no ar, aprovação pendente sem Slack | Aceita | 2026-10-03 |
 
 ---
 
@@ -898,3 +899,22 @@ precisa ficar **ligado o tempo todo**: verifica o Gmail a cada 30 segundos e man
 **Riscos anotados:** o Supabase gratuito pausa projetos sem uso por 1 semana (o P.H. no ar consulta o banco o tempo todo,
 o que evita a pausa); e o P.H. **não pode rodar no PC e no Railway ao mesmo tempo**, porque os dois leriam o mesmo Gmail e
 responderiam duas vezes.
+
+---
+
+## 044: Programa pronto para a nuvem
+
+**Contexto:** o `iniciar_brax.py` foi feito para o PC: escutava só em 127.0.0.1 (o ngrok fazia a ponte), aceitava o modo
+simulado do WhatsApp e, sem Slack, pedia a aprovação de executivos no terminal.
+
+**Decisão:**
+- Quando a variável `PORT` existe (o Railway a define), o servidor usa essa porta e escuta em 0.0.0.0. No PC, nada muda.
+- **Na nuvem, só o modo `meta`.** No modo simulado, a assinatura das mensagens usa um segredo de exemplo que está no GitHub
+  público: com o webhook exposto, qualquer pessoa poderia forjar mensagens e gastar a API. No modo `meta`, cada aviso é
+  conferido com o segredo real do app (HMAC). O programa se recusa a ligar se a regra não for cumprida.
+- Sem Slack na nuvem, a aprovação fica **pendente** em vez de travar esperando o terminal.
+- `railway.json` (comando de início, verificação de saúde em `/saude`, reinício em caso de falha) e `.python-version` (3.14).
+- O envio real do WhatsApp continua desligado (decisão 032): o número de teste da Meta não é usado para mandar mensagens.
+
+**Motivo:** um endereço público muda o modelo de ameaça. A regra que era aceitável no PC (segredo de exemplo) vira uma porta
+aberta na internet, então a trava fica no código, e não só na documentação.

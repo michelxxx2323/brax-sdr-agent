@@ -26,6 +26,11 @@ for fluxo in (sys.stdout, sys.stdin):
     except (AttributeError, ValueError):
         pass
 
+if config.NA_NUVEM and config.WHATSAPP_MODO != "meta":
+    # Na nuvem, o webhook é público. No modo simulado, a assinatura usa um segredo de exemplo que está no GitHub:
+    # qualquer pessoa poderia mandar mensagens falsas e gastar a API (decisão 044).
+    sys.exit("Na hospedagem, use WHATSAPP_MODO=meta com o WHATSAPP_APP_SECRET real do app da Meta.")
+
 crm = criar_crm()
 envio_whatsapp = criar_envio()
 print("P.H. da BRAX")
@@ -74,7 +79,8 @@ if slack:
 else:
     from brax_sdr.terminal import aprovador_no_terminal
 
-    agente = Agente(aprovador=aprovador_no_terminal, crm=crm)
+    # No servidor não há terminal para responder: sem Slack, a aprovação fica pendente em vez de travar.
+    agente = Agente(aprovador=None if config.NA_NUVEM else aprovador_no_terminal, crm=crm)
 
 if gmail:
     from brax_sdr.atendente_email import AtendenteEmail
@@ -82,11 +88,11 @@ if gmail:
     threading.Thread(target=AtendenteEmail(gmail, agente).rodar, daemon=True, name="email").start()
     print("  E-mail: ligado")
 
-print(f"  WhatsApp: modo {config.WHATSAPP_MODO} em http://127.0.0.1:{config.WHATSAPP_PORTA}/webhook")
+print(f"  WhatsApp: modo {config.WHATSAPP_MODO} em http://{config.SERVIDOR_HOST}:{config.WHATSAPP_PORTA}/webhook", flush=True)
 if config.WHATSAPP_MODO == "meta" and not config.WHATSAPP_ENVIO_HABILITADO:
     print("            envio DESLIGADO: as respostas só aparecem no terminal")
 print()
 try:
-    uvicorn.run(criar_app(agente, envio_whatsapp, RegistroDeMensagens()), host="127.0.0.1", port=config.WHATSAPP_PORTA, log_level="warning")
+    uvicorn.run(criar_app(agente, envio_whatsapp, RegistroDeMensagens()), host=config.SERVIDOR_HOST, port=config.WHATSAPP_PORTA, log_level="warning")
 except KeyboardInterrupt:
     pass

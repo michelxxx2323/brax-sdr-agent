@@ -9,12 +9,12 @@ from brax_sdr.roteamento import prioridade, rotear
     ("dados", "faixa_esperada"),
     [
         # Self-service: os dois critérios dentro do limite (limites inclusivos).
-        ({"tipo_empresa": "ltda", "funcionarios": 6, "gasto_mensal": 8_000}, "self_service"),
-        ({"tipo_empresa": "sa", "funcionarios": 20, "gasto_mensal": 50_000}, "self_service"),
+        ({"tipo_empresa": "ltda", "funcionarios": 6, "gasto_mensal": 8_000, "setor": "SaaS"}, "self_service"),
+        ({"tipo_empresa": "sa", "funcionarios": 20, "gasto_mensal": 50_000, "setor": "e-commerce"}, "self_service"),
         # Executivo: basta um critério acima.
-        ({"tipo_empresa": "ltda", "funcionarios": 21, "gasto_mensal": 10_000}, "executivo"),
-        ({"tipo_empresa": "ltda", "funcionarios": 5, "gasto_mensal": 50_001}, "executivo"),
-        ({"tipo_empresa": "ltda", "funcionarios": 28, "gasto_mensal": None}, "executivo"),
+        ({"tipo_empresa": "ltda", "funcionarios": 21, "gasto_mensal": 10_000, "setor": "SaaS"}, "executivo"),
+        ({"tipo_empresa": "ltda", "funcionarios": 5, "gasto_mensal": 50_001, "setor": "marketplace"}, "executivo"),
+        ({"tipo_empresa": "ltda", "funcionarios": 28, "gasto_mensal": None, "setor": "healthtech"}, "executivo"),
         # Fora do ICP.
         ({"tipo_empresa": "mei", "funcionarios": 1, "gasto_mensal": 2_000}, "fora_do_icp"),
         ({"tipo_empresa": "pessoa_fisica"}, "fora_do_icp"),
@@ -22,10 +22,14 @@ from brax_sdr.roteamento import prioridade, rotear
         ({"tipo_empresa": "ltda", "funcionarios": 50, "so_quer_credito": True}, "fora_do_icp"),
         # Setor especial vai para humano, mesmo sendo grande.
         ({"tipo_empresa": "ltda", "funcionarios": 80, "setor_especial": True}, "humano"),
+        # O código confere o texto do setor, mesmo sem a marcação do modelo (evals: corretora de cripto).
+        ({"tipo_empresa": "ltda", "funcionarios": 30, "gasto_mensal": 60_000, "setor": "corretora de criptoativos"}, "humano"),
+        ({"tipo_empresa": "ltda", "funcionarios": 8, "gasto_mensal": 5_000, "setor": "bets esportivas"}, "humano"),
         # Dados insuficientes.
         ({}, "dados_insuficientes"),
         ({"tipo_empresa": "ltda", "funcionarios": 10}, "dados_insuficientes"),
         ({"funcionarios": 100}, "dados_insuficientes"),  # pode ser MEI? confirmar tipo antes
+        ({"tipo_empresa": "ltda", "funcionarios": 30, "gasto_mensal": 60_000}, "dados_insuficientes"),  # e o setor?
     ],
 )
 def test_faixas(dados, faixa_esperada):
@@ -38,13 +42,19 @@ def test_motivo_fora_do_icp_usa_codigo_padronizado():
 
 
 def test_motivo_executivo_explica_os_criterios():
-    motivo = rotear(tipo_empresa="ltda", funcionarios=28, gasto_mensal=70_000).motivo
+    motivo = rotear(tipo_empresa="ltda", funcionarios=28, gasto_mensal=70_000, setor="SaaS").motivo
     assert "28 funcionários" in motivo
     assert "R$ 70.000" in motivo
 
 
 def test_motivo_dados_insuficientes_lista_o_que_falta():
-    assert rotear(tipo_empresa="ltda").motivo == "falta: funcionarios, gasto_mensal"
+    assert rotear(tipo_empresa="ltda").motivo == "falta: funcionarios, gasto_mensal, setor"
+    assert rotear(tipo_empresa="ltda", funcionarios=30).motivo == "falta: setor"
+
+
+def test_setor_comum_nao_vira_analise_especial():
+    for setor in ("SaaS de RH", "estúdio de jogos mobile", "marketplace de alimentos", "fintech de pagamentos"):
+        assert rotear(tipo_empresa="ltda", funcionarios=6, gasto_mensal=8_000, setor=setor).faixa == "self_service"
 
 
 def test_prioridade():

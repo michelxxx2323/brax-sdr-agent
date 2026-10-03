@@ -23,7 +23,7 @@
 | 5 | Papel de quem conversa | Persona e decisor | "Qual o seu papel na empresa?" | Sim |
 | 6 | Dor principal | Argumento e CRM | "O que te fez procurar a BRAX agora?" | Recomendado |
 | 7 | Solução atual | Objeções e CRM | "Hoje vocês usam qual banco ou cartão para as despesas?" | Recomendado |
-| 8 | Setor | ICP e setores de análise especial | Inferir do site; perguntar só se não der | Recomendado |
+| 8 | Setor | ICP e setores de análise especial | Inferir do que o lead contou; senão: "O que a empresa de vocês faz?" | Sim (para rotear) |
 | 9 | Sinais de compra | Prioridade | Observar na conversa (rodada, contratações, 1ª pessoa de finanças) | Não |
 | 10 | Quem decide | Handoff | Se não for founder/CFO: "Quem mais participa dessa decisão?" | Para faixa executivo |
 

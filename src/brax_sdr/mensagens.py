@@ -4,6 +4,8 @@ Recusas (fora do perfil) têm texto fixo por motivo: em fintech, uma recusa mal
 explicada gera reclamação, e o modelo errou esse momento em dois testes seguidos.
 """
 
+import re
+
 _FORA_DO_ICP = {
     "mei": (
         "Hoje a BRAX atende só empresas LTDA e S.A. com time, então ainda não conseguimos abrir conta para MEI. "
@@ -47,3 +49,25 @@ def mensagem_fora_do_icp(motivo: str, nome: str | None = None, primeira_mensagem
     if primeira_mensagem:  # guardrail G4: identificar-se na primeira mensagem
         abertura += " Aqui é o P.H., assistente virtual da BRAX."
     return f"{abertura} {_FORA_DO_ICP.get(motivo, _FORA_DO_ICP['sem_cnpj'])}"
+
+
+IDENTIFICACAO = "Aqui é o P.H., assistente virtual da BRAX."
+_ASSISTENTE_SEM_VIRTUAL = re.compile(r"\bassistente (da BRAX)", re.IGNORECASE)
+_SAUDACAO_INICIAL = re.compile(r"^(?:oi|ol[áa]|opa|e a[íi]|bom dia|boa tarde|boa noite)\b[^.!?\n]{0,40}[.!?]+\s*", re.IGNORECASE)
+
+
+def garantir_identificacao(texto: str) -> str:
+    """Guardrail G4 garantido em código: a primeira mensagem diz que o P.H. é assistente virtual.
+
+    Achado nos evals: em 2 de 20 conversas, a primeira mensagem saiu sem "assistente virtual"
+    ("Aqui é P.H., assistente da BRAX" ou nenhuma apresentação).
+    """
+    if "assistente virtual" in texto.lower():
+        return texto
+    completado = _ASSISTENTE_SEM_VIRTUAL.sub(r"assistente virtual \1", texto, count=1)
+    if completado != texto:
+        return completado
+    saudacao = _SAUDACAO_INICIAL.match(texto)
+    if saudacao:  # "Oi, Gustavo! Um vendedor..." vira "Oi, Gustavo! Aqui é o P.H.... Um vendedor..."
+        return f"{saudacao.group(0).rstrip()} {IDENTIFICACAO} {texto[saudacao.end():]}".strip()
+    return f"{IDENTIFICACAO} {texto}".strip()

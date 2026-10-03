@@ -131,6 +131,12 @@ _TEXTO_SEM_INFORMACAO = re.compile(
     r"|-+|\?+|n/?a|none|null|desconhecid[oa]|n[ãa]o (?:informad[oa]|sei|dispon[íi]vel)", re.IGNORECASE
 )
 
+# Achado nos evals (cenário sem_interesse): sem saber o nome, o modelo registrou "User" e "Lead" como nome do contato.
+# A despedida saiu "Entendido, Lead!" e foi bloqueada como texto interno: o lead ficou sem resposta.
+_NOME_GENERICO = re.compile(
+    r"(?:o |a )?(?:user|usu[áa]ri[oa]|lead|cliente|contato|visitante|an[ôo]nimo|prospect|sem nome)", re.IGNORECASE
+)
+
 _TIPOS_JSON = {"string": str, "integer": int, "number": (int, float), "boolean": bool, "array": list}
 
 
@@ -159,6 +165,8 @@ def _validar_qualificacao(entrada: dict) -> dict:
             valor = valor.strip()
             if _TEXTO_SEM_INFORMACAO.fullmatch(valor):
                 continue  # "não informado" não é um dado: descartar em vez de gravar
+            if campo == "nome_contato" and _NOME_GENERICO.fullmatch(valor):
+                continue  # "User" ou "Lead" não é o nome de ninguém
         limpo[campo] = valor
     return limpo
 
@@ -185,7 +193,10 @@ _PROXIMO_PASSO = {
         "conversa: não chame outras ferramentas e não escreva outra mensagem."
     ),
     "humano": "Diga que uma pessoa do time vai continuar o atendimento e chame transferir_para_humano.",
-    "dados_insuficientes": "Pergunte, uma coisa por vez, o que falta para rotear.",
+    "dados_insuficientes": (
+        "Pergunte, uma coisa por vez, o que falta para rotear. Se faltar o setor, pergunte o que a empresa faz "
+        "e registre a resposta em setor."
+    ),
 }
 
 
@@ -198,6 +209,7 @@ def _rotear_dados(lead: Lead):
         gasto_mensal=d.get("gasto_mensal"),
         so_quer_credito=bool(d.get("so_quer_credito")),
         setor_especial=bool(d.get("setor_especial")),
+        setor=d.get("setor"),
     )
 
 

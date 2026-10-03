@@ -34,6 +34,16 @@ class ClienteFalso:
         return self.respostas.pop(0)
 
 
+def _em_andamento(pasta, lead_id, **campos):
+    """Lead com uma troca anterior: a resposta testada não é a primeira (que ganha a apresentação do G4)."""
+    lead = memoria.carregar(lead_id, pasta=pasta)
+    lead.mensagens = [{"role": "user", "content": "oi"},
+                      {"role": "assistant", "content": "Oi! Aqui é o P.H., assistente virtual da BRAX."}]
+    for campo, valor in campos.items():
+        setattr(lead, campo, valor)
+    memoria.salvar(lead, pasta=pasta)
+
+
 def test_conversa_com_ferramenta_salva_historico_completo(tmp_path):
     cliente = ClienteFalso([
         _msg([ToolUseBlock(id="t1", name="registrar_qualificacao", input={"funcionarios": 6}, type="tool_use")], "tool_use"),
@@ -65,15 +75,14 @@ def test_texto_escrito_junto_com_ferramenta_nao_se_perde(tmp_path):
         ], "tool_use"),
         _msg([], "end_turn"),
     ])
+    _em_andamento(tmp_path, "lead7")
     resposta = Agente(client=cliente, pasta_leads=tmp_path).responder("lead7", "Somos 12 pessoas")
     assert resposta.texto == "Perfeito! Hoje como o time paga as despesas?"
 
 
 def test_texto_antes_da_ferramenta_nao_aparece_quando_ha_texto_depois(tmp_path):
     # Caso real "lumen2": pergunta escrita antes da aprovação + resposta depois da recusa = duas mensagens contraditórias.
-    lead = memoria.carregar("lead8", pasta=tmp_path)
-    lead.faixa = "executivo"
-    memoria.salvar(lead, pasta=tmp_path)
+    _em_andamento(tmp_path, "lead8", faixa="executivo")
     cliente = ClienteFalso([
         _msg([
             TextBlock(text="Qual horário funciona melhor para você hoje: manhã ou tarde?", type="text"),
@@ -89,7 +98,7 @@ def test_texto_antes_da_ferramenta_nao_aparece_quando_ha_texto_depois(tmp_path):
     salvo = memoria.carregar("lead8", pasta=tmp_path)
     textos_salvos = [b["text"] for m in salvo.mensagens if isinstance(m["content"], list) for b in m["content"] if b["type"] == "text"]
     assert textos_salvos == ["Hoje não dá, mas amanhã às 15h está livre: link"]  # o histórico mostra só o que o lead viu
-    assert salvo.mensagens[1]["content"][0]["type"] == "tool_use"
+    assert salvo.mensagens[3]["content"][0]["type"] == "tool_use"
 
 
 def test_confirmacao_inventada_gera_alerta(tmp_path):
@@ -119,6 +128,7 @@ def test_mensagem_longa_no_whatsapp_e_encurtada(tmp_path):
         _msg([TextBlock(text=LONGA, type="text")], "end_turn"),
         _msg([TextBlock(text=curta, type="text")], "end_turn"),  # resposta da chamada de reescrita
     ])
+    _em_andamento(tmp_path, "longo")
     resposta = Agente(client=cliente, pasta_leads=tmp_path).responder("longo", "Me passa uma estimativa")
     assert resposta.texto == curta
     assert cliente.chamadas[1]["messages"] == [{"role": "user", "content": f"<mensagem>\n{LONGA}\n</mensagem>"}]
@@ -133,12 +143,14 @@ def test_reescrita_que_perde_o_link_e_descartada(tmp_path):
         _msg([TextBlock(text=LONGA, type="text")], "end_turn"),
         _msg([TextBlock(text="Paulo, abre a conta pelo app!", type="text")], "end_turn"),  # sumiu o link
     ])
+    _em_andamento(tmp_path, "longo2")
     resposta = Agente(client=cliente, pasta_leads=tmp_path).responder("longo2", "Me passa uma estimativa")
     assert resposta.texto == LONGA
 
 
 def test_email_nao_e_encurtado(tmp_path):
     cliente = ClienteFalso([_msg([TextBlock(text=LONGA, type="text")], "end_turn")])
+    _em_andamento(tmp_path, "email1")
     resposta = Agente(client=cliente, pasta_leads=tmp_path).responder("email1", "Oi", canal="email")
     assert resposta.texto == LONGA
     assert len(cliente.chamadas) == 1
@@ -237,11 +249,22 @@ def test_historico_e_relido_na_mensagem_seguinte(tmp_path):
     assert enviadas[2]["content"] == "Tudo bem?"
 
 
-def test_primeira_mensagem_sem_identificacao_gera_alerta(tmp_path):
-    cliente = ClienteFalso([_msg([TextBlock(text="Oi, tudo bem?", type="text")], "end_turn")])
+def test_primeira_mensagem_sem_identificacao_e_completada_pelo_codigo(tmp_path):
+    # Guardrail G4 garantido em código (achado nos evals: 2 de 20 primeiras mensagens sem "assistente virtual").
+    cliente = ClienteFalso([_msg([TextBlock(text="Oi, tudo bem? Qual o nome da empresa?", type="text")], "end_turn")])
     resposta = Agente(client=cliente, pasta_leads=tmp_path).responder("lead3", "Oi")
-    assert resposta.alertas == ["G4: primeira mensagem sem identificação como assistente virtual"]
-    assert memoria.carregar("lead3", pasta=tmp_path).eventos[-1]["tipo"] == "alerta_guardrail"
+    assert resposta.texto == "Oi, tudo bem? Aqui é o P.H., assistente virtual da BRAX. Qual o nome da empresa?"
+    assert resposta.alertas == []
+    assert memoria.carregar("lead3", pasta=tmp_path).mensagens[-1]["content"][0]["text"] == resposta.texto
+
+
+def test_markdown_em_negrito_sai_do_whatsapp(tmp_path):
+    cliente = ClienteFalso([
+        _msg([TextBlock(text="Oi! Aqui é o P.H., assistente virtual da BRAX. O plano **Start** é gratuito.", type="text")],
+             "end_turn"),
+    ])
+    resposta = Agente(client=cliente, pasta_leads=tmp_path).responder("lead4", "Quanto custa?")
+    assert resposta.texto == "Oi! Aqui é o P.H., assistente virtual da BRAX. O plano Start é gratuito."
 
 
 def test_depois_do_opt_out_o_agente_nao_chama_a_api(tmp_path):
@@ -300,9 +323,7 @@ def test_reescrita_fora_do_papel_e_descartada():
 
 
 def test_despedida_de_lead_roteado_encerra_automaticamente(tmp_path):
-    lead = memoria.carregar("abs", pasta=tmp_path)
-    lead.faixa = "self_service"
-    memoria.salvar(lead, pasta=tmp_path)
+    _em_andamento(tmp_path, "abs", faixa="self_service")
     cliente = ClienteFalso([_msg([TextBlock(text="Abraço, Wesley!", type="text")], "end_turn")])
     agente = Agente(client=cliente, pasta_leads=tmp_path)
     assert agente.responder("abs", "Abs").texto == "Abraço, Wesley!"

@@ -4,6 +4,7 @@ O modelo EXTRAI os dados da conversa; este código DECIDE a faixa (decisão 013)
 Assim a regra é previsível, testável e auditável, e muda num lugar só.
 """
 
+import re
 from dataclasses import dataclass
 
 from brax_sdr import config
@@ -22,6 +23,19 @@ PONTOS_POR_SINAL = {
 }
 PONTOS_DECISOR = 2
 
+# Setores de análise especial (cerebro/vendas/qualificacao.md). O modelo marca setor_especial, e o código confere
+# o texto do setor também (achado nos evals: uma corretora de cripto foi para o executivo).
+_SETOR_ESPECIAL = re.compile(
+    r"cripto|bitcoin|blockchain|\bexchange\b|c[âa]mbio|aposta|\bbets?\b|cassino|jogos? de azar|loteria|"
+    r"bebida|cervej|destilad|vinho|tabaco|cigarr|\bvapes?\b|\barmas?\b|muni[çc][ãa]o|\bongs?\b|igreja|religios|"
+    r"sede (fora|no exterior)",
+    re.IGNORECASE,
+)
+
+
+def setor_e_especial(setor: str | None) -> bool:
+    return bool(setor and _SETOR_ESPECIAL.search(setor))
+
 
 @dataclass(frozen=True)
 class Roteamento:
@@ -39,6 +53,7 @@ def rotear(
     gasto_mensal: float | None = None,
     so_quer_credito: bool = False,
     setor_especial: bool = False,
+    setor: str | None = None,
 ) -> Roteamento:
     """Aplica a tabela de roteamento na ordem definida em qualificacao.md."""
     # 1. Fora do ICP: desqualificar cedo.
@@ -48,7 +63,7 @@ def rotear(
         return Roteamento("fora_do_icp", "so_credito")
 
     # 2. Setor de análise especial: o agente não decide.
-    if setor_especial:
+    if setor_especial or setor_e_especial(setor):
         return Roteamento("humano", "setor_analise_especial")
 
     # 3. Executivo: basta UM dos critérios acima do limite.
@@ -60,7 +75,9 @@ def rotear(
 
     faltando = [
         nome
-        for nome, valor in (("tipo_empresa", tipo_empresa), ("funcionarios", funcionarios), ("gasto_mensal", gasto_mensal))
+        for nome, valor in (
+            ("tipo_empresa", tipo_empresa), ("funcionarios", funcionarios), ("gasto_mensal", gasto_mensal), ("setor", setor)
+        )
         if valor is None
     ]
 
@@ -68,6 +85,9 @@ def rotear(
         # Sem saber o tipo de empresa ainda pode ser MEI/PF: confirmar antes.
         if tipo_empresa is None:
             return Roteamento("dados_insuficientes", "falta: tipo_empresa")
+        # Sem saber o setor, pode ser um setor de análise especial: perguntar o que a empresa faz antes.
+        if setor is None:
+            return Roteamento("dados_insuficientes", "falta: setor")
         return Roteamento("executivo", " e ".join(motivos_executivo))
 
     # 4. Self-service: precisa dos DOIS critérios dentro do limite.

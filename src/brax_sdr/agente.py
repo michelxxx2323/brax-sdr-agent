@@ -21,7 +21,12 @@ from brax_sdr.guardrails import (
 )
 from brax_sdr.crm import sincronizar_com_seguranca
 from brax_sdr.memoria import Lead
-from brax_sdr.mensagens import mensagem_fora_do_icp, mensagem_sem_interesse, mensagem_transferencia
+from brax_sdr.mensagens import (
+    garantir_identificacao,
+    mensagem_fora_do_icp,
+    mensagem_sem_interesse,
+    mensagem_transferencia,
+)
 from brax_sdr.prompt import montar_system
 from brax_sdr.protecao import eh_despedida, pede_humano, verificar_antes_da_api
 
@@ -357,6 +362,16 @@ class Agente:
             aviso = mensagem_transferencia(lead.primeiro_nome(), primeira and not ja_se_apresentou)
             texto_final = f"{aviso} {texto_final}".strip()
             fixar_texto(texto_final)
+
+        if not mensagem_do_codigo and texto_final:
+            ajustado = texto_final
+            if primeira:
+                ajustado = garantir_identificacao(ajustado)  # guardrail G4 (achado nos evals: 2 de 20 sem identificação)
+            if lead.canal == "whatsapp":
+                ajustado = ajustado.replace("**", "")  # o WhatsApp mostraria os asteriscos (evals: cenário de preço)
+            if ajustado != texto_final:
+                texto_final = ajustado
+                fixar_texto(texto_final)
 
         if not mensagem_do_codigo and texto_final and parece_texto_interno(texto_final):
             # Texto interno ("o lead se despediu", nomes de ferramentas) nunca chega ao cliente (decisão 024).

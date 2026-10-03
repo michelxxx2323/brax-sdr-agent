@@ -58,7 +58,7 @@ def test_nao_encerra_lead_que_nao_foi_roteado():
 
 def test_fora_do_assunto_nao_serve_de_atalho_quando_da_para_rotear():
     # Caso real "mei2": o modelo usou "fora_do_assunto" para escapar da exigência de rotear.
-    lead = Lead(id="t", dados={"tipo_empresa": "ltda", "funcionarios": 5, "gasto_mensal": 5000})
+    lead = Lead(id="t", dados={"tipo_empresa": "ltda", "funcionarios": 5, "gasto_mensal": 5000, "setor": "SaaS"})
     saida, erro = executar("encerrar_conversa", {"motivo": "fora_do_assunto"}, lead)
     assert erro is True
     assert "rotear_lead" in saida

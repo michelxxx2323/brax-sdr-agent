@@ -43,8 +43,18 @@ def test_qualificacao_descarta_textos_sem_informacao():
     assert lead.dados == {"empresa": "Nexora"}
 
 
+def test_qualificacao_descarta_nome_generico():
+    # Achado nos evals: nome_contato="Lead" virou "Entendido, Lead!", e a despedida foi bloqueada como texto interno.
+    lead = Lead(id="t")
+    for generico in ("User", "Lead", "usuário", "Cliente"):
+        _executar("registrar_qualificacao", {"nome_contato": generico}, lead)
+    assert "nome_contato" not in lead.dados
+    _executar("registrar_qualificacao", {"nome_contato": "Leandro"}, lead)
+    assert lead.dados["nome_contato"] == "Leandro"
+
+
 def test_rotear_self_service_devolve_link_do_app():
-    lead = Lead(id="t", dados={"tipo_empresa": "ltda", "funcionarios": 6, "gasto_mensal": 8000})
+    lead = Lead(id="t", dados={"tipo_empresa": "ltda", "funcionarios": 6, "gasto_mensal": 8000, "setor": "SaaS"})
     resultado, _ = _executar("rotear_lead", {}, lead)
     assert resultado["faixa"] == "self_service"
     assert resultado["link_app"] == config.LINK_APP

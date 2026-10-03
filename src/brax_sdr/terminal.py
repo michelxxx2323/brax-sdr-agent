@@ -29,7 +29,7 @@ MOTIVOS_DE_SILENCIO = {
     "conversa_encerrada": "conversa encerrada, e esta mensagem é só uma despedida (nenhum token gasto)",
     "limite_diario": "limite de mensagens por dia atingido (nenhum token gasto)",
     "limite_de_custo": "limite de custo deste lead atingido; uma pessoa do time assume (nenhum token gasto)",
-    "atendimento_humano": "uma pessoa do time está atendendo este lead; o P.H. está pausado (no terminal: /devolver)",
+    "atendimento_humano": "uma pessoa do time assumiu a conversa; o P.H. está pausado (no terminal: /devolver)",
 }
 
 

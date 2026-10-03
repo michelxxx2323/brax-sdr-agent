@@ -49,7 +49,14 @@ if config.SLACK_BOT_TOKEN and config.SLACK_APP_TOKEN and config.SLACK_CANAL_APRO
     from slack_bolt import App
     from slack_bolt.adapter.socket_mode import SocketModeHandler
 
-    from brax_sdr.slack_brax import Entregador, SlackBrax, devolver_ao_ph, processar_decisao, registrar_acoes
+    from brax_sdr.slack_brax import (
+        Entregador,
+        SlackBrax,
+        assumir_conversa,
+        devolver_ao_ph,
+        processar_decisao,
+        registrar_acoes,
+    )
 
     app_slack = App(token=config.SLACK_BOT_TOKEN)
     slack = SlackBrax(app_slack.client, crm=crm)
@@ -74,7 +81,13 @@ if slack:
         except Exception as erro:
             print(f"[Slack] ERRO ao devolver {lead_id} ao P.H.: {type(erro).__name__}: {erro}", flush=True)
 
-    registrar_acoes(app_slack, ao_decidir, ao_devolver)
+    def ao_assumir(lead_id: str, usuario: str) -> None:
+        try:
+            print(f"[Slack] {lead_id}: {assumir_conversa(lead_id, usuario, agente, slack)}", flush=True)
+        except Exception as erro:
+            print(f"[Slack] ERRO ao assumir {lead_id}: {type(erro).__name__}: {erro}", flush=True)
+
+    registrar_acoes(app_slack, ao_decidir, ao_devolver, ao_assumir)
     SocketModeHandler(app_slack, config.SLACK_APP_TOKEN).connect()  # conecta em segundo plano
     print(f"  Slack: ligado (canal {config.SLACK_CANAL_APROVACAO})")
 else:

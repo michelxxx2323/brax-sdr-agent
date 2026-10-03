@@ -30,6 +30,8 @@ _FORMATO_DE_REUNIAO = re.compile(
     r"\b(ligar|ligo|liga[çc][ãa]o|telefonema|v[íi]deo|videochamada|presencial|google meet|zoom|teams)\b", re.IGNORECASE
 )
 
+_MENCIONA_HORARIO_COMERCIAL = re.compile(r"hor[áa]rio comercial|\b9h\b", re.IGNORECASE)
+
 # Ferramentas que só registram dados: o texto escrito antes delas continua valendo (decisão 027).
 FERRAMENTAS_SO_DE_REGISTRO = {"registrar_qualificacao"}
 
@@ -209,19 +211,21 @@ class Agente:
             memoria.salvar(lead, pasta=self.pasta_leads)
             return Resposta(texto=None, lead=lead, motivo_silencio="atendimento_humano")
 
-        # Pedido explícito por uma pessoa: o código transfere, sem passar pela IA (guardrail G4, decisão 036).
-        if pede_humano(texto):
-            primeira = not any(m["role"] == "assistant" for m in lead.mensagens)
-            lead.mensagens.append({"role": "user", "content": texto})
+        # Pedido explícito por uma pessoa: o código transfere ANTES de chamar a IA (guardrail G4). Achado no teste do Fabio:
+        # ele pediu duas vezes e o modelo seguiu qualificando. Depois, a IA responde normalmente e continua a
+        # qualificação, para o vendedor chegar preparado (decisão 037).
+        transferido_agora = False
+        if pede_humano(texto) and not lead.transferido_para_vendedor:
             lead.encerrada = False
             executar("transferir_para_humano", {"motivo": "o lead pediu para falar com uma pessoa"}, lead,
                      self.aprovador, self.alerta_humano)
-            resposta_texto = mensagem_transferencia(lead.primeiro_nome(), primeira)
-            lead.mensagens.append({"role": "assistant", "content": resposta_texto})
-            lead.ultima_resposta_em, lead.aguardando_lead = memoria.agora(), False
-            sincronizar_com_seguranca(self.crm, lead)
-            memoria.salvar(lead, pasta=self.pasta_leads)
-            return Resposta(texto=resposta_texto, lead=lead, ferramentas_usadas=["transferir_para_humano"])
+            transferido_agora = True
+        elif lead.transferido_para_vendedor and self.aviso_em_atendimento:
+            # O vendedor acompanha pela thread do alerta tudo o que o lead diz depois da transferência.
+            try:
+                self.aviso_em_atendimento(lead, texto)
+            except Exception as erro:
+                lead.registrar_evento("alerta_humano_erro", str(erro)[:200])
 
         # Proteção de custo e encerramento (decisão 021): decide sem chamar a API.
         protecao = verificar_antes_da_api(lead, texto)
@@ -347,6 +351,12 @@ class Agente:
                 lead.registrar_evento("mensagem_encurtada", f"{len(texto_final)} → {len(curto)} caracteres")
                 fixar_texto(curto)
                 texto_final = curto
+
+        if transferido_agora and not mensagem_do_codigo and not _MENCIONA_HORARIO_COMERCIAL.search(texto_final):
+            # A IA esqueceu de avisar quando o vendedor entra em contato: o código garante a frase (decisão 037).
+            aviso = mensagem_transferencia(lead.primeiro_nome(), primeira)
+            texto_final = f"{aviso} {texto_final}".strip()
+            fixar_texto(texto_final)
 
         if not mensagem_do_codigo and texto_final and parece_texto_interno(texto_final):
             # Texto interno ("o lead se despediu", nomes de ferramentas) nunca chega ao cliente (decisão 024).

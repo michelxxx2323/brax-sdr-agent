@@ -25,14 +25,11 @@ _FORA_DO_ICP = {
 
 
 def mensagem_transferencia(nome: str | None = None, primeira_mensagem: bool = False) -> str:
-    """Resposta quando o lead pede uma pessoa (o código transfere, sem passar pela IA: decisão 036)."""
+    """Aviso de transferência, usado quando a resposta da IA não diz quando o vendedor entra em contato (decisão 037)."""
     abertura = f"Claro, {nome}!" if nome else "Claro!"
     if primeira_mensagem:  # guardrail G4: identificar-se na primeira mensagem
         abertura += " Aqui é o P.H., assistente virtual da BRAX."
-    return (
-        f"{abertura} Vou chamar uma pessoa do nosso time para continuar a conversa com você por aqui, "
-        "em horário comercial (seg a sex, 9h às 18h)."
-    )
+    return f"{abertura} Um vendedor do nosso time vai entrar em contato com você em horário comercial (seg a sex, 9h às 18h)."
 
 
 def mensagem_sem_interesse(nome: str | None = None, empresa: str | None = None) -> str:

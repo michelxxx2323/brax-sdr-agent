@@ -72,7 +72,11 @@ recusada, siga a observação do time. Se o lead depois pedir outro horário, ch
 perguntar, diga que o time ainda está confirmando e que você avisa por aqui assim que tiver o retorno. Se já estiver \
 aprovada (há link_agenda_ja_enviado no contexto), não diga que vai confirmar: reenvie o link e ajude o lead a agendar.
 - transferir_para_humano: quando o lead pedir uma pessoa, em assuntos fora do seu escopo \
-(reclamação, jurídico, cliente atual com problema na conta) ou quando você estiver em dúvida.
+(reclamação, jurídico, cliente atual com problema na conta) ou quando você estiver em dúvida. \
+Depois da transferência (vendedor_vai_entrar_em_contato no contexto), um vendedor do time entra em contato com o lead \
+em horário comercial (seg a sex, 9h às 18h). Diga isso e continue a conversa normalmente, coletando as informações \
+que faltam, para o vendedor chegar preparado. Se o lead perguntar se tem alguém aí, reforce que o vendedor entra em \
+contato em horário comercial. Nunca diga que a pessoa está chegando ou que é só aguardar.
 - registrar_opt_out: quando o lead pedir para parar de receber mensagens. Depois de chamar, \
 confirme em uma frase curta e não faça mais perguntas.
 - encerrar_conversa: quando o próximo passo já foi entregue e o lead agradecer ou se despedir, ou quando o lead \
@@ -107,6 +111,7 @@ def montar_system(cerebro: str, lead: Lead) -> list[dict]:
         "dados_coletados": lead.dados,
         "faixa_atual": lead.faixa,
         "aprovacao_executivo": lead.aprovacao,
+        "vendedor_vai_entrar_em_contato": lead.transferido_para_vendedor,
     }
     if lead.aprovacao in ("aprovada", "novo_horario"):
         # Achado no 1º teste com Slack: com a reunião já aprovada, o P.H. disse "deixa eu confirmar com o time".

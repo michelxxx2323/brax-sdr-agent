@@ -240,20 +240,25 @@ def _solicitar_aprovacao(lead: Lead, entrada: dict, aprovador: Aprovador | None)
     return resposta
 
 
+PROXIMO_PASSO_TRANSFERENCIA = (
+    "Diga que um vendedor do nosso time vai entrar em contato em horário comercial (seg a sex, 9h às 18h). "
+    "Para ele chegar preparado, continue a qualificação com a próxima pergunta que falta. "
+    "Nunca diga que a pessoa está chegando nem que é só aguardar."
+)
+
+
 def _transferir_para_humano(lead: Lead, entrada: dict, alerta_humano: AlertaHumano | None) -> dict:
+    """Passa o lead a um vendedor, que entra em contato em horário comercial; o P.H. segue coletando (decisão 037)."""
+    if lead.transferido_para_vendedor:
+        return {"ok": True, "ja_transferido": True, "proximo_passo": PROXIMO_PASSO_TRANSFERENCIA}  # um alerta só
+    lead.transferido_para_vendedor = True
     lead.registrar_evento("transferencia_humano", entrada["motivo"])
-    # Pausa o P.H. para este lead (decisão 036): achado no teste do Diego, o P.H. seguiu respondendo depois de
-    # transferir, e na vida real falaria ao mesmo tempo que a pessoa do time.
-    lead.atendimento_humano = True
     if alerta_humano:
         try:
-            alerta_humano(lead, entrada["motivo"])  # Slack: alguém do time assume (decisão 034)
+            alerta_humano(lead, entrada["motivo"])  # Slack: alerta com o botão "Assumir conversa"
         except Exception as erro:
             lead.registrar_evento("alerta_humano_erro", str(erro)[:200])
-    return {
-        "ok": True,
-        "proximo_passo": "Avise que uma pessoa do time vai continuar a conversa em horário comercial (seg a sex, 9h às 18h).",
-    }
+    return {"ok": True, "proximo_passo": PROXIMO_PASSO_TRANSFERENCIA}
 
 
 def _registrar_opt_out(lead: Lead) -> dict:

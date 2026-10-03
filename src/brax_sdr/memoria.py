@@ -40,7 +40,9 @@ class Lead:
     email_contexto: dict = field(default_factory=dict)  # thread e cabeçalhos para responder na mesma conversa
     crm: dict = field(default_factory=dict)  # ids no HubSpot e estado da sincronização (decisão 033)
     slack: dict = field(default_factory=dict)  # mensagem de aprovação no Slack (canal, ts) e resumo (decisão 034)
-    atendimento_humano: bool = False  # transferido para uma pessoa: o P.H. fica pausado até ser devolvido (decisão 036)
+    # Transferência (decisão 037): o vendedor entra em contato em horário comercial e o P.H. segue coletando informações.
+    transferido_para_vendedor: bool = False
+    atendimento_humano: bool = False  # alguém do time assumiu a conversa no chat: o P.H. fica pausado até ser devolvido
     eventos: list[dict] = field(default_factory=list)
     criado_em: str = field(default_factory=agora)
     atualizado_em: str = field(default_factory=agora)

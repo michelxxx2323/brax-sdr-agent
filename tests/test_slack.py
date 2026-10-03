@@ -255,64 +255,66 @@ def test_resumo_recebe_a_disponibilidade_mais_recente():
     assert pedido["model"] == config.MODELO_AVANCADO and pedido["thinking"] == {"type": "disabled"}
 
 
-# --- Pausa do P.H. durante o atendimento humano (decisão 036) ---
+# --- Transferência: vendedor em horário comercial, P.H. segue coletando (decisão 037) ---
 
-def test_transferencia_pausa_o_ph_e_mensagens_seguintes_vao_para_a_thread(tmp_path):
-    # Caso real do Diego: depois de transferir, o P.H. seguiu respondendo ("Tranquilo! A gente se fala em breve").
-    from anthropic.types import ToolUseBlock
+def _agente_com_slack(tmp_path, textos):
+    slack_falso = SlackFalso()
+    slack = _slack(slack_falso)
+    agente = Agente(client=ClaudeFalso(textos), pasta_leads=tmp_path, alerta_humano=slack.alerta_humano,
+                    aviso_em_atendimento=slack.mensagem_em_atendimento)
+    return agente, slack_falso, slack
+
+
+def test_depois_da_transferencia_o_ph_segue_coletando_e_o_vendedor_acompanha(tmp_path):
+    # Regra do dono do projeto: na transferência, o P.H. avisa que o vendedor entra em contato em horário comercial
+    # e continua coletando informações; nunca "é só aguardar que ela chega" (teste da Gabi).
+    agente, slack_falso, _ = _agente_com_slack(tmp_path, [
+        "Claro! Um vendedor do nosso time entra em contato em horário comercial (seg a sex, 9h às 18h). "
+        "Para ele chegar preparado: qual o nome da empresa?",
+        "Anotado! E quantas pessoas trabalham na Toddo?",
+    ])
+    agente.responder(TELEFONE, "Quero falar com uma pessoa")
+    salvo = memoria.carregar(TELEFONE, pasta=tmp_path)
+    assert salvo.transferido_para_vendedor is True and salvo.atendimento_humano is False  # sem pausa
+    assert slack_falso.postadas[0]["blocks"][-1]["elements"][0]["action_id"] == "brax_assumir"
+
+    resposta = agente.responder(TELEFONE, "É a Toddo")
+    assert resposta.texto == "Anotado! E quantas pessoas trabalham na Toddo?"  # o P.H. continua a qualificação
+    assert slack_falso.postadas[1]["thread_ts"] == "1700.1" and "É a Toddo" in slack_falso.postadas[1]["text"]
+    assert '"vendedor_vai_entrar_em_contato": true' in agente.client.chamadas[1]["system"][1]["text"]
+
+
+def test_assumir_pausa_e_devolver_despausa(tmp_path):
+    from brax_sdr.slack_brax import assumir_conversa, devolver_ao_ph
 
     slack_falso = SlackFalso()
     slack = _slack(slack_falso)
-    cliente = ClaudeFalso([])
-    cliente.textos = None
-    respostas = [
-        Message(id="a", type="message", role="assistant", model="claude-haiku-4-5", stop_reason="tool_use", stop_sequence=None,
-                usage=Usage(input_tokens=1, output_tokens=1),
-                content=[ToolUseBlock(type="tool_use", id="t1", name="transferir_para_humano", input={"motivo": "pediu uma pessoa"})]),
-        Message(id="b", type="message", role="assistant", model="claude-haiku-4-5", stop_reason="end_turn", stop_sequence=None,
-                usage=Usage(input_tokens=1, output_tokens=1),
-                content=[TextBlock(type="text", text="Uma pessoa do time vai continuar a conversa com você.")]),
-    ]
-    cliente.create = lambda **kwargs: (cliente.chamadas.append(kwargs), respostas.pop(0))[1]
-    agente = Agente(client=cliente, pasta_leads=tmp_path, alerta_humano=slack.alerta_humano,
-                    aviso_em_atendimento=slack.mensagem_em_atendimento)
-    lead = memoria.carregar(TELEFONE, pasta=tmp_path)
-    lead.mensagens = [{"role": "user", "content": "oi"}, {"role": "assistant", "content": "Oi! Sou o P.H., assistente virtual."}]
-    memoria.salvar(lead, pasta=tmp_path)
+    lead_pendente(tmp_path, transferido_para_vendedor=True,
+                  slack={"alerta": {"canal": "C123", "ts": "1700.9", "motivo": "pediu uma pessoa"}})
+    agente = Agente(client=ClaudeFalso([]), pasta_leads=tmp_path, aviso_em_atendimento=slack.mensagem_em_atendimento)
 
-    agente.responder(TELEFONE, "Quero falar com uma pessoa real")
-    salvo = memoria.carregar(TELEFONE, pasta=tmp_path)
-    assert salvo.atendimento_humano is True
-    assert salvo.slack["alerta"]["ts"] == "1700.1"
-    assert slack_falso.postadas[0]["blocks"][-1]["elements"][0]["action_id"] == "brax_devolver"
+    assert assumir_conversa(TELEFONE, "U1", agente, slack) == "assumida (P.H. pausado)"
+    assert slack_falso.atualizadas[0]["blocks"][-1]["elements"][0]["action_id"] == "brax_devolver"
+    resposta = agente.responder(TELEFONE, "Alguém aí?")
+    assert resposta.motivo_silencio == "atendimento_humano" and agente.client.chamadas == []  # pausado: a IA não fala
+    assert slack_falso.postadas[-1]["thread_ts"] == "1700.9"
 
-    chamadas_antes = len(cliente.chamadas)
-    resposta = agente.responder(TELEFONE, "Ok, aguardo")
-    assert resposta.texto is None and resposta.motivo_silencio == "atendimento_humano"
-    assert len(cliente.chamadas) == chamadas_antes  # a IA não é chamada durante a pausa
-    assert slack_falso.postadas[1]["thread_ts"] == "1700.1" and "Ok, aguardo" in slack_falso.postadas[1]["text"]
-    assert memoria.carregar(TELEFONE, pasta=tmp_path).mensagens[-1] == {"role": "user", "content": "Ok, aguardo"}
-
-
-def test_devolver_ao_ph_despausa_e_atualiza_o_alerta(tmp_path):
-    from brax_sdr.slack_brax import devolver_ao_ph
-
-    slack_falso = SlackFalso()
-    lead_pendente(tmp_path, atendimento_humano=True, slack={"alerta": {"canal": "C123", "ts": "1700.9", "motivo": "pediu uma pessoa"}})
-    agente = Agente(client=ClaudeFalso([]), pasta_leads=tmp_path)
-    assert devolver_ao_ph(TELEFONE, "U1", agente, _slack(slack_falso)) == "devolvido ao P.H."
+    assert devolver_ao_ph(TELEFONE, "U1", agente, slack) == "devolvido ao P.H."
     assert memoria.carregar(TELEFONE, pasta=tmp_path).atendimento_humano is False
-    assert "Devolvido ao P.H." in slack_falso.atualizadas[0]["blocks"][-1]["elements"][0]["text"]
-    assert devolver_ao_ph(TELEFONE, "U2", agente, _slack(slack_falso)) == "já estava com o P.H."
+    assert "Devolvido ao P.H." in slack_falso.atualizadas[-1]["blocks"][1]["elements"][0]["text"]
+    assert devolver_ao_ph(TELEFONE, "U2", agente, slack) == "já estava com o P.H."
 
 
-def test_botao_devolver_chama_a_funcao_certa():
-    from brax_sdr.slack_brax import ACAO_DEVOLVER
+def test_botoes_assumir_e_devolver_chamam_a_funcao_certa():
+    from brax_sdr.slack_brax import ACAO_ASSUMIR, ACAO_DEVOLVER
 
-    app, devolvidos = AppFalso(), []
-    registrar_acoes(app, lambda *args: None, lambda *args: devolvidos.append(args))
-    app.acoes[ACAO_DEVOLVER](ack=lambda: None, body={"actions": [{"value": TELEFONE}], "user": {"id": "U1"}})
-    assert devolvidos == [(TELEFONE, "U1")]
+    app, chamados = AppFalso(), []
+    registrar_acoes(app, lambda *args: None, lambda *args: chamados.append(("devolver", *args)),
+                    lambda *args: chamados.append(("assumir", *args)))
+    corpo = {"actions": [{"value": TELEFONE}], "user": {"id": "U1"}}
+    app.acoes[ACAO_ASSUMIR](ack=lambda: None, body=corpo)
+    app.acoes[ACAO_DEVOLVER](ack=lambda: None, body=corpo)
+    assert chamados == [("assumir", TELEFONE, "U1"), ("devolver", TELEFONE, "U1")]
 
 
 def test_followup_nao_envia_lembrete_durante_atendimento_humano():
@@ -328,20 +330,28 @@ def test_followup_nao_envia_lembrete_durante_atendimento_humano():
 
 # --- Achados do teste do Fabio ---
 
-def test_pedido_por_uma_pessoa_transfere_sem_passar_pela_ia(tmp_path):
-    # Caso real: "Oi quero falar com uma pessoa" (duas vezes) e o modelo seguiu qualificando.
-    slack_falso = SlackFalso()
-    slack = _slack(slack_falso)
-    cliente = ClaudeFalso([])
-    agente = Agente(client=cliente, pasta_leads=tmp_path, alerta_humano=slack.alerta_humano,
-                    aviso_em_atendimento=slack.mensagem_em_atendimento)
+def test_pedido_por_uma_pessoa_sempre_transfere_e_o_horario_comercial_e_garantido(tmp_path):
+    # Caso real: "Oi quero falar com uma pessoa" (duas vezes) e o modelo seguiu qualificando sem transferir.
+    agente, slack_falso, _ = _agente_com_slack(tmp_path, [
+        "Oi, Fabio! Aqui é o P.H., assistente virtual da BRAX. Qual o nome da empresa?",  # a IA esqueceu o aviso
+    ])
     resposta = agente.responder("5511900000007", "Oi quero falar com uma pessoa")
-    assert cliente.chamadas == []  # a IA nem é chamada
-    assert resposta.texto.startswith("Claro! Aqui é o P.H., assistente virtual da BRAX.")  # 1ª mensagem: G4
-    assert "pessoa do nosso time" in resposta.texto
     salvo = memoria.carregar("5511900000007", pasta=tmp_path)
-    assert salvo.atendimento_humano is True and slack_falso.postadas[0]["blocks"][-1]["elements"][0]["action_id"] == "brax_devolver"
-    assert agente.responder("5511900000007", "Alguém aí?").motivo_silencio == "atendimento_humano"
+    assert salvo.transferido_para_vendedor is True  # o código transferiu, independentemente da IA
+    assert len(slack_falso.postadas) == 1  # alerta no Slack
+    assert resposta.texto.startswith("Claro! Aqui é o P.H., assistente virtual da BRAX. Um vendedor do nosso time")
+    assert "horário comercial" in resposta.texto and resposta.texto.endswith("Qual o nome da empresa?")
+
+
+def test_segundo_pedido_nao_gera_segundo_alerta(tmp_path):
+    agente, slack_falso, _ = _agente_com_slack(tmp_path, [
+        "Claro! Um vendedor entra em contato em horário comercial (seg a sex, 9h às 18h). Qual o nome da empresa?",
+        "Já avisei o time: o vendedor entra em contato em horário comercial. Qual o nome da empresa?",
+    ])
+    agente.responder(TELEFONE, "quero falar com uma pessoa")
+    agente.responder(TELEFONE, "quero falar com uma pessoa!!")
+    alertas = [p for p in slack_falso.postadas if "thread_ts" not in p]
+    assert len(alertas) == 1
 
 
 @pytest.mark.parametrize("frase", ["Prefiro falar com uma pessoa", "me passa pra um atendente", "não quero falar com robô"])

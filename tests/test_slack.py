@@ -208,3 +208,37 @@ def test_botoes_e_janela_chamam_a_decisao_certa():
         (TELEFONE, "recusada", "indicar o app", "U1"),
         (TELEFONE, "novo_horario", "terça às 10h", "U1"),
     ]
+
+
+# --- Achados do 1º teste real com Slack ---
+
+def test_simulador_mostra_mensagem_proativa_sem_o_lead_escrever(tmp_path, monkeypatch, capsys):
+    # O retorno da aprovação chega sem o lead ter escrito nada: antes, o simulador nunca o mostrava.
+    from brax_sdr import simulador_whatsapp
+
+    monkeypatch.setattr(config, "PASTA_WHATSAPP", tmp_path)
+    envio = EnvioSimulado(pasta=tmp_path)
+    envio.enviar(TELEFONE, "mensagem antiga")
+    caixa = simulador_whatsapp.CaixaDeEntrada(TELEFONE)
+    envio.enviar("5511999999999", "para outro lead")
+    envio.enviar(TELEFONE, f"Boa notícia, Bruno! Escolha o horário: {config.LINK_AGENDA_EXECUTIVO}")
+    caixa.conferir()
+    saida = capsys.readouterr().out
+    assert "Boa notícia, Bruno!" in saida
+    assert "mensagem antiga" not in saida and "para outro lead" not in saida
+    assert caixa.chegou.is_set()
+
+
+def test_contexto_mostra_o_link_quando_a_reuniao_ja_foi_aprovada():
+    from brax_sdr.prompt import montar_system
+
+    contexto = montar_system("C", Lead(id="x", aprovacao="aprovada"))[1]["text"]
+    assert config.LINK_AGENDA_EXECUTIVO in contexto and "link_agenda_ja_enviado" in contexto
+    assert "link_agenda_ja_enviado" not in montar_system("C", Lead(id="x", aprovacao="pendente"))[1]["text"]
+
+
+def test_deixa_eu_confirmar_sem_ferramenta_gera_alerta():
+    from brax_sdr.guardrails import checar_confiabilidade
+
+    frase = "Opa, Bruno! Deixa eu confirmar com o time se quinta à tarde ainda tá disponível. Já retorno por aqui!"
+    assert checar_confiabilidade(frase, []) == ["Confiabilidade: promete uma ação para depois sem ter chamado nenhuma ferramenta"]

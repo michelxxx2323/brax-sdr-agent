@@ -50,7 +50,9 @@ _AFIRMA_CONFIRMACAO = re.compile(
 )
 _TEXTO_DE_EXEMPLO = re.compile(r"\[[^\]]{0,60}\b(link|url|inserir|nome)\b[^\]]{0,60}\]", re.IGNORECASE)
 _PROMETE_ACAO_FUTURA = re.compile(
-    r"\bvou (confirmar|verificar|checar|consultar)\b|\bum momentinho\b|\bte (mando|envio|passo)\b[^.\n]{0,40}\bem seguida\b",
+    r"\bvou (confirmar|verificar|checar|consultar)\b|\bum momentinho\b|\bte (mando|envio|passo)\b[^.\n]{0,40}\bem seguida\b"
+    # Achado no 1º teste com Slack: "Deixa eu confirmar com o time... Já retorno por aqui!" com a reunião já aprovada.
+    r"|\bdeixa eu (confirmar|verificar|checar|ver)\b|\bj[áa] (te )?retorno\b",
     re.IGNORECASE,
 )
 

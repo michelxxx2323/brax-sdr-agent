@@ -7,6 +7,7 @@ São dois blocos:
 
 import json
 
+from brax_sdr import config
 from brax_sdr.memoria import Lead
 
 INSTRUCOES = """\
@@ -67,6 +68,9 @@ Na resposta em que ele informar a disponibilidade, chame esta ferramenta com um 
 do lead) e responda conforme o resultado: aprovada, envie o link de agenda; novo_horario, ofereça o horário \
 sugerido pelo time e envie o link na mesma mensagem; pendente, diga que vai confirmar e retorna; \
 recusada, siga a observação do time. Se o lead depois pedir outro horário, chame a ferramenta de novo.
+- A aprovação pode chegar depois, pelo time: o contexto do lead mostra a situação atual. Se estiver "pendente" e o lead \
+perguntar, diga que o time ainda está confirmando e que você avisa por aqui assim que tiver o retorno. Se já estiver \
+aprovada (há link_agenda_ja_enviado no contexto), não diga que vai confirmar: reenvie o link e ajude o lead a agendar.
 - transferir_para_humano: quando o lead pedir uma pessoa, em assuntos fora do seu escopo \
 (reclamação, jurídico, cliente atual com problema na conta) ou quando você estiver em dúvida.
 - registrar_opt_out: quando o lead pedir para parar de receber mensagens. Depois de chamar, \
@@ -104,6 +108,9 @@ def montar_system(cerebro: str, lead: Lead) -> list[dict]:
         "faixa_atual": lead.faixa,
         "aprovacao_executivo": lead.aprovacao,
     }
+    if lead.aprovacao in ("aprovada", "novo_horario"):
+        # Achado no 1º teste com Slack: com a reunião já aprovada, o P.H. disse "deixa eu confirmar com o time".
+        contexto["link_agenda_ja_enviado"] = config.LINK_AGENDA_EXECUTIVO
     return [
         {"type": "text", "text": fixo, "cache_control": {"type": "ephemeral"}},
         {

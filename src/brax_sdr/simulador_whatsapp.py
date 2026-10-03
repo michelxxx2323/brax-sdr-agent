@@ -7,6 +7,7 @@ envia ao servidor e mostra a resposta do P.H., lida do arquivo de saída do modo
 import argparse
 import json
 import sys
+import threading
 import time
 import uuid
 
@@ -50,14 +51,36 @@ def _linhas_de_saida() -> list[dict]:
     return [json.loads(linha) for linha in arquivo.read_text(encoding="utf-8").splitlines() if linha.strip()]
 
 
-def esperar_resposta(telefone: str, ja_vistas: int, limite_segundos: int = 120) -> dict | None:
-    inicio = time.monotonic()
-    while time.monotonic() - inicio < limite_segundos:
-        novas = [linha for linha in _linhas_de_saida()[ja_vistas:] if linha["para"] == telefone]
-        if novas:
-            return novas[0]
-        time.sleep(0.5)
-    return None
+class CaixaDeEntrada:
+    """Vigia as mensagens do P.H. para este lead e mostra na hora, inclusive as que ele manda por iniciativa própria
+    (retorno da aprovação no Slack, follow-up). Achado no 1º teste com Slack: o simulador só olhava logo depois de o
+    lead escrever, e o retorno da aprovação nunca apareceu."""
+
+    def __init__(self, telefone: str):
+        self.telefone = telefone
+        self.vistas = len(_linhas_de_saida())  # mensagens antigas não são mostradas de novo
+        self.chegou = threading.Event()
+
+    def _mostrar(self, linha: dict) -> None:
+        if linha["texto"] is None:
+            motivo = linha.get("motivo")
+            print(f"\n[O P.H. não responde: {MOTIVOS_DE_SILENCIO.get(motivo, motivo)}]\n")
+        else:
+            print(f"\nP.H.: {linha['texto']}\n")
+        print("Você (lead): ", end="", flush=True)
+
+    def conferir(self) -> None:
+        linhas = _linhas_de_saida()
+        novas, self.vistas = linhas[self.vistas:], len(linhas)
+        for linha in novas:
+            if linha["para"] == self.telefone:
+                self._mostrar(linha)
+                self.chegou.set()
+
+    def vigiar(self) -> None:
+        while True:
+            self.conferir()
+            time.sleep(0.5)
 
 
 def main() -> None:
@@ -80,6 +103,8 @@ def main() -> None:
 
     print(f"WhatsApp simulado | lead: {args.nome} ({args.telefone}) | servidor: {args.url}")
     print(AJUDA + "\n")
+    caixa = CaixaDeEntrada(args.telefone)
+    threading.Thread(target=caixa.vigiar, daemon=True).start()
     ultimo_aviso = None
     while True:
         try:
@@ -109,7 +134,7 @@ def main() -> None:
         else:
             aviso = montar_aviso(args.telefone, args.nome, "text", {"body": texto})
 
-        ja_vistas = len(_linhas_de_saida())
+        caixa.chegou.clear()
         status = enviar_aviso(args.url, aviso)
         if status != 200:
             print(f"O servidor recusou o aviso (HTTP {status}).\n")
@@ -119,11 +144,7 @@ def main() -> None:
             time.sleep(2)
             print("(confira no terminal do servidor: \"aviso repetido ignorado\")\n")
             continue
-        resposta = esperar_resposta(args.telefone, ja_vistas)
-        if resposta is None:
-            print("(sem resposta em 2 minutos: veja o terminal do servidor; pode haver uma aprovação esperando por você lá)\n")
-        elif resposta["texto"] is None:
-            motivo = resposta.get("motivo")
-            print(f"[O P.H. não responde: {MOTIVOS_DE_SILENCIO.get(motivo, motivo)}]\n")
-        else:
-            print(f"\nP.H.: {resposta['texto']}\n")
+        # Espera a resposta antes de pedir a próxima mensagem; mensagens que chegarem depois aparecem sozinhas.
+        if not caixa.chegou.wait(timeout=120):
+            print("(ainda sem resposta: veja o terminal do servidor. Se houver aprovação pendente no Slack, "
+                  "o retorno aparece aqui assim que alguém clicar.)\n")

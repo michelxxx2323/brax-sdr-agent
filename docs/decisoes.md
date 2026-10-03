@@ -12,7 +12,7 @@
 | 004 | WhatsApp somente pela API oficial da Meta | Aceita | 2026-09-24 |
 | 005 | Supabase para dados e memória | Aceita | 2026-09-24 |
 | 006 | HubSpot gratuito como CRM | Aceita | 2026-09-24 |
-| 007 | Hospedagem só na fase de canais | Aceita (e-mail sem hospedagem: 025) | 2026-09-24 |
+| 007 | Hospedagem só na fase de canais | Substituída pela 031 (e-mail sem hospedagem: 025) | 2026-09-24 |
 | 008 | Cérebro em Markdown versionado no repositório | Aceita | 2026-09-24 |
 | 009 | Aprovação humana no Slack antes de agendar com executivo | Aceita | 2026-09-24 |
 | 010 | Roteamento por faixas como hipótese a calibrar | Aceita | 2026-09-24 |
@@ -36,6 +36,7 @@
 | 028 | Follow-up com lembretes padronizados, regras em código | Aceita | 2026-10-02 |
 | 029 | "Sem interesse" como desfecho próprio, com despedida padronizada | Aceita | 2026-10-02 |
 | 030 | WhatsApp validado com um simulador da Meta, sem número de telefone | Aceita | 2026-10-02 |
+| 031 | Hospedagem depois da Fase 5 (Slack e HubSpot) | Aceita | 2026-10-02 |
 
 ---
 
@@ -582,3 +583,22 @@ hospedagem (4b), apontando para o endereço público.
 **Follow-up no WhatsApp: adiado.** Fora da janela de 24 horas após a última mensagem do lead, a Meta só permite modelos de
 mensagem pré-aprovados. O desenho fica para depois: dois modelos aprovados (equivalentes aos textos da decisão 028), com o
 envio usando o modelo em vez de texto livre quando a janela estiver fechada.
+
+---
+
+## 031: Hospedagem depois da Fase 5 (Slack e HubSpot)
+
+**Contexto:** o plano previa hospedar o projeto na Fase 4. Mas a aprovação de leads para o executivo ainda acontece no
+terminal. Num servidor, não há terminal: todo lead de executivo ficaria "pendente", e o P.H. prometeria um retorno que
+ninguém faria, o tipo de promessa vazia corrigido na Fase 2. Além disso, os testes de WhatsApp são feitos sem número
+(decisão 030), então hospedar agora não traria uso prático novo.
+
+**Opções consideradas:**
+1. Hospedar agora, com um paliativo para aprovar manualmente.
+2. Fazer a Fase 5 (aprovação no Slack e registro no HubSpot) no computador e hospedar depois, com tudo integrado.
+
+**Decisão:** opção 2. A Fase 4 foi concluída com o WhatsApp validado no modo simulado; a hospedagem (com a memória no
+Supabase) vira a etapa 5b.
+
+**Motivo:** evita construir um paliativo que seria jogado fora e garante que, quando o projeto estiver no ar, todos os
+caminhos do fluxo funcionem, inclusive o que depende de uma pessoa do time.

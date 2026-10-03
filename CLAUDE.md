@@ -53,7 +53,7 @@ Detalhes: `docs/arquitetura.md`. Decisões: `docs/decisoes.md`.
   - Confirmar os IDs na documentação oficial da Anthropic antes de usar.
 - WhatsApp **somente** pela API oficial da Meta (Cloud API, número de teste). Nunca APIs não oficiais.
 - Supabase (gratuito) para leads, conversas e memória. HubSpot (gratuito) como CRM. Slack para aprovação humana.
-- Hospedagem (Railway ou Render) só na fase de canais.
+- Hospedagem (Railway ou Render) + Supabase: depois da Fase 5, com tudo integrado (decisão 031).
 
 ## Cérebro (base de conhecimento)
 
@@ -79,8 +79,9 @@ Texto completo: `cerebro/regras/guardrails.md`.
 2. **Agente no terminal**: ✅ concluída e aprovada (13 testes reais em `docs/validacao-fase2.md`)
    Pendências anotadas para a Fase 6 na seção "Melhorias futuras" do diário.
 3. **Canal e-mail**: ✅ concluída e aprovada (Gmail API + follow-up; testes em `docs/validacao-fase3.md`)
-4. Canal WhatsApp (número de teste da Meta)
-5. CRM e aprovação humana (HubSpot + Slack)
+4. **Canal WhatsApp**: ✅ concluída e aprovada (webhook + simulador da Meta, sem número; `docs/validacao-fase4.md`)
+5. CRM e aprovação humana (HubSpot + Slack) ← próxima
+5b. Hospedagem + Supabase (movida para depois da Fase 5, decisão 031)
 6. Evals e métricas (LLM como juiz + painel de taxa de qualificação)
 
 ## Ambiente local
@@ -93,3 +94,4 @@ Texto completo: `cerebro/regras/guardrails.md`.
 - E-mail: `.venv\Scripts\python.exe atender_email.py` (autorização: `autorizar_gmail.py`, expira em 7 dias em modo de teste).
   Lembrete: o programa lê o `.env` só ao iniciar; reinicie depois de mudar o `.env` ou o código.
 - Decisões de desenho do código: o modelo extrai dados, o código decide a faixa (013); laço manual de ferramentas (015); guardrails em camadas (017); identificação curta e humano sob demanda (020); proteção de custo e encerramento antes da API (021).
+- WhatsApp (simulado): terminal 1 `.venv\Scripts\python.exe servidor_whatsapp.py`; terminal 2 `.venv\Scripts\python.exe simular_whatsapp.py`.

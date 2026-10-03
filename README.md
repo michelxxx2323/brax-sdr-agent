@@ -3,9 +3,10 @@
 > Um agente de IA que faz pré-vendas (SDR) inbound por WhatsApp e e-mail para uma fintech B2B,
 > qualificando leads, roteando para o canal certo e registrando tudo no CRM.
 
-**Status:** 🟢 Fases 1 a 3 concluídas: o P.H. qualifica e roteia leads no terminal e **por e-mail** (Gmail, com
-follow-up automático), validado com a API real ([Fase 2](docs/validacao-fase2.md), [Fase 3](docs/validacao-fase3.md)).
-Próxima: Fase 4 (WhatsApp).
+**Status:** 🟢 Fases 1 a 4 concluídas: o P.H. qualifica e roteia leads no terminal, **por e-mail** (Gmail, com
+follow-up automático) e **por WhatsApp** (webhook validado com um simulador da Meta), testado com a API real
+([Fase 2](docs/validacao-fase2.md), [Fase 3](docs/validacao-fase3.md), [Fase 4](docs/validacao-fase4.md)).
+Próxima: Fase 5 (HubSpot + aprovação no Slack). A hospedagem vem depois dela (decisão 031).
 
 > ⚠️ **A BRAX é uma empresa fictícia**, criada para este case e **inspirada na [Brex](https://www.brex.com/)**.
 > Nome, planos, preços e funcionalidades são inventados. Não há relação com a Brex nem com nenhuma empresa real.
@@ -80,8 +81,9 @@ e, na dúvida, passa para um humano. Ver [cerebro/regras/guardrails.md](cerebro/
 | 1 | Fundação | Estrutura, documentação e cérebro | ✅ Concluída |
 | 2 | Agente no terminal | Conversar com o P.H. no terminal como se fosse um lead | ✅ Concluída |
 | 3 | Canal e-mail | Gmail API, resposta na mesma thread e follow-up | ✅ Concluída |
-| 4 | Canal WhatsApp | Meta Cloud API (número de teste) | ⚪ |
-| 5 | CRM e aprovação humana | HubSpot + Slack | ⚪ |
+| 4 | Canal WhatsApp | Webhook da Meta Cloud API, validado com simulador (decisão 030) | ✅ Concluída |
+| 5 | CRM e aprovação humana | HubSpot + Slack | ⚪ Próxima |
+| 5b | Hospedagem | Railway ou Render + Supabase, com tudo integrado (decisão 031) | ⚪ |
 | 6 | Evals e métricas | Conversas de teste com LLM como juiz e painel de taxa de qualificação | ⚪ |
 
 ## Como rodar (Windows)

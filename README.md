@@ -3,10 +3,12 @@
 > Um agente de IA que faz pré-vendas (SDR) inbound por WhatsApp e e-mail para uma fintech B2B,
 > qualificando leads, roteando para o canal certo e registrando tudo no CRM.
 
-**Status:** 🟢 Fases 1 a 4 concluídas: o P.H. qualifica e roteia leads no terminal, **por e-mail** (Gmail, com
+**Status:** 🟢 Fases 1 a 5 concluídas: o P.H. qualifica e roteia leads no terminal, **por e-mail** (Gmail, com
 follow-up automático) e **por WhatsApp** (webhook validado com um simulador da Meta), testado com a API real
-([Fase 2](docs/validacao-fase2.md), [Fase 3](docs/validacao-fase3.md), [Fase 4](docs/validacao-fase4.md)).
-Próxima: Fase 5 (HubSpot + aprovação no Slack). A hospedagem vem depois dela (decisão 031).
+([Fase 2](docs/validacao-fase2.md), [Fase 3](docs/validacao-fase3.md), [Fase 4](docs/validacao-fase4.md),
+[Fase 5](docs/validacao-fase5.md)). Tudo cai no **HubSpot** (contato, empresa e negócio no funil "BRAX Inbound"), e as
+decisões humanas acontecem no **Slack** (aprovação de executivo com botões e alertas de transferência).
+Próxima: 5b (hospedagem + Supabase).
 
 > ⚠️ **A BRAX é uma empresa fictícia**, criada para este case e **inspirada na [Brex](https://www.brex.com/)**.
 > Nome, planos, preços e funcionalidades são inventados. Não há relação com a Brex nem com nenhuma empresa real.
@@ -82,8 +84,8 @@ e, na dúvida, passa para um humano. Ver [cerebro/regras/guardrails.md](cerebro/
 | 2 | Agente no terminal | Conversar com o P.H. no terminal como se fosse um lead | ✅ Concluída |
 | 3 | Canal e-mail | Gmail API, resposta na mesma thread e follow-up | ✅ Concluída |
 | 4 | Canal WhatsApp | Webhook da Meta Cloud API, validado com simulador (decisão 030) | ✅ Concluída |
-| 5 | CRM e aprovação humana | HubSpot + Slack | ⚪ Próxima |
-| 5b | Hospedagem | Railway ou Render + Supabase, com tudo integrado (decisão 031) | ⚪ |
+| 5 | CRM e aprovação humana | HubSpot (CRM) + Slack (aprovação assíncrona e alertas) | ✅ Concluída |
+| 5b | Hospedagem | Railway ou Render + Supabase, com tudo integrado (decisão 031) | ⚪ Próxima |
 | 6 | Evals e métricas | Conversas de teste com LLM como juiz e painel de taxa de qualificação | ⚪ |
 
 ## Como rodar (Windows)

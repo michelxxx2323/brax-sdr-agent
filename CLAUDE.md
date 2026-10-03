@@ -80,8 +80,8 @@ Texto completo: `cerebro/regras/guardrails.md`.
    Pendências anotadas para a Fase 6 na seção "Melhorias futuras" do diário.
 3. **Canal e-mail**: ✅ concluída e aprovada (Gmail API + follow-up; testes em `docs/validacao-fase3.md`)
 4. **Canal WhatsApp**: ✅ concluída e aprovada (webhook + simulador da Meta, sem número; `docs/validacao-fase4.md`)
-5. CRM e aprovação humana (HubSpot + Slack) ← próxima
-5b. Hospedagem + Supabase (movida para depois da Fase 5, decisão 031)
+5. **CRM e aprovação humana**: ✅ concluída e aprovada (HubSpot + Slack; testes em `docs/validacao-fase5.md`)
+5b. Hospedagem + Supabase (movida para depois da Fase 5, decisão 031) ← próxima
 6. Evals e métricas (LLM como juiz + painel de taxa de qualificação)
 
 ## Ambiente local
@@ -95,3 +95,6 @@ Texto completo: `cerebro/regras/guardrails.md`.
   Lembrete: o programa lê o `.env` só ao iniciar; reinicie depois de mudar o `.env` ou o código.
 - Decisões de desenho do código: o modelo extrai dados, o código decide a faixa (013); laço manual de ferramentas (015); guardrails em camadas (017); identificação curta e humano sob demanda (020); proteção de custo e encerramento antes da API (021).
 - WhatsApp (simulado): terminal 1 `.venv\Scripts\python.exe servidor_whatsapp.py`; terminal 2 `.venv\Scripts\python.exe simular_whatsapp.py`.
+- Tudo junto (Fase 5): `.venv\Scripts\python.exe iniciar_brax.py` (WhatsApp + e-mail + Slack + HubSpot; liga o que estiver no `.env`).
+  HubSpot: `configurar_hubspot.py` (uma vez) e `sincronizar_crm.py`. Transferência para humano: vendedor em horário comercial,
+  P.H. segue coletando (decisões 037 e 038). Retorno após aprovação no Slack: escrito pela IA com travas (decisão 034).

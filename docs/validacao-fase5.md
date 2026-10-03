@@ -43,3 +43,15 @@ na mesma rodada; agora pode chegar entre duas mensagens do lead, e o contexto pr
 
 **Detalhe corrigido:** o retorno dizia "Uma pessoa do time vai te ligar na hora marcada", um detalhe inventado. Regra
 nova no cérebro e na instrução do retorno: não dizer o formato da reunião (decisão 035).
+
+## Teste 4: "Elisa, Kora": botão "Sugerir outro horário"
+
+**Resultado: aprovado.** No Slack, a janela pediu o horário ("segunda às 14h"); 2 segundos depois a lead recebeu:
+"Confirmei com o time: sexta de manhã não conseguem, mas segunda às 14h está livre. Se funcionar melhor para você,
+confirma por aqui: [link]". Depois do "Ok obrigada", a conversa foi encerrada.
+
+O resumo do Sonnet não inventou o cargo ("motivo do contato não informado", "solução atual não informada").
+
+| Problema | Causa | Correção |
+|---|---|---|
+| O resumo dizia "aguardando confirmação de período e dia", mas a lead tinha acabado de dizer "sexta de manhã" | O resumo é pedido durante a resposta, antes de a última mensagem do lead ser salva no histórico | A disponibilidade informada é passada ao Sonnet junto com a conversa |

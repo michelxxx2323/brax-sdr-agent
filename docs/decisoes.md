@@ -39,6 +39,7 @@
 | 031 | Hospedagem depois da Fase 5 (Slack e HubSpot) | Aceita | 2026-10-02 |
 | 032 | Integração real com a Meta só no recebimento; envio desligado por padrão | Aceita | 2026-10-03 |
 | 033 | HubSpot sincronizado pelo código após cada resposta, sem travar a conversa | Aceita | 2026-10-03 |
+| 034 | Aprovação assíncrona no Slack, retorno escrito pela IA com travas, e um programa único | Aceita | 2026-10-03 |
 
 ---
 
@@ -647,3 +648,30 @@ privado viraram "legado", e a forma recomendada para um programa acessar uma con
 
 **Motivo:** o CRM é a fonte de verdade do time comercial, e o valor de um SDR automatizado está em registrar tudo, sempre,
 sem digitação manual. Ao mesmo tempo, um CRM fora do ar não pode custar uma conversa com um lead.
+
+---
+
+## 034: Aprovação assíncrona no Slack, retorno escrito pela IA com travas, e um programa único
+
+**Contexto:** até a Fase 4, a aprovação de leads para o executivo acontecia no terminal, na hora. Com o Slack, a decisão
+humana chega minutos ou horas depois, e precisa virar uma mensagem ao lead pelo canal certo (thread de e-mail ou WhatsApp).
+
+**Decisões:**
+1. **Socket Mode** (`slack_bolt`): a conexão sai do computador para o Slack; sem endereço público nem túnel.
+2. **Aprovação assíncrona:** ao pedir aprovação, o P.H. avisa o lead que vai confirmar e retornar (aprovação "pendente").
+   No Slack, o pedido traz o resumo e três botões: **Aprovar**, **Sugerir outro horário** (abre uma janela para digitar o
+   horário) e **Indicar o app**. Depois do clique, a mensagem do Slack troca os botões pelo resultado e por quem decidiu;
+   um segundo clique não gera um segundo retorno.
+3. **O retorno ao lead é escrito pela IA** (escolha do dono do projeto), com o contexto da conversa e sem permissão para
+   usar ferramentas. O código confere antes do envio: o link obrigatório está no texto? há texto interno? cabe no
+   WhatsApp? Se alguma trava falhar, vale um **texto padronizado**, e o evento fica registrado para medir.
+4. **Resumo para o time escrito pelo Sonnet 5** (o modelo reservado para tarefas mais complexas), com a regra explícita
+   de usar só fatos ditos. Corrige o "parece ser founder/CEO" da Fase 4. O mesmo resumo vira uma **nota no HubSpot**.
+   Se a chamada falhar, um resumo determinístico (só os dados registrados) entra no lugar.
+5. **"Transferir para humano" avisa no Slack**, para alguém assumir a conversa.
+6. **Programa único** (`iniciar_brax.py`): WhatsApp, e-mail e Slack no mesmo processo, porque o clique no Slack precisa
+   saber responder ao lead em qualquer canal. Uma **trava por lead**, compartilhada por todos, impede que duas coisas
+   mexam na memória do mesmo lead ao mesmo tempo.
+
+**Motivo:** fecha a lacuna que impedia a hospedagem (decisão 031): agora toda promessa de retorno tem um mecanismo real
+por trás. As travas no retorno escrito pela IA seguem o padrão do projeto: o modelo escreve, o código garante o essencial.

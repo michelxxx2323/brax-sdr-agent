@@ -113,6 +113,18 @@ Use `/estado` para ver o que o P.H. já registrou sobre o lead. O histórico fic
 Para trocar de lead, digite `/sair` antes de rodar o próximo comando. Depois de atualizar o código,
 abra uma conversa nova: uma sessão aberta continua com o código antigo.
 
+### Tudo junto: WhatsApp + e-mail + Slack + HubSpot (Fase 5)
+
+```powershell
+.venv\Scripts\python.exe configurar_hubspot.py   # uma vez: campos da BRAX e funil "BRAX Inbound"
+.venv\Scripts\python.exe iniciar_brax.py         # liga só o que estiver configurado no .env
+```
+- **HubSpot:** chave de serviço (`HUBSPOT_ACCESS_TOKEN`) com 12 escopos: `crm.objects.{contacts,companies,deals}.{read,write}`
+  e `crm.schemas.{contacts,companies,deals}.{read,write}`.
+- **Slack:** app criado pelo manifesto (Socket Mode, escopo `chat:write`), com `SLACK_BOT_TOKEN` (xoxb-), `SLACK_APP_TOKEN`
+  (xapp-, escopo `connections:write`) e `SLACK_CANAL_APROVACAO` (ID do canal). Convide o bot para o canal.
+- Para testar pelo WhatsApp simulado, em outro terminal: `.venv\Scripts\python.exe simular_whatsapp.py`.
+
 ### Canal de WhatsApp (Fase 4, modo simulado)
 
 Sem número de telefone: um simulador faz o papel da Meta (decisão 030). Use dois terminais:

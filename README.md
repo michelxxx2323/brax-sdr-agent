@@ -110,6 +110,24 @@ Use `/estado` para ver o que o P.H. já registrou sobre o lead. O histórico fic
 Para trocar de lead, digite `/sair` antes de rodar o próximo comando. Depois de atualizar o código,
 abra uma conversa nova: uma sessão aberta continua com o código antigo.
 
+### Canal de e-mail (Fase 3)
+
+O P.H. atende uma caixa do Gmail dedicada à BRAX: confere e-mails novos a cada 30s, responde na mesma thread e envia
+até dois lembretes (follow-up) quando o lead para de responder.
+
+1. Crie uma conta Gmail para a BRAX e, no Google Cloud, um projeto com a **Gmail API** ativada e um **ID do cliente OAuth**
+   do tipo *App para computador*. Coloque no `.env`: `GMAIL_CLIENT_ID`, `GMAIL_CLIENT_SECRET` e `GMAIL_REMETENTE`.
+2. Autorize uma vez (em modo de teste do Google, a autorização vale 7 dias):
+   ```powershell
+   .venv\Scripts\python.exe autorizar_gmail.py
+   ```
+3. Ligue o atendente (`Ctrl+C` para parar). Para testar, preencha `EMAIL_REMETENTES_PERMITIDOS` com o seu e-mail:
+   o P.H. só responde a quem está na lista.
+   ```powershell
+   .venv\Scripts\python.exe atender_email.py
+   ```
+4. Para testar o follow-up sem esperar dias, use `BRAX_FOLLOWUP_MINUTOS_TESTE=1` no `.env` (1 dia útil vira 1 minuto).
+
 ## Estrutura do repositório
 
 ```
@@ -123,6 +141,8 @@ brax-sdr-agent/
 ├── src/brax_sdr/     # código do agente (ver docs/arquitetura.md)
 ├── tests/            # testes automáticos (sem chamar a API)
 ├── conversar.py      # conversa com o P.H. no terminal
+├── autorizar_gmail.py  # autoriza a conta do Gmail da BRAX (uma vez)
+├── atender_email.py  # atendimento por e-mail + follow-up
 ├── .env.example      # nomes das variáveis de ambiente (sem valores)
 └── CLAUDE.md         # contexto para sessões com o Claude Code
 ```

@@ -22,7 +22,7 @@ E-mail (Gmail API) ────────┘            │
 | Canal | Tecnologia | Como chega a mensagem | Fase |
 |---|---|---|---|
 | Terminal | Python (entrada/saída padrão) | Digitação local, para testes | 2 |
-| E-mail | Gmail API | Leitura periódica da caixa de entrada ou notificação | 3 |
+| E-mail | Gmail API (conta dedicada) | O atendente confere a caixa a cada 30s (decisão 025) | 3 ✅ |
 | WhatsApp | Meta Cloud API (número de teste) | Webhook HTTP da Meta | 4 |
 
 Cada canal só **traduz** a mensagem para um formato comum (`lead`, `canal`, `texto`, `data`) e entrega ao agente.
@@ -57,7 +57,7 @@ Um único agente usando a Claude API com **ferramentas (tools)**. A cada mensage
 | `registrar_opt_out` | Registra pedido de parada (LGPD); o código bloqueia novas respostas | ✅ Fase 2 (registro local) → Fase 5 |
 | `encerrar_conversa` | Encerra após a despedida; despedidas seguintes não chegam à IA (decisão 021) | ✅ Fase 2 |
 | `atualizar_crm` | Cria/atualiza contato, empresa e negócio no HubSpot | Fase 5 |
-| `agendar_followup` | Programa uma nova mensagem se o lead sumir | Fases 3/4 |
+| Follow-up (não é ferramenta: roda no código) | 2 lembretes padronizados quando o lead some (decisão 028) | ✅ Fase 3 (e-mail) → WhatsApp na Fase 4 |
 | `pesquisar_empresa` | Busca informações públicas da empresa e do decisor | A definir |
 | `consultar_cerebro` | Busca trechos relevantes do cérebro | Só se o cérebro crescer (decisão 016) |
 
@@ -79,6 +79,10 @@ O link do app (self-service) e o link de agenda (executivo) são devolvidos pela
 | `src/brax_sdr/memoria.py` | Memória por lead (arquivo JSON local; Supabase depois) |
 | `src/brax_sdr/agente.py` | Laço de conversa com ferramentas (decisão 015) |
 | `src/brax_sdr/terminal.py` | Interface de terminal com aprovação humana simulada |
+| `src/brax_sdr/gmail.py` | Autorização e cliente da Gmail API; quem mexe na caixa é o código, não a IA (decisão 026) |
+| `src/brax_sdr/canal_email.py` | Leitura, limpeza (citações e assinaturas), filtros anti-loop e resposta na mesma thread |
+| `src/brax_sdr/atendente_email.py` | Confere a caixa a cada 30s, responde com o P.H. e dispara os follow-ups |
+| `src/brax_sdr/followup.py` | Regras, cadência (dias úteis, horário comercial) e textos dos lembretes |
 
 O que cada teste real revelou e como foi corrigido: [validacao-fase2.md](validacao-fase2.md).
 

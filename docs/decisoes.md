@@ -33,6 +33,7 @@
 | 025 | Recepção de e-mail conferindo a caixa a cada 30s, no computador local | Aceita | 2026-10-02 |
 | 026 | Quem mexe na caixa de e-mail é o código, não a IA | Aceita | 2026-10-02 |
 | 027 | Texto anterior a uma ferramenta só é descartado se ela puder mudar a resposta | Aceita | 2026-10-02 |
+| 028 | Follow-up com lembretes padronizados, regras em código | Aceita | 2026-10-02 |
 
 ---
 
@@ -506,3 +507,29 @@ texto final. No e-mail, fechos ("Abraço,") e assinaturas repetidos são removid
 
 **Motivo:** registrar um dado não altera a resposta, então descartar o texto anterior só causava perda. A regra continua
 protegendo o caso que originou a 019.
+
+---
+
+## 028: Follow-up com lembretes padronizados, regras em código
+
+**Contexto:** a missão do P.H. inclui o follow-up: retomar o contato quando o lead some no meio da qualificação.
+A cadência já estava no cérebro (`handoff.md`): 1 dia útil, depois mais 3, no máximo 2 lembretes.
+
+**Opções consideradas para o texto:**
+1. A IA escreve cada lembrete com base na conversa (mais personalizado; custo por lembrete; mesmo risco de erro e
+   vazamento visto na Fase 2).
+2. Texto padronizado pelo código, com nome do lead e da empresa.
+
+**Decisão:** opção 2, com todas as regras em `src/brax_sdr/followup.py`:
+- Só dispara se a última fala do P.H. foi uma **pergunta** (ele estava esperando resposta).
+- Nunca dispara para quem pediu parada, teve a conversa encerrada, foi bloqueado por custo ou está fora do perfil.
+- Só em **horário comercial** (seg a sex, 9h às 18h de Brasília) e em **dias úteis**.
+- O 2º lembrete diz como parar de receber mensagens; depois dele, o lead vira "sem resposta" e não recebe mais nada.
+- A resposta do lead zera a contagem.
+- Os lembretes saem na **mesma thread** de e-mail e ficam no histórico, para o P.H. saber o que já foi enviado.
+
+**Motivo:** o follow-up é curto, repetitivo e, se errar (horário, frequência, quem recebe), incomoda o lead e arrisca a
+LGPD. Em código, as regras são previsíveis, testáveis e não custam tokens: o mesmo raciocínio da recusa padronizada
+(decisão 023). Ficaram de fora, por falta de dados: lembrete para quem recebeu o link e não abriu conta (sem integração
+com o app) e para quem não agendou com o executivo (depende da agenda real, na Fase 5). No WhatsApp, o follow-up entra
+na Fase 4, porque a Meta exige modelos de mensagem aprovados fora da janela de 24 horas.

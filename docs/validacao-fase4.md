@@ -21,3 +21,21 @@ da Meta, com avisos no formato da WhatsApp Cloud API e assinatura HMAC, e o serv
 - O resumo para aprovação dizia "Ana, parece ser founder/CEO", mas o cargo não foi informado: o resumo para o time
   comercial não deve conter palpites.
 - "Boa sorte na segunda!" (quem conversa na reunião é o executivo), já anotado na Fase 2.
+
+## Teste 2: integração real com a Meta, só recebimento (decisão 032)
+
+Configuração: app na Meta com o número de teste da WhatsApp Cloud API, servidor no computador exposto por um túnel
+ngrok, `WHATSAPP_MODO=meta` e envio desligado (nenhuma mensagem sai para ninguém).
+
+**Resultado: aprovado.**
+- `diagnosticar_whatsapp.py` confirmou token e número de teste na Meta (só leitura).
+- A Meta verificou o endereço do webhook com o token de verificação.
+- O botão "Testar" do campo `messages` enviou uma mensagem de exemplo **real e assinada pela Meta**, de um número fictício:
+  o servidor conferiu a assinatura (HTTP 200), criou o lead e o P.H. respondeu ("Oi! Aqui é o P.H., assistente virtual da
+  BRAX 👋 ... Qual é o nome da sua empresa?"). A resposta apareceu só no terminal, como previsto.
+
+| Problema | Causa | Correção |
+|---|---|---|
+| A Meta não conseguia validar o webhook | A URL foi cadastrada sem `https://`; além disso, o exemplo do guia citava `.ngrok-free.app`, mas os domínios gratuitos novos terminam em `.ngrok-free.dev` | URL completa (`https://<domínio>/webhook`). O diagnóstico pelo painel local do ngrok (porta 4040) mostrou que a chamada da Meta nem chegava ao túnel, o que isolou o problema no cadastro da URL |
+
+**Pendente (por escolha):** o envio real ao WhatsApp, que exige cadastrar um número na lista do número de teste.

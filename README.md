@@ -123,6 +123,17 @@ Sem número de telefone: um simulador faz o papel da Meta (decisão 030). Use do
 .venv\Scripts\python.exe simular_whatsapp.py --nome "Ana" --telefone 5511900000002
 ```
 
+### Canal de WhatsApp com a Meta de verdade (recebimento)
+
+Com um app na Meta (número de teste da WhatsApp Cloud API) e um túnel [ngrok](https://ngrok.com) para expor o servidor:
+1. No `.env`: `WHATSAPP_MODO=meta`, `WHATSAPP_ACCESS_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_APP_SECRET` e um
+   `WHATSAPP_VERIFY_TOKEN` inventado. O envio fica **desligado** (`WHATSAPP_ENVIO_HABILITADO` vazio): as respostas só
+   aparecem no terminal (decisão 032).
+2. Confira as credenciais (só leitura): `.venv\Scripts\python.exe diagnosticar_whatsapp.py`
+3. Terminal 1: `.venv\Scripts\python.exe servidor_whatsapp.py` · Terminal 2: `ngrok http --url=SEU-DOMINIO 8000`
+4. Na Meta (WhatsApp → Configuração → Webhook): URL **com `https://`**, por exemplo `https://seu-dominio.ngrok-free.dev/webhook`,
+   e o mesmo token de verificação. Assine o campo `messages` e use o botão **Testar**.
+
 ### Canal de e-mail (Fase 3)
 
 O P.H. atende uma caixa do Gmail dedicada à BRAX: confere e-mails novos a cada 30s, responde na mesma thread e envia

@@ -187,3 +187,24 @@ def montar_resposta(email: EmailRecebido, texto: str) -> dict:
         mensagem["References"] = f"{email.referencias} {email.message_id}".strip()
     bruto = base64.urlsafe_b64encode(mensagem.as_bytes()).decode()
     return {"raw": bruto, "threadId": email.thread_id}
+
+
+# --- Thread guardada na memória do lead (para o follow-up responder na mesma conversa) ----------
+
+def contexto_da_thread(email: EmailRecebido) -> dict:
+    return {
+        "thread_id": email.thread_id,
+        "message_id": email.message_id,
+        "referencias": email.referencias,
+        "assunto": email.assunto,
+        "remetente": email.remetente,
+    }
+
+
+def email_da_thread(contexto: dict) -> EmailRecebido:
+    """Reconstrói o suficiente do último e-mail do lead para responder na mesma thread."""
+    return EmailRecebido(
+        id="", thread_id=contexto["thread_id"], remetente=contexto["remetente"], nome_remetente="",
+        assunto=contexto.get("assunto", ""), texto="", message_id=contexto.get("message_id", ""),
+        referencias=contexto.get("referencias", ""), anexos=[], cabecalhos={},
+    )

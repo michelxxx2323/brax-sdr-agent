@@ -13,7 +13,7 @@ from pathlib import Path
 from brax_sdr import config
 
 
-def _agora() -> str:
+def agora() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
 
@@ -32,12 +32,18 @@ class Lead:
     custo_total_usd: float = 0.0  # estimativa acumulada de todas as respostas deste lead
     mensagens_hoje: dict = field(default_factory=dict)  # {"data", "total", "avisado"}
     bloqueio: str | None = None  # ex.: "limite_de_custo" (só uma pessoa do time desbloqueia)
+    # Follow-up (decisão 028)
+    ultima_resposta_em: str | None = None  # quando o P.H. falou com o lead pela última vez
+    aguardando_lead: bool = False  # a última fala do P.H. foi uma pergunta
+    followups_enviados: int = 0  # zera quando o lead responde
+    sem_resposta: bool = False  # recebeu todos os lembretes e não respondeu
+    email_contexto: dict = field(default_factory=dict)  # thread e cabeçalhos para responder na mesma conversa
     eventos: list[dict] = field(default_factory=list)
-    criado_em: str = field(default_factory=_agora)
-    atualizado_em: str = field(default_factory=_agora)
+    criado_em: str = field(default_factory=agora)
+    atualizado_em: str = field(default_factory=agora)
 
     def registrar_evento(self, tipo: str, detalhe: str = "") -> None:
-        self.eventos.append({"quando": _agora(), "tipo": tipo, "detalhe": detalhe})
+        self.eventos.append({"quando": agora(), "tipo": tipo, "detalhe": detalhe})
 
 
 def _id_seguro(lead_id: str) -> str:
@@ -59,9 +65,14 @@ def carregar(lead_id: str, canal: str = "whatsapp", pasta: Path = config.PASTA_L
 
 
 def salvar(lead: Lead, pasta: Path = config.PASTA_LEADS) -> None:
-    lead.atualizado_em = _agora()
+    lead.atualizado_em = agora()
     pasta.mkdir(parents=True, exist_ok=True)
     caminho = _arquivo(lead.id, pasta)
     temporario = caminho.with_suffix(".tmp")
     temporario.write_text(json.dumps(asdict(lead), ensure_ascii=False, indent=2), encoding="utf-8")
     temporario.replace(caminho)  # grava tudo ou nada, nunca um arquivo pela metade
+
+
+def listar(pasta: Path = config.PASTA_LEADS) -> list[str]:
+    """Ids de todos os leads salvos (usado pelo follow-up)."""
+    return sorted(caminho.stem for caminho in pasta.glob("*.json")) if pasta.exists() else []

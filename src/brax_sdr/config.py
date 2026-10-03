@@ -67,6 +67,13 @@ EMAIL_REMETENTES_PERMITIDOS = {
     e.strip().lower() for e in os.getenv("EMAIL_REMETENTES_PERMITIDOS", "").split(",") if e.strip()
 }
 
+# --- Follow-up (decisão 028; cadência de cerebro/vendas/handoff.md) ---
+FOLLOWUP_ESPERAS_DIAS_UTEIS = (1, 3)  # 1º lembrete após 1 dia útil; 2º (e último) após mais 3
+FOLLOWUP_VERIFICAR_A_CADA_MINUTOS = 10
+FOLLOWUP_HORARIO_COMERCIAL = (9, 18)  # seg a sex, horário de Brasília
+# Modo de teste: troca "dias úteis" por minutos e ignora o horário comercial. 0 = desligado.
+FOLLOWUP_MINUTOS_TESTE = int(os.getenv("BRAX_FOLLOWUP_MINUTOS_TESTE") or 0)
+
 # --- Links públicos ---
 LINK_APP = os.getenv("BRAX_LINK_APP") or "https://app.brax.example/abrir-conta"
 LINK_AGENDA_EXECUTIVO = os.getenv("BRAX_LINK_AGENDA_EXECUTIVO") or "https://agenda.brax.example/executivo"

@@ -5,11 +5,19 @@ Uso (na pasta do projeto):
 """
 
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 
 from brax_sdr import config, memoria
 from brax_sdr.agente import Agente
-from brax_sdr.canal_email import ler_mensagem, montar_resposta, motivo_para_ignorar, texto_para_o_agente
+from brax_sdr.canal_email import (
+    contexto_da_thread,
+    email_da_thread,
+    ler_mensagem,
+    montar_resposta,
+    motivo_para_ignorar,
+    texto_para_o_agente,
+)
+from brax_sdr.followup import numero_do_followup_devido, registrar_followup, texto_do_followup
 
 
 # Na busca do Gmail, "BRAX/processado" vira "brax-processado".
@@ -78,8 +86,33 @@ class AtendenteEmail:
         self._marcar_processado(mensagem_id)
         if not resposta.texto:
             return f"sem resposta ({resposta.motivo_silencio})"
+        lead = memoria.carregar(email.remetente, pasta=self.agente.pasta_leads)
+        lead.email_contexto = contexto_da_thread(email)  # o follow-up responde nesta mesma thread
+        memoria.salvar(lead, pasta=self.agente.pasta_leads)
         self.servico.users().messages().send(userId="me", body=montar_resposta(email, resposta.texto)).execute()
         return "respondido"
+
+    def enviar_followups(self, agora: datetime | None = None) -> list[str]:
+        """Envia os lembretes devidos (decisão 028). Devolve os ids dos leads que receberam."""
+        agora = agora or datetime.now(timezone.utc)
+        enviados = []
+        for lead_id in memoria.listar(self.agente.pasta_leads):
+            try:
+                lead = memoria.carregar(lead_id, pasta=self.agente.pasta_leads)
+                numero = numero_do_followup_devido(lead, agora)
+                if not numero:
+                    continue
+                texto = texto_do_followup(numero, lead)
+                # Registra ANTES de enviar: na dúvida, um lembrete a menos, nunca um repetido.
+                registrar_followup(lead, numero, texto, agora)
+                memoria.salvar(lead, pasta=self.agente.pasta_leads)
+                corpo = montar_resposta(email_da_thread(lead.email_contexto), texto)
+                self.servico.users().messages().send(userId="me", body=corpo).execute()
+                enviados.append(lead_id)
+                _log(f"Follow-up {numero} enviado para {lead_id}")
+            except Exception as erro:
+                _log(f"ERRO no follow-up de {lead_id}: {type(erro).__name__}: {erro}")
+        return enviados
 
     def rodar_uma_vez(self) -> None:
         for mensagem_id in self.buscar_novos():
@@ -95,7 +128,14 @@ class AtendenteEmail:
         _log(f"Atendendo {config.GMAIL_REMETENTE or 'a caixa da BRAX'} a cada {config.EMAIL_INTERVALO_SEGUNDOS}s. Ctrl+C para parar.")
         if config.EMAIL_REMETENTES_PERMITIDOS:
             _log(f"Só respondo a: {', '.join(sorted(config.EMAIL_REMETENTES_PERMITIDOS))}")
+        if config.FOLLOWUP_MINUTOS_TESTE:
+            _log(f"MODO DE TESTE do follow-up: 1 dia útil = {config.FOLLOWUP_MINUTOS_TESTE} min, sem horário comercial.")
+        intervalo_followup = 0 if config.FOLLOWUP_MINUTOS_TESTE else config.FOLLOWUP_VERIFICAR_A_CADA_MINUTOS * 60
+        ultimo_followup = 0.0
         while True:
             self.rodar_uma_vez()
+            if time.monotonic() - ultimo_followup >= intervalo_followup:
+                self.enviar_followups()
+                ultimo_followup = time.monotonic()
             time.sleep(config.EMAIL_INTERVALO_SEGUNDOS)
 

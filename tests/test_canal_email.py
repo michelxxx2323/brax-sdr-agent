@@ -291,3 +291,13 @@ def test_corpo_remove_assinatura_curta_e_fecho_repetido():
     escrito = "Oi, Ana!\n\nAbraço,\nP.H.\n\nAbraço,\nP.H. - BRAX"
     texto = _decodificar_resposta(montar_resposta(ler_mensagem(mensagem_gmail()), escrito)).get_content()
     assert texto.rstrip() == f"Oi, Ana!\n\nAbraço,\n{ASSINATURA}"
+
+
+def test_atendente_guarda_a_thread_para_o_followup(tmp_path):
+    gmail = GmailFalso([mensagem_gmail()])
+    cliente = ClienteFalso(["Oi, Ana! Aqui é o P.H., assistente virtual da BRAX. Quantas pessoas trabalham na Lumen?"])
+    AtendenteEmail(gmail, Agente(client=cliente, pasta_leads=tmp_path)).processar("m1")
+    lead = memoria.carregar("ana@lumen.example", pasta=tmp_path)
+    assert lead.email_contexto["thread_id"] == "t-m1"
+    assert lead.email_contexto["message_id"] == "<m1@mail.example>"
+    assert lead.aguardando_lead is True  # a resposta terminou com pergunta: base do follow-up

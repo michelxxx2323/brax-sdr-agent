@@ -272,6 +272,11 @@ class Agente:
 
         lead.mensagens = mensagens
         lead.custo_total_usd += resposta.custo_usd
+        # Base do follow-up (decisão 028): o lead respondeu, então a contagem de lembretes recomeça.
+        lead.followups_enviados, lead.sem_resposta = 0, False
+        if texto_final:
+            lead.ultima_resposta_em = memoria.agora()
+            lead.aguardando_lead = "?" in texto_final
         memoria.salvar(lead, pasta=self.pasta_leads)
         if not texto_final and lead.encerrada:
             # Encerrou sem nada a dizer (ex.: o lead só se despediu): silêncio em vez de mensagem vazia.

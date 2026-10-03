@@ -93,3 +93,15 @@ teste ainda rodou com o código antigo, porque o programa não tinha sido reinic
 | Problema | Causa | Correção |
 |---|---|---|
 | Depois de devolvida a conversa, o "Alguém aí?" recebeu "é só aguardar um pouco que ela chega" | Promessa improvisada pelo modelo; e a regra de negócio da transferência estava errada no desenho (pausa imediata) | Nova regra (decisão 037): o vendedor entra em contato em horário comercial e o P.H. segue coletando informações; pausa só com "Assumir conversa" |
+
+## Teste 8: "Hugo": transferência simplificada (decisão 038)
+
+**Funcionou:** transferência pelo código, alerta no Slack sem botões; ao "Alguém aí?", o P.H. reforçou que o vendedor entra em
+contato em horário comercial e seguiu coletando informações (nada de "é só aguardar").
+
+| Problema | Causa | Correção |
+|---|---|---|
+| Primeira resposta duplicada: "Claro! Aqui é o P.H. [...] Oi, Hugo! Aqui é o P.H. [...] posso conectar você [...] Antes disso" | A IA não percebeu que a transferência já tinha acontecido (o aviso estava só no contexto); o código acrescentou a frase do horário comercial na frente, com outra apresentação | Na rodada da transferência, uma nota explícita acompanha a mensagem do lead para a IA (sem ficar no histórico). A frase acrescentada não repete a apresentação |
+
+**Aprendizado:** informação no "contexto" do lead é fácil de ser ignorada; o que precisa acontecer **nesta** resposta vai junto
+da mensagem. E quando o código emenda texto ao da IA, precisa checar o que a IA já disse.

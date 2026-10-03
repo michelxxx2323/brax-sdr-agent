@@ -38,6 +38,7 @@ class Lead:
     followups_enviados: int = 0  # zera quando o lead responde
     sem_resposta: bool = False  # recebeu todos os lembretes e não respondeu
     email_contexto: dict = field(default_factory=dict)  # thread e cabeçalhos para responder na mesma conversa
+    crm: dict = field(default_factory=dict)  # ids no HubSpot e estado da sincronização (decisão 033)
     eventos: list[dict] = field(default_factory=list)
     criado_em: str = field(default_factory=agora)
     atualizado_em: str = field(default_factory=agora)

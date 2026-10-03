@@ -82,6 +82,10 @@ WHATSAPP_PORTA = int(os.getenv("WHATSAPP_PORTA") or 8000)
 WHATSAPP_ENVIO_HABILITADO = (os.getenv("WHATSAPP_ENVIO_HABILITADO") or "false").lower() == "true"
 PASTA_WHATSAPP = RAIZ / "data" / "local" / "whatsapp"  # saída simulada e ids já processados (fora do Git)
 
+# --- HubSpot (Fase 5, decisão 033) ---
+HUBSPOT_ACCESS_TOKEN = os.getenv("HUBSPOT_ACCESS_TOKEN", "")  # chave de serviço (Service key) da conta
+HUBSPOT_FUNIL = "BRAX Inbound"
+
 # --- Follow-up (decisão 028; cadência de cerebro/vendas/handoff.md) ---
 FOLLOWUP_ESPERAS_DIAS_UTEIS = (1, 3)  # 1º lembrete após 1 dia útil; 2º (e último) após mais 3
 FOLLOWUP_VERIFICAR_A_CADA_MINUTOS = 10

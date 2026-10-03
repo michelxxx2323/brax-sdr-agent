@@ -78,7 +78,7 @@ Texto completo: `cerebro/regras/guardrails.md`.
 1. **Fundação**: estrutura, documentação e cérebro. ✅ concluída e aprovada
 2. **Agente no terminal**: ✅ concluída e aprovada (13 testes reais em `docs/validacao-fase2.md`)
    Pendências anotadas para a Fase 6 na seção "Melhorias futuras" do diário.
-3. Canal e-mail
+3. **Canal e-mail**: ✅ concluída e aprovada (Gmail API + follow-up; testes em `docs/validacao-fase3.md`)
 4. Canal WhatsApp (número de teste da Meta)
 5. CRM e aprovação humana (HubSpot + Slack)
 6. Evals e métricas (LLM como juiz + painel de taxa de qualificação)
@@ -90,4 +90,6 @@ Texto completo: `cerebro/regras/guardrails.md`.
 - Ambiente: `.venv` na raiz. Sempre use `.venv\Scripts\python.exe`.
 - Testes: `.venv\Scripts\python.exe -m pytest` (não chamam a API; o agente é testado com um cliente falso).
 - Conversar: `.venv\Scripts\python.exe conversar.py --detalhes`.
+- E-mail: `.venv\Scripts\python.exe atender_email.py` (autorização: `autorizar_gmail.py`, expira em 7 dias em modo de teste).
+  Lembrete: o programa lê o `.env` só ao iniciar; reinicie depois de mudar o `.env` ou o código.
 - Decisões de desenho do código: o modelo extrai dados, o código decide a faixa (013); laço manual de ferramentas (015); guardrails em camadas (017); identificação curta e humano sob demanda (020); proteção de custo e encerramento antes da API (021).

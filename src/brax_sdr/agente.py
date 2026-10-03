@@ -21,9 +21,14 @@ from brax_sdr.guardrails import (
 )
 from brax_sdr.crm import sincronizar_com_seguranca
 from brax_sdr.memoria import Lead
-from brax_sdr.mensagens import mensagem_fora_do_icp, mensagem_sem_interesse
+from brax_sdr.mensagens import mensagem_fora_do_icp, mensagem_sem_interesse, mensagem_transferencia
 from brax_sdr.prompt import montar_system
-from brax_sdr.protecao import eh_despedida, verificar_antes_da_api
+from brax_sdr.protecao import eh_despedida, pede_humano, verificar_antes_da_api
+
+# Formato de reunião que o P.H. não pode prometer: quem define é a agenda (decisão 035).
+_FORMATO_DE_REUNIAO = re.compile(
+    r"\b(ligar|ligo|liga[çc][ãa]o|telefonema|v[íi]deo|videochamada|presencial|google meet|zoom|teams)\b", re.IGNORECASE
+)
 
 # Ferramentas que só registram dados: o texto escrito antes delas continua valendo (decisão 027).
 FERRAMENTAS_SO_DE_REGISTRO = {"registrar_qualificacao"}
@@ -130,7 +135,10 @@ class Agente:
         curto = "\n\n".join(b.text.strip() for b in msg.content if b.type == "text").strip()
         return curto if _reescrita_confiavel(texto, curto) else texto
 
-    def mensagem_proativa(self, lead_id: str, instrucao: str, link_obrigatorio: str | None, texto_padrao: str) -> str:
+    def mensagem_proativa(
+        self, lead_id: str, instrucao: str, link_obrigatorio: str | None, texto_padrao: str,
+        sem_formato_de_reuniao: bool = False,
+    ) -> str:
         """Mensagem enviada por iniciativa do P.H. (ex.: retorno depois da aprovação no Slack, decisão 034).
 
         A IA escreve com o contexto da conversa; o código confere (link certo, nada de texto interno, tamanho no
@@ -166,6 +174,9 @@ class Agente:
                 motivo = "link obrigatório ausente"
             elif parece_texto_interno(texto):
                 motivo = "texto interno"
+            elif sem_formato_de_reuniao and _FORMATO_DE_REUNIAO.search(texto):
+                # Achado nos testes da Carla e do Fabio: "um executivo vai te ligar", mesmo com a regra (decisão 035).
+                motivo = "inventou o formato da reunião"
         if motivo:
             lead.registrar_evento("retorno_padrao_usado", motivo)
             texto = texto_padrao
@@ -197,6 +208,20 @@ class Agente:
                     lead.registrar_evento("alerta_humano_erro", str(erro)[:200])
             memoria.salvar(lead, pasta=self.pasta_leads)
             return Resposta(texto=None, lead=lead, motivo_silencio="atendimento_humano")
+
+        # Pedido explícito por uma pessoa: o código transfere, sem passar pela IA (guardrail G4, decisão 036).
+        if pede_humano(texto):
+            primeira = not any(m["role"] == "assistant" for m in lead.mensagens)
+            lead.mensagens.append({"role": "user", "content": texto})
+            lead.encerrada = False
+            executar("transferir_para_humano", {"motivo": "o lead pediu para falar com uma pessoa"}, lead,
+                     self.aprovador, self.alerta_humano)
+            resposta_texto = mensagem_transferencia(lead.primeiro_nome(), primeira)
+            lead.mensagens.append({"role": "assistant", "content": resposta_texto})
+            lead.ultima_resposta_em, lead.aguardando_lead = memoria.agora(), False
+            sincronizar_com_seguranca(self.crm, lead)
+            memoria.salvar(lead, pasta=self.pasta_leads)
+            return Resposta(texto=resposta_texto, lead=lead, ferramentas_usadas=["transferir_para_humano"])
 
         # Proteção de custo e encerramento (decisão 021): decide sem chamar a API.
         protecao = verificar_antes_da_api(lead, texto)

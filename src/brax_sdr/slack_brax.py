@@ -208,7 +208,7 @@ def processar_decisao(lead_id: str, decisao: str, observacao: str, usuario: str,
         memoria.salvar(lead, pasta=agente.pasta_leads)
 
         instrucao, link, padrao = _instrucao(decisao, lead, observacao)
-        texto = agente.mensagem_proativa(lead_id, instrucao, link, padrao)
+        texto = agente.mensagem_proativa(lead_id, instrucao, link, padrao, sem_formato_de_reuniao=decisao != "recusada")
         lead = memoria.carregar(lead_id, pasta=agente.pasta_leads)
         try:
             canal = entregador.entregar(lead, texto)

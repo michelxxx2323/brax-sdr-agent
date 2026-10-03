@@ -324,3 +324,45 @@ def test_followup_nao_envia_lembrete_durante_atendimento_humano():
     lead = Lead(id="ana@x.example", canal="email", aguardando_lead=True, ultima_resposta_em=ontem.isoformat(),
                 email_contexto={"thread_id": "t"}, atendimento_humano=True)
     assert numero_do_followup_devido(lead, ontem + timedelta(days=2)) is None
+
+
+# --- Achados do teste do Fabio ---
+
+def test_pedido_por_uma_pessoa_transfere_sem_passar_pela_ia(tmp_path):
+    # Caso real: "Oi quero falar com uma pessoa" (duas vezes) e o modelo seguiu qualificando.
+    slack_falso = SlackFalso()
+    slack = _slack(slack_falso)
+    cliente = ClaudeFalso([])
+    agente = Agente(client=cliente, pasta_leads=tmp_path, alerta_humano=slack.alerta_humano,
+                    aviso_em_atendimento=slack.mensagem_em_atendimento)
+    resposta = agente.responder("5511900000007", "Oi quero falar com uma pessoa")
+    assert cliente.chamadas == []  # a IA nem é chamada
+    assert resposta.texto.startswith("Claro! Aqui é o P.H., assistente virtual da BRAX.")  # 1ª mensagem: G4
+    assert "pessoa do nosso time" in resposta.texto
+    salvo = memoria.carregar("5511900000007", pasta=tmp_path)
+    assert salvo.atendimento_humano is True and slack_falso.postadas[0]["blocks"][-1]["elements"][0]["action_id"] == "brax_devolver"
+    assert agente.responder("5511900000007", "Alguém aí?").motivo_silencio == "atendimento_humano"
+
+
+@pytest.mark.parametrize("frase", ["Prefiro falar com uma pessoa", "me passa pra um atendente", "não quero falar com robô"])
+def test_variacoes_de_pedido_por_humano(frase):
+    from brax_sdr.protecao import pede_humano
+
+    assert pede_humano(frase)
+
+
+@pytest.mark.parametrize("frase", ["somos 25 pessoas", "cada pessoa do time tem cartão?", "a pessoa que decide sou eu"])
+def test_frases_normais_nao_sao_pedido_por_humano(frase):
+    from brax_sdr.protecao import pede_humano
+
+    assert not pede_humano(frase)
+
+
+def test_retorno_que_inventa_ligacao_cai_no_texto_padronizado(tmp_path):
+    # Caso real (Carla e Fabio): "Um executivo da BRAX vai te ligar".
+    lead_pendente(tmp_path)
+    inventado = f"Ótimo, Ana! Escolhe o horário: {config.LINK_AGENDA_EXECUTIVO}\n\nUm executivo da BRAX vai te ligar!"
+    agente, envio, entregador, _, slack = _cenario(tmp_path, [inventado])
+    processar_decisao(TELEFONE, "aprovada", "", "U1", agente, entregador, slack)
+    texto = _saida(envio)[0]["texto"]
+    assert "ligar" not in texto and config.LINK_AGENDA_EXECUTIVO in texto

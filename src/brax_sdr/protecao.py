@@ -54,6 +54,20 @@ def eh_despedida(texto: str) -> bool:
     return all(_palavra_de_despedida(p) for p in palavras)  # só emojis/pontuação também conta
 
 
+# Pedido explícito para falar com uma pessoa (guardrail G4: transferir sempre). Achado no teste do Fabio: ele pediu duas
+# vezes e o modelo seguiu qualificando ("antes de eu te conectar, deixa eu entender melhor...").
+_PEDE_HUMANO = re.compile(
+    r"\b(falar|conversar|atendimento|atender|passa|passe|transfere|transfira)\b[^.?!\n]{0,30}"
+    r"\b(pessoa|humano|humana|atendente|algu[ée]m de verdade|algu[ée]m real|ser humano|gente de verdade)\b"
+    r"|\bpessoa (real|de verdade)\b|\batendente humano\b|\bn[ãa]o quero (falar com )?(rob[ôo]|bot|ia|m[áa]quina)\b",
+    re.IGNORECASE,
+)
+
+
+def pede_humano(texto: str) -> bool:
+    return bool(_PEDE_HUMANO.search(texto))
+
+
 def verificar_antes_da_api(lead: Lead, texto: str) -> tuple[str, str | None] | None:
     """Aplica as regras de proteção a uma mensagem recebida.
 

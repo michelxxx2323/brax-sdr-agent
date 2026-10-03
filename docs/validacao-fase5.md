@@ -55,3 +55,19 @@ O resumo do Sonnet não inventou o cargo ("motivo do contato não informado", "s
 | Problema | Causa | Correção |
 |---|---|---|
 | O resumo dizia "aguardando confirmação de período e dia", mas a lead tinha acabado de dizer "sexta de manhã" | O resumo é pedido durante a resposta, antes de a última mensagem do lead ser salva no histórico | A disponibilidade informada é passada ao Sonnet junto com a conversa |
+
+## Teste 5: "Diego": transferir para humano
+
+**Resultado: o alerta funcionou.** Ao pedido "Quero falar com uma pessoa real", o P.H. chamou `transferir_para_humano`, o
+alerta chegou ao Slack e o lead foi avisado de que uma pessoa do time continua em horário comercial.
+
+| Problema | Causa | Correção |
+|---|---|---|
+| Depois de transferir, o P.H. seguiu respondendo ("Tranquilo! A gente se fala em breve") | Nada pausava o P.H. após a transferência | O P.H. fica pausado para o lead; as mensagens vão para a thread do alerta no Slack; botão "Devolver ao P.H." (decisão 036) |
+
+## Melhorias futuras identificadas
+
+- **Responder ao lead de dentro do Slack** durante o atendimento humano (hoje a pessoa do time usa os próprios canais).
+- **Agenda real ligada ao CRM** (reuniões do HubSpot): possível, deixada de fora por privacidade (decisão 035).
+- **Busca de empresas com consistência eventual:** com vários processos (hospedagem), a proteção contra duplicadas exigiria
+  uma trava ou uma chave única, como o domínio da empresa.

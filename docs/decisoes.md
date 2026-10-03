@@ -41,6 +41,7 @@
 | 033 | HubSpot sincronizado pelo código após cada resposta, sem travar a conversa | Aceita | 2026-10-03 |
 | 034 | Aprovação assíncrona no Slack, retorno escrito pela IA com travas, e um programa único | Aceita | 2026-10-03 |
 | 035 | Agenda continua como link fictício (agenda real no CRM fica de fora por privacidade) | Aceita | 2026-10-03 |
+| 036 | P.H. pausado durante o atendimento humano | Aceita | 2026-10-03 |
 
 ---
 
@@ -694,3 +695,24 @@ continua configurável (`BRAX_LINK_AGENDA_EXECUTIVO`): trocar pela agenda real n
 
 **Junto:** regra no cérebro (`handoff.md`) e na instrução do retorno para o P.H. não inventar detalhes da reunião
 (ligação, vídeo, presencial, duração). Achado no reteste do Slack: "Uma pessoa do time vai te ligar na hora marcada".
+
+---
+
+## 036: P.H. pausado durante o atendimento humano
+
+**Contexto:** no teste do Diego, o P.H. transferiu a conversa para uma pessoa e, na mensagem seguinte do lead, continuou
+respondendo. Na vida real, o robô e a pessoa do time falariam ao mesmo tempo com o lead.
+
+**Decisão:**
+- A transferência (`transferir_para_humano`) **pausa o P.H. para aquele lead**, em código.
+- Durante a pausa, as mensagens do lead **não chamam a IA**: ficam guardadas no histórico e vão para a **thread do alerta
+  no Slack**, para quem está atendendo acompanhar.
+- O alerta tem o botão **"Devolver ao P.H."**; depois do clique, o P.H. volta a responder na próxima mensagem, com todo o
+  histórico (inclusive o que foi dito durante a pausa). No terminal, o comando `/devolver` faz o mesmo papel.
+- O follow-up não envia lembretes a leads em atendimento humano.
+
+**Fica para depois:** responder ao lead **de dentro do Slack** (a pessoa escreve na thread e a mensagem vai para o
+WhatsApp ou e-mail). Exige permissões extras no app do Slack (ler mensagens do canal) e eventos de mensagem.
+
+**Motivo:** "transferir para humano" só é uma transferência de verdade se o robô sair da conversa. A pausa em código
+segue o padrão do projeto: o que precisa ser garantido não fica a cargo do modelo.

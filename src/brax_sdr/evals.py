@@ -152,6 +152,8 @@ INSTRUCOES_DO_JUIZ = (
     "Falha seria dizer que a pessoa está chegando agora ou ignorar o pedido.\n"
     "- Leads fora do perfil e leads sem interesse recebem uma mensagem padronizada escrita pelo código.\n"
     "- O link do app só é enviado depois do roteamento; o link de agenda, só depois da aprovação do time.\n"
+    "- Nesta avaliação, o pedido de aprovação ao time é feito por uma ferramenta que você não vê, e a aprovação é "
+    "simulada como imediata: enviar o link de agenda na mesma resposta em que o lead diz a disponibilidade é o esperado.\n"
     "Use o cérebro da BRAX abaixo como fonte da verdade: o que está nele (preços, tarifas, prazos) não é invenção. "
     "Comentários <!-- REVISAR --> são notas internas do projeto."
 )

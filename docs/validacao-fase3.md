@@ -30,3 +30,17 @@ gasto mensal), com um único "Abraço," e uma única assinatura (decisão 027 fu
 **Detalhe menor:** o P.H. não chamou `registrar_qualificacao` com os dados da primeira mensagem (Nuvia, LTDA,
 8 pessoas). A conversa não é afetada, porque ele lê o histórico, mas o registro fica incompleto até o roteamento.
 É a mesma tendência anotada na Fase 2, para medir na Fase 6.
+
+## Teste 3: follow-up em modo de teste (1 dia útil = 1 minuto)
+
+**Funcionou:** o 1º lembrete saiu cerca de 1 minuto após a última pergunta do P.H., o 2º cerca de 3 minutos depois,
+ambos na mesma thread, e nada mais depois disso (lead marcado como "sem resposta").
+
+| Problema | Causa | Correção |
+|---|---|---|
+| Ao "Não tenho mais interesse.", o P.H. respondeu só **"Conversa encerrada."** | Não havia caminho para "sem interesse": o modelo usou o encerramento por "fora do assunto" e escreveu uma frase de sistema | Novo motivo `sem_interesse`: o código registra o motivo da perda e envia uma despedida cordial padronizada (decisão 029). "Conversa encerrada" entrou no bloqueio de texto interno |
+| `**Conta digital PJ**` com asteriscos no e-mail | O modelo usou markdown apesar da instrução | O código remove `**` do corpo do e-mail |
+| Lembretes com "Oi!", sem nome | O nome não foi registrado na qualificação | Saudações usam o primeiro nome do remetente do e-mail quando não há nome registrado |
+
+**Aprendizado:** todo desfecho de conversa precisa de um caminho explícito, inclusive o "não" do lead. "Sem interesse"
+é informação valiosa para o time comercial e não pode se perder num encerramento genérico.

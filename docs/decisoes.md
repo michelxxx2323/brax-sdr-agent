@@ -34,6 +34,7 @@
 | 026 | Quem mexe na caixa de e-mail é o código, não a IA | Aceita | 2026-10-02 |
 | 027 | Texto anterior a uma ferramenta só é descartado se ela puder mudar a resposta | Aceita | 2026-10-02 |
 | 028 | Follow-up com lembretes padronizados, regras em código | Aceita | 2026-10-02 |
+| 029 | "Sem interesse" como desfecho próprio, com despedida padronizada | Aceita | 2026-10-02 |
 
 ---
 
@@ -533,3 +534,18 @@ LGPD. Em código, as regras são previsíveis, testáveis e não custam tokens: 
 (decisão 023). Ficaram de fora, por falta de dados: lembrete para quem recebeu o link e não abriu conta (sem integração
 com o app) e para quem não agendou com o executivo (depende da agenda real, na Fase 5). No WhatsApp, o follow-up entra
 na Fase 4, porque a Meta exige modelos de mensagem aprovados fora da janela de 24 horas.
+
+---
+
+## 029: "Sem interesse" como desfecho próprio, com despedida padronizada
+
+**Contexto:** no teste de follow-up, o lead respondeu "Não tenho mais interesse." Sem um caminho para isso, o P.H.
+encerrou como "fora do assunto" e respondeu só "Conversa encerrada.", uma frase de sistema, sem registrar o motivo da perda.
+
+**Decisão:** novo motivo `sem_interesse` em `encerrar_conversa`. O código registra `motivo_encerramento = sem_interesse`
+(para o CRM na Fase 5), envia uma despedida cordial e padronizada e não manda mais lembretes. Diferente do opt-out:
+"não tenho interesse" encerra a conversa, mas o lead pode voltar; "pare de me mandar mensagens" é opt-out (LGPD) e bloqueia
+qualquer contato.
+
+**Motivo:** o "não" do lead é um dado de negócio (taxa e motivos de perda) e um momento de marca: uma despedida mal feita
+fecha a porta para uma retomada. Mesmo raciocínio das decisões 023 e 028: momento curto, repetitivo e sensível vai para o código.

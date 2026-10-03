@@ -146,14 +146,40 @@ class EnvioMeta:
         self.url = f"https://graph.facebook.com/{config.WHATSAPP_API_VERSAO}/{numero_id}/messages"
         self.cabecalhos = {"Authorization": f"Bearer {token}"}
 
-    def enviar(self, telefone: str, texto: str) -> None:
-        resposta = httpx.post(
+    def _postar(self, telefone: str, texto: str) -> httpx.Response:
+        return httpx.post(
             self.url,
             headers=self.cabecalhos,
             json={"messaging_product": "whatsapp", "to": telefone, "type": "text", "text": {"body": texto}},
             timeout=20,
         )
-        resposta.raise_for_status()
+
+    def enviar(self, telefone: str, texto: str) -> None:
+        resposta = self._postar(telefone, texto)
+        alternativo = numero_brasileiro_com_nono_digito(telefone)
+        if resposta.status_code >= 400 and alternativo and _codigo_de_erro(resposta) == ERRO_NUMERO_NAO_PERMITIDO:
+            # A Meta costuma entregar celulares brasileiros sem o 9º dígito, mas a lista de números permitidos
+            # do número de teste guarda o número com o 9. Tenta de novo no formato da lista.
+            resposta = self._postar(alternativo, texto)
+        if resposta.status_code >= 400:
+            raise RuntimeError(f"A Meta recusou o envio (HTTP {resposta.status_code}): {resposta.text[:300]}")
+
+
+ERRO_NUMERO_NAO_PERMITIDO = 131030  # "Recipient phone number not in allowed list"
+
+
+def _codigo_de_erro(resposta: httpx.Response) -> int | None:
+    try:
+        return resposta.json().get("error", {}).get("code")
+    except ValueError:
+        return None
+
+
+def numero_brasileiro_com_nono_digito(telefone: str) -> str | None:
+    """55 + DDD + 8 dígitos de celular (começando de 6 a 9) → o mesmo número com o 9 na frente. Senão, None."""
+    if len(telefone) == 12 and telefone.startswith("55") and telefone[4] in "6789":
+        return f"{telefone[:4]}9{telefone[4:]}"
+    return None
 
 
 def criar_envio():

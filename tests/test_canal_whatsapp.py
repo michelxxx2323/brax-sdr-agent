@@ -152,3 +152,46 @@ def test_regras_do_whatsapp_valem_no_servidor(tmp_path):
     _postar(http, montar_aviso(TELEFONE, "Ana", "text", {"body": "o que vocês fazem?"}))
     assert len(cliente.chamadas) == 2  # resposta + reescrita
     assert len(_saida(envio)[0]["texto"]) < len(longa)
+
+
+# --- Envio real (Meta), com a API falsa ---
+
+from brax_sdr.canal_whatsapp import EnvioMeta, numero_brasileiro_com_nono_digito  # noqa: E402
+
+
+def test_nono_digito_so_para_celular_brasileiro_sem_o_9():
+    assert numero_brasileiro_com_nono_digito("551187654321") == "5511987654321"
+    assert numero_brasileiro_com_nono_digito("5511987654321") is None  # já tem o 9
+    assert numero_brasileiro_com_nono_digito("551132654321") is None  # fixo (começa com 3)
+    assert numero_brasileiro_com_nono_digito("14155550123") is None  # não é do Brasil
+
+
+class _RespostaFalsa:
+    def __init__(self, status, corpo):
+        self.status_code, self._corpo, self.text = status, corpo, json.dumps(corpo)
+
+    def json(self):
+        return self._corpo
+
+
+def test_envio_tenta_de_novo_com_o_9_quando_a_meta_recusa(monkeypatch):
+    destinos = []
+
+    def post_falso(url, headers, json, timeout):
+        destinos.append(json["to"])
+        if json["to"] == "551187654321":
+            return _RespostaFalsa(400, {"error": {"code": 131030, "message": "Recipient phone number not in allowed list"}})
+        return _RespostaFalsa(200, {"messages": [{"id": "wamid.ok"}]})
+
+    monkeypatch.setattr("brax_sdr.canal_whatsapp.httpx.post", post_falso)
+    EnvioMeta(token="t", numero_id="123").enviar("551187654321", "Oi!")
+    assert destinos == ["551187654321", "5511987654321"]
+
+
+def test_erro_da_meta_aparece_com_o_motivo(monkeypatch):
+    monkeypatch.setattr(
+        "brax_sdr.canal_whatsapp.httpx.post",
+        lambda url, headers, json, timeout: _RespostaFalsa(401, {"error": {"code": 190, "message": "Access token has expired"}}),
+    )
+    with pytest.raises(RuntimeError, match="Access token has expired"):
+        EnvioMeta(token="t", numero_id="123").enviar("5511987654321", "Oi!")

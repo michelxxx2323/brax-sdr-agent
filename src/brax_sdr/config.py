@@ -78,6 +78,8 @@ WHATSAPP_VERIFY_TOKEN = os.getenv("WHATSAPP_VERIFY_TOKEN") or "verificacao-local
 # No modo simulado, o simulador e o servidor usam esta chave para assinar e conferir as mensagens.
 WHATSAPP_APP_SECRET = os.getenv("WHATSAPP_APP_SECRET") or ("segredo-local-de-teste" if WHATSAPP_MODO == "simulado" else "")
 WHATSAPP_PORTA = int(os.getenv("WHATSAPP_PORTA") or 8000)
+# No modo meta, só envia de verdade com "true". Desligado: processa e mostra no terminal o que TERIA enviado (decisão 032).
+WHATSAPP_ENVIO_HABILITADO = (os.getenv("WHATSAPP_ENVIO_HABILITADO") or "false").lower() == "true"
 PASTA_WHATSAPP = RAIZ / "data" / "local" / "whatsapp"  # saída simulada e ids já processados (fora do Git)
 
 # --- Follow-up (decisão 028; cadência de cerebro/vendas/handoff.md) ---

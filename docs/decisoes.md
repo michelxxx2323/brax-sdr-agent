@@ -37,6 +37,7 @@
 | 029 | "Sem interesse" como desfecho próprio, com despedida padronizada | Aceita | 2026-10-02 |
 | 030 | WhatsApp validado com um simulador da Meta, sem número de telefone | Aceita | 2026-10-02 |
 | 031 | Hospedagem depois da Fase 5 (Slack e HubSpot) | Aceita | 2026-10-02 |
+| 032 | Integração real com a Meta só no recebimento; envio desligado por padrão | Aceita | 2026-10-03 |
 
 ---
 
@@ -602,3 +603,21 @@ Supabase) vira a etapa 5b.
 
 **Motivo:** evita construir um paliativo que seria jogado fora e garante que, quando o projeto estiver no ar, todos os
 caminhos do fluxo funcionem, inclusive o que depende de uma pessoa do time.
+
+---
+
+## 032: Integração real com a Meta só no sentido de recebimento; envio desligado por padrão
+
+**Contexto:** a ideia é integrar o P.H. ao número de teste da WhatsApp Cloud API, mas sem usar nem enviar mensagens a um
+número pessoal. O número de teste só entrega mensagens a números cadastrados na lista dele.
+
+**Decisão:** validar a integração real naquilo que não exige número pessoal, e deixar o envio documentado como pendente:
+1. **Credenciais:** `diagnosticar_whatsapp.py` consulta a Meta (só leitura) e confirma token e número de teste.
+2. **Webhook:** a Meta verifica o endereço (túnel ngrok) com o token de verificação.
+3. **Recebimento:** o botão "Testar" do painel da Meta envia uma mensagem de exemplo, de um número fictício; o servidor confere
+   a assinatura e o P.H. processa a mensagem.
+4. **Envio:** `WHATSAPP_ENVIO_HABILITADO` vem **desligado**. O P.H. processa normalmente, mas a resposta só aparece no terminal
+   ("teria enviado para..."); nenhuma mensagem sai.
+
+**Motivo:** comprova a parte mais arriscada da integração (endereço público, verificação, assinatura, formato real da Meta)
+sem expor nenhum número. Ligar o envio real depois é mudar uma linha no `.env` e cadastrar um número na lista da Meta.

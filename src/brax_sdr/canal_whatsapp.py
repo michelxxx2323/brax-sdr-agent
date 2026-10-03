@@ -140,7 +140,13 @@ class EnvioSimulado:
 class EnvioMeta:
     """Modo real: envia pela WhatsApp Cloud API. Só respostas dentro da janela de 24h do lead (texto livre)."""
 
-    def __init__(self, token: str = config.WHATSAPP_ACCESS_TOKEN, numero_id: str = config.WHATSAPP_PHONE_NUMBER_ID):
+    def __init__(
+        self,
+        token: str = config.WHATSAPP_ACCESS_TOKEN,
+        numero_id: str = config.WHATSAPP_PHONE_NUMBER_ID,
+        habilitado: bool = config.WHATSAPP_ENVIO_HABILITADO,
+    ):
+        self.habilitado = habilitado
         if not token or not numero_id:
             raise RuntimeError("Modo meta: preencha WHATSAPP_ACCESS_TOKEN e WHATSAPP_PHONE_NUMBER_ID no .env.")
         self.url = f"https://graph.facebook.com/{config.WHATSAPP_API_VERSAO}/{numero_id}/messages"
@@ -155,6 +161,10 @@ class EnvioMeta:
         )
 
     def enviar(self, telefone: str, texto: str) -> None:
+        if not self.habilitado:
+            # Envio desligado (decisão 032): nenhuma mensagem sai; o terminal mostra o que teria saído.
+            print(f"[ENVIO DESLIGADO] Teria enviado para {telefone}:\n{texto}\n", flush=True)
+            return
         resposta = self._postar(telefone, texto)
         alternativo = numero_brasileiro_com_nono_digito(telefone)
         if resposta.status_code >= 400 and alternativo and _codigo_de_erro(resposta) == ERRO_NUMERO_NAO_PERMITIDO:

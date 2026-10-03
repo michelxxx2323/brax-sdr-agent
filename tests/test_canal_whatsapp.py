@@ -184,7 +184,7 @@ def test_envio_tenta_de_novo_com_o_9_quando_a_meta_recusa(monkeypatch):
         return _RespostaFalsa(200, {"messages": [{"id": "wamid.ok"}]})
 
     monkeypatch.setattr("brax_sdr.canal_whatsapp.httpx.post", post_falso)
-    EnvioMeta(token="t", numero_id="123").enviar("551187654321", "Oi!")
+    EnvioMeta(token="t", numero_id="123", habilitado=True).enviar("551187654321", "Oi!")
     assert destinos == ["551187654321", "5511987654321"]
 
 
@@ -194,4 +194,15 @@ def test_erro_da_meta_aparece_com_o_motivo(monkeypatch):
         lambda url, headers, json, timeout: _RespostaFalsa(401, {"error": {"code": 190, "message": "Access token has expired"}}),
     )
     with pytest.raises(RuntimeError, match="Access token has expired"):
-        EnvioMeta(token="t", numero_id="123").enviar("5511987654321", "Oi!")
+        EnvioMeta(token="t", numero_id="123", habilitado=True).enviar("5511987654321", "Oi!")
+
+
+def test_envio_desligado_nao_chama_a_meta(monkeypatch, capsys):
+    # Decisão 032: no modo meta com envio desligado, nenhuma mensagem sai; o terminal mostra o que sairia.
+    def post_proibido(*args, **kwargs):
+        raise AssertionError("não deveria chamar a Meta")
+
+    monkeypatch.setattr("brax_sdr.canal_whatsapp.httpx.post", post_proibido)
+    EnvioMeta(token="t", numero_id="123", habilitado=False).enviar("16315551181", "Oi, aqui é o P.H.!")
+    saida = capsys.readouterr().out
+    assert "[ENVIO DESLIGADO] Teria enviado para 16315551181" in saida and "Oi, aqui é o P.H.!" in saida

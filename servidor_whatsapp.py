@@ -30,6 +30,9 @@ if not config.WHATSAPP_APP_SECRET:
     sys.exit(1)
 
 print(f"Servidor do WhatsApp | modo: {config.WHATSAPP_MODO} | http://127.0.0.1:{config.WHATSAPP_PORTA}/webhook")
+if config.WHATSAPP_MODO == "meta":
+    print("Envio REAL ligado: as respostas vão para o WhatsApp." if config.WHATSAPP_ENVIO_HABILITADO
+          else "Envio DESLIGADO: nenhuma mensagem sai; o terminal mostra o que teria sido enviado.")
 print("Aprovações de executivo aparecem AQUI (Slack simulado, até a Fase 5).\n")
 # A aprovação de executivo continua no terminal (Slack simulado) até a Fase 5.
 app = criar_app(Agente(aprovador=aprovador_no_terminal), criar_envio(), RegistroDeMensagens())

@@ -275,8 +275,8 @@ def test_depois_da_transferencia_o_ph_segue_coletando_e_o_vendedor_acompanha(tmp
     ])
     agente.responder(TELEFONE, "Quero falar com uma pessoa")
     salvo = memoria.carregar(TELEFONE, pasta=tmp_path)
-    assert salvo.transferido_para_vendedor is True and salvo.atendimento_humano is False  # sem pausa
-    assert slack_falso.postadas[0]["blocks"][-1]["elements"][0]["action_id"] == "brax_assumir"
+    assert salvo.transferido_para_vendedor is True
+    assert all(b["type"] != "actions" for b in slack_falso.postadas[0]["blocks"])  # alerta sem botões (decisão 038)
 
     resposta = agente.responder(TELEFONE, "É a Toddo")
     assert resposta.texto == "Anotado! E quantas pessoas trabalham na Toddo?"  # o P.H. continua a qualificação
@@ -284,47 +284,18 @@ def test_depois_da_transferencia_o_ph_segue_coletando_e_o_vendedor_acompanha(tmp
     assert '"vendedor_vai_entrar_em_contato": true' in agente.client.chamadas[1]["system"][1]["text"]
 
 
-def test_assumir_pausa_e_devolver_despausa(tmp_path):
-    from brax_sdr.slack_brax import assumir_conversa, devolver_ao_ph
-
-    slack_falso = SlackFalso()
-    slack = _slack(slack_falso)
-    lead_pendente(tmp_path, transferido_para_vendedor=True,
-                  slack={"alerta": {"canal": "C123", "ts": "1700.9", "motivo": "pediu uma pessoa"}})
-    agente = Agente(client=ClaudeFalso([]), pasta_leads=tmp_path, aviso_em_atendimento=slack.mensagem_em_atendimento)
-
-    assert assumir_conversa(TELEFONE, "U1", agente, slack) == "assumida (P.H. pausado)"
-    assert slack_falso.atualizadas[0]["blocks"][-1]["elements"][0]["action_id"] == "brax_devolver"
-    resposta = agente.responder(TELEFONE, "Alguém aí?")
-    assert resposta.motivo_silencio == "atendimento_humano" and agente.client.chamadas == []  # pausado: a IA não fala
-    assert slack_falso.postadas[-1]["thread_ts"] == "1700.9"
-
-    assert devolver_ao_ph(TELEFONE, "U1", agente, slack) == "devolvido ao P.H."
-    assert memoria.carregar(TELEFONE, pasta=tmp_path).atendimento_humano is False
-    assert "Devolvido ao P.H." in slack_falso.atualizadas[-1]["blocks"][1]["elements"][0]["text"]
-    assert devolver_ao_ph(TELEFONE, "U2", agente, slack) == "já estava com o P.H."
 
 
-def test_botoes_assumir_e_devolver_chamam_a_funcao_certa():
-    from brax_sdr.slack_brax import ACAO_ASSUMIR, ACAO_DEVOLVER
-
-    app, chamados = AppFalso(), []
-    registrar_acoes(app, lambda *args: None, lambda *args: chamados.append(("devolver", *args)),
-                    lambda *args: chamados.append(("assumir", *args)))
-    corpo = {"actions": [{"value": TELEFONE}], "user": {"id": "U1"}}
-    app.acoes[ACAO_ASSUMIR](ack=lambda: None, body=corpo)
-    app.acoes[ACAO_DEVOLVER](ack=lambda: None, body=corpo)
-    assert chamados == [("assumir", TELEFONE, "U1"), ("devolver", TELEFONE, "U1")]
 
 
-def test_followup_nao_envia_lembrete_durante_atendimento_humano():
+def test_followup_nao_envia_lembrete_para_lead_transferido():
     from datetime import datetime, timedelta, timezone
 
     from brax_sdr.followup import numero_do_followup_devido
 
     ontem = datetime(2026, 9, 30, 13, 0, tzinfo=timezone.utc)
     lead = Lead(id="ana@x.example", canal="email", aguardando_lead=True, ultima_resposta_em=ontem.isoformat(),
-                email_contexto={"thread_id": "t"}, atendimento_humano=True)
+                email_contexto={"thread_id": "t"}, transferido_para_vendedor=True)
     assert numero_do_followup_devido(lead, ontem + timedelta(days=2)) is None
 
 

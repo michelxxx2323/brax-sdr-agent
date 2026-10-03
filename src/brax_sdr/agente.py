@@ -199,18 +199,6 @@ class Agente:
             memoria.salvar(lead, pasta=self.pasta_leads)
             return Resposta(texto=None, lead=lead, motivo_silencio="opt_out")
 
-        # Em atendimento humano, o P.H. fica pausado (decisão 036): guarda a mensagem e avisa o time, sem chamar a IA.
-        if lead.atendimento_humano:
-            lead.mensagens.append({"role": "user", "content": texto})
-            lead.registrar_evento("mensagem_em_atendimento_humano", texto[:120])
-            if self.aviso_em_atendimento:
-                try:
-                    self.aviso_em_atendimento(lead, texto)
-                except Exception as erro:
-                    lead.registrar_evento("alerta_humano_erro", str(erro)[:200])
-            memoria.salvar(lead, pasta=self.pasta_leads)
-            return Resposta(texto=None, lead=lead, motivo_silencio="atendimento_humano")
-
         # Pedido explícito por uma pessoa: o código transfere ANTES de chamar a IA (guardrail G4). Achado no teste do Fabio:
         # ele pediu duas vezes e o modelo seguiu qualificando. Depois, a IA responde normalmente e continua a
         # qualificação, para o vendedor chegar preparado (decisão 037).

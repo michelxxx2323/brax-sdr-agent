@@ -6,7 +6,7 @@ Fase de canais: a mesma interface passa a usar o Supabase (decisão 014).
 
 import json
 import re
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, fields
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -42,7 +42,6 @@ class Lead:
     slack: dict = field(default_factory=dict)  # mensagem de aprovação no Slack (canal, ts) e resumo (decisão 034)
     # Transferência (decisão 037): o vendedor entra em contato em horário comercial e o P.H. segue coletando informações.
     transferido_para_vendedor: bool = False
-    atendimento_humano: bool = False  # alguém do time assumiu a conversa no chat: o P.H. fica pausado até ser devolvido
     eventos: list[dict] = field(default_factory=list)
     criado_em: str = field(default_factory=agora)
     atualizado_em: str = field(default_factory=agora)
@@ -71,7 +70,10 @@ def carregar(lead_id: str, canal: str = "whatsapp", pasta: Path = config.PASTA_L
     caminho = _arquivo(lead_id, pasta)
     if not caminho.exists():
         return Lead(id=_id_seguro(lead_id), canal=canal)
-    return Lead(**json.loads(caminho.read_text(encoding="utf-8")))
+    dados = json.loads(caminho.read_text(encoding="utf-8"))
+    # Ignora campos que deixaram de existir (ex.: a pausa da decisão 036, removida na 038): arquivos antigos continuam abrindo.
+    conhecidos = {campo.name for campo in fields(Lead)}
+    return Lead(**{chave: valor for chave, valor in dados.items() if chave in conhecidos})
 
 
 def salvar(lead: Lead, pasta: Path = config.PASTA_LEADS) -> None:

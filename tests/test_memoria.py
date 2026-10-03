@@ -31,3 +31,11 @@ def test_id_malicioso_nao_sai_da_pasta(tmp_path):
     arquivos = list(tmp_path.iterdir())
     assert len(arquivos) == 1
     assert arquivos[0].parent == tmp_path
+
+
+def test_arquivo_com_campo_que_deixou_de_existir_continua_abrindo(tmp_path):
+    # Leads salvos com a pausa da decisão 036 (campo "atendimento_humano", removido na 038).
+    import json
+
+    (tmp_path / "antigo.json").write_text(json.dumps({"id": "antigo", "atendimento_humano": True}), encoding="utf-8")
+    assert memoria.carregar("antigo", pasta=tmp_path).id == "antigo"

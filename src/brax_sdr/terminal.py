@@ -19,7 +19,6 @@ from brax_sdr.memoria import Lead
 
 AJUDA = """Comandos:
   /estado   mostra o que o P.H. já registrou sobre o lead
-  /devolver devolve o lead ao P.H. depois de uma transferência para humano (faz o papel do botão do Slack)
   /ajuda    mostra esta ajuda
   /sair     encerra (o histórico fica salvo; use o mesmo --lead para continuar)"""
 
@@ -29,7 +28,6 @@ MOTIVOS_DE_SILENCIO = {
     "conversa_encerrada": "conversa encerrada, e esta mensagem é só uma despedida (nenhum token gasto)",
     "limite_diario": "limite de mensagens por dia atingido (nenhum token gasto)",
     "limite_de_custo": "limite de custo deste lead atingido; uma pessoa do time assume (nenhum token gasto)",
-    "atendimento_humano": "uma pessoa do time assumiu a conversa; o P.H. está pausado (no terminal: /devolver)",
 }
 
 
@@ -128,16 +126,6 @@ def main() -> None:
             continue
         if texto == "/estado":
             mostrar_estado(args.lead)
-            continue
-        if texto == "/devolver":
-            lead_atual = memoria.carregar(args.lead)
-            if lead_atual.atendimento_humano:
-                lead_atual.atendimento_humano = False
-                lead_atual.registrar_evento("devolvido_ao_ph", "terminal")
-                memoria.salvar(lead_atual)
-                print("Lead devolvido ao P.H.: ele volta a responder na próxima mensagem.\n")
-            else:
-                print("Este lead não está em atendimento humano.\n")
             continue
         if parece_comando(texto):
             print("Isso parece um comando do terminal, não uma mensagem de lead. Nada foi enviado ao P.H.")

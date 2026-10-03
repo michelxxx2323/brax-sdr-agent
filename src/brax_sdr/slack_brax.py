@@ -14,8 +14,6 @@ ACAO_APROVAR = "brax_aprovar"
 ACAO_NOVO_HORARIO = "brax_novo_horario"
 ACAO_INDICAR_APP = "brax_indicar_app"
 JANELA_HORARIO = "brax_janela_horario"
-ACAO_DEVOLVER = "brax_devolver"
-ACAO_ASSUMIR = "brax_assumir"
 
 
 # --- Mensagens do Slack (Block Kit) ------------------------------------------------------------
@@ -43,25 +41,18 @@ def blocos_de_aprovacao(lead: Lead, resumo: str, disponibilidade: str) -> list[d
     ]
 
 
-def blocos_de_atendimento(lead: Lead, motivo: str, assumido_por: str | None = None, nota: str = "") -> list[dict]:
-    """Alerta de transferência (decisão 037). Sem dono: o vendedor entra em contato em horário comercial e o P.H. segue
-    coletando informações. Com dono ("Assumir conversa"): o P.H. pausa até "Devolver ao P.H."."""
-    if assumido_por:
-        situacao = f"🙋 Conversa assumida por <@{assumido_por}>: o P.H. está *pausado* para este lead."
-        botao = {"type": "button", "action_id": ACAO_DEVOLVER, "value": lead.id, "text": {"type": "plain_text", "text": "Devolver ao P.H."}}
-    else:
-        situacao = (
-            "Um vendedor deve entrar em contato em *horário comercial*. Enquanto isso, o P.H. segue coletando informações; "
-            "tudo o que o lead disser aparece na thread desta mensagem."
-        )
-        botao = {"type": "button", "action_id": ACAO_ASSUMIR, "value": lead.id, "text": {"type": "plain_text", "text": "Assumir conversa"}}
+def blocos_de_atendimento(lead: Lead, motivo: str) -> list[dict]:
+    """Alerta de transferência (decisões 037 e 038): o vendedor entra em contato em horário comercial e o P.H. segue
+    coletando informações. Sem botões: o time não responde pelo Slack."""
     return [
         {"type": "section", "text": {"type": "mrkdwn", "text": (
             f"🙋 *Lead pediu atendimento humano*\n*Lead:* {_rotulo_do_lead(lead)} · *Canal:* {lead.canal} · "
             f"*Contato:* {lead.id}\n*Motivo:* {motivo}"
         )}},
-        {"type": "context", "elements": [{"type": "mrkdwn", "text": situacao + (f"\n{nota}" if nota else "")}]},
-        {"type": "actions", "elements": [botao]},
+        {"type": "context", "elements": [{"type": "mrkdwn", "text": (
+            "Um vendedor deve entrar em contato em *horário comercial*. Enquanto isso, o P.H. segue coletando informações; "
+            "tudo o que o lead disser aparece na thread desta mensagem."
+        )}]},
     ]
 
 
@@ -232,56 +223,8 @@ def processar_decisao(lead_id: str, decisao: str, observacao: str, usuario: str,
         return f"retorno enviado ({canal})" if canal else "retorno não entregue"
 
 
-def _atualizar_alerta(slack: SlackBrax, lead: Lead, assumido_por: str | None = None, nota: str = "") -> None:
-    alerta = lead.slack.get("alerta")
-    if alerta:
-        slack.cliente.chat_update(
-            channel=alerta["canal"], ts=alerta["ts"], text=f"Atendimento humano: {_rotulo_do_lead(lead)}",
-            blocks=blocos_de_atendimento(lead, alerta.get("motivo", "-"), assumido_por, nota),
-        )
-
-
-def assumir_conversa(lead_id: str, usuario: str, agente, slack: SlackBrax) -> str:
-    """Alguém do time vai falar com o lead no próprio chat: o P.H. pausa para não falarem os dois ao mesmo tempo."""
-    with trava_do_lead(lead_id):
-        lead = memoria.carregar(lead_id, pasta=agente.pasta_leads)
-        if lead.atendimento_humano:
-            return "já estava assumida"
-        lead.atendimento_humano = True
-        lead.registrar_evento("assumido_por_humano", f"Slack <@{usuario}>")
-        memoria.salvar(lead, pasta=agente.pasta_leads)
-    _atualizar_alerta(slack, lead, assumido_por=usuario)
-    return "assumida (P.H. pausado)"
-
-
-def devolver_ao_ph(lead_id: str, usuario: str, agente, slack: SlackBrax) -> str:
-    """O time terminou: o P.H. volta a responder este lead na próxima mensagem."""
-    with trava_do_lead(lead_id):
-        lead = memoria.carregar(lead_id, pasta=agente.pasta_leads)
-        if not lead.atendimento_humano:
-            return "já estava com o P.H."
-        lead.atendimento_humano = False
-        lead.registrar_evento("devolvido_ao_ph", f"Slack <@{usuario}>")
-        memoria.salvar(lead, pasta=agente.pasta_leads)
-    _atualizar_alerta(slack, lead, nota=f"✅ Devolvido ao P.H. por <@{usuario}>")
-    return "devolvido ao P.H."
-
-
-def registrar_acoes(app, ao_decidir, ao_devolver=None, ao_assumir=None) -> None:
-    """Liga os botões e a janela do Slack (slack_bolt.App) às funções ao_decidir(lead_id, decisao, observacao, usuario),
-    ao_assumir(lead_id, usuario) e ao_devolver(lead_id, usuario)."""
-
-    @app.action(ACAO_ASSUMIR)
-    def _assumir(ack, body):
-        ack()
-        if ao_assumir:
-            ao_assumir(body["actions"][0]["value"], body["user"]["id"])
-
-    @app.action(ACAO_DEVOLVER)
-    def _devolver(ack, body):
-        ack()
-        if ao_devolver:
-            ao_devolver(body["actions"][0]["value"], body["user"]["id"])
+def registrar_acoes(app, ao_decidir) -> None:
+    """Liga os botões e a janela do Slack (slack_bolt.App) à função ao_decidir(lead_id, decisao, observacao, usuario)."""
 
     @app.action(ACAO_APROVAR)
     def _aprovar(ack, body):

@@ -84,3 +84,12 @@ alerta chegou ao Slack e o lead foi avisado de que uma pessoa do time continua e
 **Aprendizado:** a mesma regra pode funcionar num teste (Diego) e falhar no seguinte (Fabio). Um teste que passa não prova que
 o modelo sempre obedece; regras inegociáveis (como o G4) precisam de garantia em código. Na Fase 6, os evals vão medir com
 que frequência isso acontece.
+
+## Teste 7: "Gabi" (perfil Fabio, Toddo): reteste da transferência
+
+**Resultado:** a transferência pelo código funcionou (alerta no Slack, pausa, botão "Devolver ao P.H."). A primeira parte do
+teste ainda rodou com o código antigo, porque o programa não tinha sido reiniciado.
+
+| Problema | Causa | Correção |
+|---|---|---|
+| Depois de devolvida a conversa, o "Alguém aí?" recebeu "é só aguardar um pouco que ela chega" | Promessa improvisada pelo modelo; e a regra de negócio da transferência estava errada no desenho (pausa imediata) | Nova regra (decisão 037): o vendedor entra em contato em horário comercial e o P.H. segue coletando informações; pausa só com "Assumir conversa" |

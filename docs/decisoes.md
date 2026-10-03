@@ -41,7 +41,8 @@
 | 033 | HubSpot sincronizado pelo código após cada resposta, sem travar a conversa | Aceita | 2026-10-03 |
 | 034 | Aprovação assíncrona no Slack, retorno escrito pela IA com travas, e um programa único | Aceita | 2026-10-03 |
 | 035 | Agenda continua como link fictício (agenda real no CRM fica de fora por privacidade) | Aceita | 2026-10-03 |
-| 036 | P.H. pausado durante o atendimento humano | Aceita | 2026-10-03 |
+| 036 | P.H. pausado durante o atendimento humano | Aceita (gatilho da pausa mudado pela 037) | 2026-10-03 |
+| 037 | Transferência: vendedor em horário comercial e P.H. segue coletando | Aceita | 2026-10-03 |
 
 ---
 
@@ -720,3 +721,23 @@ WhatsApp ou e-mail). Exige permissões extras no app do Slack (ler mensagens do 
 
 **Motivo:** "transferir para humano" só é uma transferência de verdade se o robô sair da conversa. A pausa em código
 segue o padrão do projeto: o que precisa ser garantido não fica a cargo do modelo.
+
+---
+
+## 037: Transferência = vendedor entra em contato em horário comercial; o P.H. segue coletando
+
+**Contexto:** a decisão 036 pausava o P.H. assim que ele transferia o lead. No teste da Gabi, depois de devolvida a
+conversa, o P.H. improvisou "é só aguardar um pouco que ela chega". A regra de negócio definida pelo dono do projeto é outra:
+na prática, ninguém do time fica no chat esperando; o vendedor entra em contato depois, em horário comercial.
+
+**Decisão:**
+- Ao transferir (por ferramenta ou porque o código reconheceu o pedido por uma pessoa), o P.H. **avisa que um vendedor
+  entra em contato em horário comercial (seg a sex, 9h às 18h)** e **continua a qualificação**, para o vendedor chegar
+  preparado. Se a resposta da IA não mencionar o horário comercial, o código acrescenta a frase. Nunca "está chegando".
+- Tudo o que o lead diz depois da transferência vai para a **thread do alerta** no Slack.
+- A **pausa** (decisão 036) só acontece quando alguém clica em **"Assumir conversa"**, ou seja, quando uma pessoa vai
+  falar com o lead no próprio chat. **"Devolver ao P.H."** desfaz a pausa.
+- Um lead transferido recebe **um** alerta só, e **não recebe lembretes de follow-up** (o vendedor vai procurá-lo).
+
+**Motivo:** deixar o lead sem resposta, ou prometer alguém "chegando", piora a experiência; continuar a conversa até o
+vendedor chegar aproveita o tempo para qualificar e reduz a ligação de descoberta do vendedor.

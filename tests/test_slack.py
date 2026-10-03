@@ -1,5 +1,6 @@
 """Testes da aprovação pelo Slack (decisão 034) com Slack, Claude, Gmail e WhatsApp FALSOS: nada sai para a internet."""
 
+import copy
 import json
 
 import pytest
@@ -46,7 +47,7 @@ class ClaudeFalso:
         self.messages = self
 
     def create(self, **kwargs):
-        self.chamadas.append(kwargs)
+        self.chamadas.append(copy.deepcopy(kwargs))  # cópia: o agente continua mexendo na lista depois
         return Message(id="x", type="message", role="assistant", model="claude-haiku-4-5", stop_reason="end_turn",
                        stop_sequence=None, usage=Usage(input_tokens=1, output_tokens=1),
                        content=[TextBlock(type="text", text=self.textos.pop(0))])
@@ -310,8 +311,9 @@ def test_pedido_por_uma_pessoa_sempre_transfere_e_o_horario_comercial_e_garantid
     salvo = memoria.carregar("5511900000007", pasta=tmp_path)
     assert salvo.transferido_para_vendedor is True  # o código transferiu, independentemente da IA
     assert len(slack_falso.postadas) == 1  # alerta no Slack
-    assert resposta.texto.startswith("Claro! Aqui é o P.H., assistente virtual da BRAX. Um vendedor do nosso time")
-    assert "horário comercial" in resposta.texto and resposta.texto.endswith("Qual o nome da empresa?")
+    # A IA já se apresentou: a frase acrescentada não repete a apresentação (teste do Hugo).
+    assert resposta.texto.startswith("Claro! Um vendedor do nosso time vai entrar em contato com você em horário comercial")
+    assert resposta.texto.count("assistente virtual") == 1 and resposta.texto.endswith("Qual o nome da empresa?")
 
 
 def test_segundo_pedido_nao_gera_segundo_alerta(tmp_path):
@@ -347,3 +349,22 @@ def test_retorno_que_inventa_ligacao_cai_no_texto_padronizado(tmp_path):
     processar_decisao(TELEFONE, "aprovada", "", "U1", agente, entregador, slack)
     texto = _saida(envio)[0]["texto"]
     assert "ligar" not in texto and config.LINK_AGENDA_EXECUTIVO in texto
+
+
+def test_nota_da_transferencia_vai_para_a_ia_mas_nao_fica_no_historico(tmp_path):
+    # Achado no teste do Hugo: só com o aviso no contexto, a IA respondeu "posso conectar você... antes disso".
+    agente, _, _ = _agente_com_slack(tmp_path, [
+        "Claro, Hugo! Um vendedor entra em contato em horário comercial (seg a sex, 9h às 18h). Qual o nome da empresa?"])
+    agente.responder(TELEFONE, "Oi quero falar com uma pessoa")
+    enviado_a_ia = agente.client.chamadas[0]["messages"][-1]["content"]
+    assert enviado_a_ia.startswith("Oi quero falar com uma pessoa") and "a transferência para um vendedor já foi feita" in enviado_a_ia
+    salvo = memoria.carregar(TELEFONE, pasta=tmp_path)
+    assert salvo.mensagens[0] == {"role": "user", "content": "Oi quero falar com uma pessoa"}
+
+
+def test_frase_acrescentada_nao_repete_a_apresentacao(tmp_path):
+    # Caso real: "Claro! Aqui é o P.H., assistente virtual da BRAX. [...] Oi, Hugo! Aqui é o P.H., assistente virtual da BRAX".
+    agente, _, _ = _agente_com_slack(tmp_path, ["Oi, Hugo! Aqui é o P.H., assistente virtual da BRAX 👋 Qual o nome da empresa?"])
+    resposta = agente.responder(TELEFONE, "Oi quero falar com uma pessoa")
+    assert resposta.texto.count("assistente virtual") == 1
+    assert resposta.texto.startswith("Claro! Um vendedor do nosso time vai entrar em contato com você em horário comercial")

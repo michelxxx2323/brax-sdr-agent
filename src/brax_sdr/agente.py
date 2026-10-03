@@ -229,7 +229,17 @@ class Agente:
         primeira = not any(m["role"] == "assistant" for m in lead.mensagens)
         faixa_inicial = lead.faixa
         encerramento_inicial = lead.dados.get("motivo_encerramento")
-        mensagens = [*lead.mensagens, {"role": "user", "content": texto}]
+        conteudo_do_lead = texto
+        if transferido_agora:
+            # Nota só desta rodada (não fica no histórico). Achado no teste do Hugo: só com o aviso no contexto, a IA
+            # escreveu "posso conectar você... antes disso", como se a transferência ainda não tivesse acontecido.
+            conteudo_do_lead = (
+                f"{texto}\n\n[Nota do sistema, não é do lead: a transferência para um vendedor já foi feita. Avise que um "
+                "vendedor do nosso time vai entrar em contato em horário comercial (seg a sex, 9h às 18h) e faça a "
+                "próxima pergunta de qualificação, para ele chegar preparado.]"
+            )
+        posicao_do_lead = len(lead.mensagens)
+        mensagens = [*lead.mensagens, {"role": "user", "content": conteudo_do_lead}]
         resposta = Resposta(texto=None, lead=lead)
         # Cada rodada: (posição da mensagem do assistente em `mensagens`, textos escritos nela).
         rodadas_com_ferramenta: list[tuple[int, list[str]]] = []
@@ -342,7 +352,9 @@ class Agente:
 
         if transferido_agora and not mensagem_do_codigo and not _MENCIONA_HORARIO_COMERCIAL.search(texto_final):
             # A IA esqueceu de avisar quando o vendedor entra em contato: o código garante a frase (decisão 037).
-            aviso = mensagem_transferencia(lead.primeiro_nome(), primeira)
+            # Sem repetir a apresentação se a IA já se apresentou (achado no teste do Hugo: "Aqui é o P.H." duas vezes).
+            ja_se_apresentou = "assistente virtual" in texto_final.lower()
+            aviso = mensagem_transferencia(lead.primeiro_nome(), primeira and not ja_se_apresentou)
             texto_final = f"{aviso} {texto_final}".strip()
             fixar_texto(texto_final)
 
@@ -368,6 +380,7 @@ class Agente:
         for alerta in resposta.alertas:
             lead.registrar_evento(tipo_de_evento(alerta), alerta)
 
+        mensagens[posicao_do_lead] = {"role": "user", "content": texto}  # o histórico guarda só o que o lead escreveu
         lead.mensagens = mensagens
         lead.custo_total_usd += resposta.custo_usd
         # Base do follow-up (decisão 028): o lead respondeu, então a contagem de lembretes recomeça.

@@ -108,11 +108,19 @@ def campos_do_contato(lead: Lead) -> dict:
         "brax_motivo_encerramento": motivo_de_perda(lead),
         "brax_opt_out": "sim" if lead.opt_out else None,
     }
-    if "@" in lead.id:
-        campos["email"] = lead.id
-    else:
-        campos["phone"] = f"+{lead.id}"
+    campo, valor = identificador_do_contato(lead)
+    if campo != "brax_lead_id":
+        campos[campo] = valor
     return _sem_vazios(campos)
+
+
+def identificador_do_contato(lead: Lead) -> tuple[str, str]:
+    """Campo usado para achar o contato no HubSpot: e-mail, telefone (só dígitos) ou, nos testes do terminal, o id do lead."""
+    if "@" in lead.id:
+        return "email", lead.id
+    if lead.id.isdigit():
+        return "phone", f"+{lead.id}"
+    return "brax_lead_id", lead.id  # ex.: "lumen" no terminal: não é e-mail nem telefone
 
 
 def campos_da_empresa(lead: Lead) -> dict:
@@ -146,6 +154,9 @@ class HubSpot:
             transport=transporte,
         )
         self._etapas: dict[str, tuple[str, str]] | None = None  # chave → (id do funil, id da etapa)
+        # A busca do HubSpot demora alguns segundos para enxergar um registro novo (consistência eventual).
+        # Achado na 1ª sincronização real: duas conversas da Nuvia seguidas criaram duas empresas.
+        self._empresas_criadas: dict[str, str] = {}  # nome normalizado → id
 
     def _pedir(self, metodo: str, caminho: str, corpo: dict | None = None, aceitar: tuple[int, ...] = ()) -> dict:
         resposta = self.http.request(metodo, caminho, json=corpo)
@@ -224,8 +235,7 @@ class HubSpot:
 
         contato = campos_do_contato(lead)
         if not crm.get("contato_id"):
-            chave = "email" if "email" in contato else "phone"
-            crm["contato_id"] = self._buscar("contacts", chave, contato[chave])
+            crm["contato_id"] = self._buscar("contacts", *identificador_do_contato(lead))
         crm["contato_id"] = self._gravar("contacts", crm.get("contato_id"), contato)
         feito.append("contato")
 
@@ -233,10 +243,12 @@ class HubSpot:
         if empresa.get("name"):
             if not crm.get("empresa_id"):
                 # Mesma empresa, outro contato (pendência da Fase 2): reaproveita a empresa que já está no CRM.
-                existente = self._buscar("companies", "name", empresa["name"])
+                nome = empresa["name"].strip().lower()
+                existente = self._empresas_criadas.get(nome) or self._buscar("companies", "name", empresa["name"])
                 if existente:
                     lead.registrar_evento("crm_empresa_existente", empresa["name"])
                 crm["empresa_id"] = self._gravar("companies", existente, empresa)
+                self._empresas_criadas[nome] = crm["empresa_id"]
                 self._associar("contacts", crm["contato_id"], "companies", crm["empresa_id"])
             else:
                 self._gravar("companies", crm["empresa_id"], empresa)

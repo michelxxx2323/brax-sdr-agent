@@ -119,6 +119,9 @@ def test_campos_do_contato_e_da_empresa():
     assert contato["brax_decisor"] == "sim" and contato["brax_prioridade"] == "5"
     assert "phone" not in contato
     assert campos_do_contato(Lead(id="5511900000002"))["phone"] == "+5511900000002"  # lead de WhatsApp
+    # Bug da 1ª sincronização real: leads do terminal ("lumen") viravam telefone "+lumen".
+    terminal = campos_do_contato(Lead(id="lumen"))
+    assert "phone" not in terminal and "email" not in terminal and terminal["brax_lead_id"] == "lumen"
     empresa = campos_da_empresa(lead_lumen())
     assert empresa == {"name": "Lumen", "numberofemployees": "28", "brax_tipo_empresa": "ltda", "brax_gasto_mensal": "70000"}
 
@@ -159,6 +162,23 @@ def test_segunda_pessoa_da_mesma_empresa_reaproveita_a_empresa():
     assert len(falso.objetos["companies"]) == 1
     assert len(falso.objetos["contacts"]) == 2
     assert sara.eventos[-1]["tipo"] == "crm_empresa_existente"
+
+
+def test_empresas_seguidas_nao_duplicam_mesmo_com_busca_atrasada():
+    # Achado real: a busca do HubSpot demora para enxergar um registro novo; duas Nuvias seguidas viraram duas empresas.
+    falso = HubSpotFalso()
+    hubspot = _hubspot(falso)
+    rota_original = falso.__call__
+
+    def busca_atrasada(pedido):
+        if pedido.url.path.endswith("/companies/search"):
+            return httpx.Response(200, json={"results": []})  # a busca ainda não enxerga nada
+        return rota_original(pedido)
+
+    hubspot.http._transport = httpx.MockTransport(busca_atrasada)
+    hubspot.sincronizar(lead_lumen(id="paulo@nuvia.example", dados={"empresa": "Nuvia"}))
+    hubspot.sincronizar(lead_lumen(id="ana@nuvia.example", dados={"empresa": "nuvia "}))
+    assert len(falso.objetos["companies"]) == 1
 
 
 def test_contato_que_ja_existia_no_crm_e_atualizado():

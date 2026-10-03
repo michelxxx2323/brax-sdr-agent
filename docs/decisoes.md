@@ -41,8 +41,9 @@
 | 033 | HubSpot sincronizado pelo código após cada resposta, sem travar a conversa | Aceita | 2026-10-03 |
 | 034 | Aprovação assíncrona no Slack, retorno escrito pela IA com travas, e um programa único | Aceita | 2026-10-03 |
 | 035 | Agenda continua como link fictício (agenda real no CRM fica de fora por privacidade) | Aceita | 2026-10-03 |
-| 036 | P.H. pausado durante o atendimento humano | Aceita (gatilho da pausa mudado pela 037) | 2026-10-03 |
-| 037 | Transferência: vendedor em horário comercial e P.H. segue coletando | Aceita | 2026-10-03 |
+| 036 | P.H. pausado durante o atendimento humano | Substituída pela 038 | 2026-10-03 |
+| 037 | Transferência: vendedor em horário comercial e P.H. segue coletando | Aceita (simplificada pela 038) | 2026-10-03 |
+| 038 | Transferência simplificada, sem pausa nem botões | Aceita | 2026-10-03 |
 
 ---
 
@@ -741,3 +742,25 @@ na prática, ninguém do time fica no chat esperando; o vendedor entra em contat
 
 **Motivo:** deixar o lead sem resposta, ou prometer alguém "chegando", piora a experiência; continuar a conversa até o
 vendedor chegar aproveita o tempo para qualificar e reduz a ligação de descoberta do vendedor.
+
+---
+
+## 038: Transferência simplificada, sem pausa nem botões
+
+**Contexto:** a decisão 037 manteve uma pausa do P.H., acionada pelo botão "Assumir conversa" no Slack, para quando alguém do
+time fosse falar com o lead no próprio chat. Mas o time **não consegue responder ao lead pelo Slack**: isso exigiria
+permissões extras no app (ler mensagens do canal) e eventos de mensagem. Pausar o P.H. sem dar a ninguém um jeito de falar
+com o lead deixaria o lead sem resposta.
+
+**Opções consideradas:**
+1. Implementar respostas pelo Slack (a pessoa escreve na thread do alerta e a mensagem vai para o WhatsApp ou e-mail).
+2. Simplificar: tirar a pausa e os botões.
+
+**Decisão:** opção 2. Na transferência: alerta no Slack (sem botões); o P.H. avisa que um vendedor entra em contato em
+horário comercial e segue coletando informações; o que o lead disser vai para a thread do alerta; sem follow-up.
+A leitura da memória passou a ignorar campos que deixaram de existir, para os leads antigos continuarem abrindo.
+
+**Fica para depois:** a opção 1, se o time comercial passar a atender pelo Slack.
+
+**Motivo:** cada peça precisa ter uso real. A pausa só faz sentido junto com um canal para o humano responder; sem ele,
+ela vira um jeito de deixar o lead sem resposta.

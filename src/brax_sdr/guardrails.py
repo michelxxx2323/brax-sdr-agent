@@ -52,7 +52,9 @@ _TEXTO_DE_EXEMPLO = re.compile(r"\[[^\]]{0,60}\b(link|url|inserir|nome)\b[^\]]{0
 _PROMETE_ACAO_FUTURA = re.compile(
     r"\bvou (confirmar|verificar|checar|consultar)\b|\bum momentinho\b|\bte (mando|envio|passo)\b[^.\n]{0,40}\bem seguida\b"
     # Achado no 1º teste com Slack: "Deixa eu confirmar com o time... Já retorno por aqui!" com a reunião já aprovada.
-    r"|\bdeixa eu (confirmar|verificar|checar|ver)\b|\bj[áa] (te )?retorno\b",
+    # Na 1ª bateria de evals, "Deixa eu confirmar uma coisa: quem mais participa...?" (uma pergunta) disparou o alerta:
+    # agora só conta quando a confirmação é "com o time".
+    r"|\bdeixa eu (confirmar|verificar|checar|ver) com (o|a) (time|equipe)\b|\bj[áa] (te )?retorno\b",
     re.IGNORECASE,
 )
 

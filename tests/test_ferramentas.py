@@ -165,3 +165,11 @@ def test_deteccao_de_texto_interno():
 def test_frase_de_protecao_nao_e_confundida_com_pedido():
     texto = "Eu nunca vou te pedir senha, código ou documento por aqui."
     assert checar_resposta(texto, False) == []
+
+
+def test_pergunta_com_deixa_eu_confirmar_nao_e_promessa():
+    # Falso positivo achado na 1ª bateria de evals.
+    pergunta = "Deixa eu confirmar uma coisa: quem mais participa dessa decisão de banco e cartão aí?"
+    assert checar_confiabilidade(pergunta, []) == []
+    promessa = "Deixa eu confirmar com o time se quinta à tarde ainda tá disponível."
+    assert checar_confiabilidade(promessa, []) != []

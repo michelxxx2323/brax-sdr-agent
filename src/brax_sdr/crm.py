@@ -277,6 +277,20 @@ class HubSpot:
         return feito
 
 
+def criar_nota(hubspot: HubSpot, lead: Lead, texto: str) -> None:
+    """Nota no HubSpot (ex.: resumo para o executivo), associada ao contato, à empresa e ao negócio do lead."""
+    # Tipos de associação padrão do HubSpot para notas: contato 202, empresa 190, negócio 214.
+    tipos = {"contato_id": 202, "empresa_id": 190, "negocio_id": 214}
+    associacoes = [
+        {"to": {"id": lead.crm[chave]}, "types": [{"associationCategory": "HUBSPOT_DEFINED", "associationTypeId": tipo}]}
+        for chave, tipo in tipos.items() if lead.crm.get(chave)
+    ]
+    hubspot._pedir("POST", "/crm/v3/objects/notes", {
+        "properties": {"hs_timestamp": datetime.now(timezone.utc).isoformat(timespec="seconds"), "hs_note_body": texto},
+        "associations": associacoes,
+    })
+
+
 def sincronizar_com_seguranca(crm: HubSpot | None, lead: Lead) -> bool:
     """Sincroniza sem nunca derrubar a conversa. Em caso de erro, marca o lead como pendente (tenta de novo depois)."""
     if crm is None:

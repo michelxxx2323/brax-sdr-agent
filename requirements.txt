@@ -10,3 +10,5 @@ google-auth-oauthlib>=1.5
 fastapi>=0.140
 uvicorn>=0.50
 httpx>=0.28
+# Aprovação humana (Fase 5): biblioteca oficial do Slack
+slack_bolt>=1.30

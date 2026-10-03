@@ -86,6 +86,11 @@ PASTA_WHATSAPP = RAIZ / "data" / "local" / "whatsapp"  # saída simulada e ids j
 HUBSPOT_ACCESS_TOKEN = os.getenv("HUBSPOT_ACCESS_TOKEN", "")  # chave de serviço (Service key) da conta
 HUBSPOT_FUNIL = "BRAX Inbound"
 
+# --- Slack (Fase 5, decisão 034): aprovação de executivo e alertas, via Socket Mode (sem endereço público) ---
+SLACK_BOT_TOKEN = os.getenv("SLACK_BOT_TOKEN", "")  # xoxb-...
+SLACK_APP_TOKEN = os.getenv("SLACK_APP_TOKEN", "")  # xapp-... (Socket Mode)
+SLACK_CANAL_APROVACAO = os.getenv("SLACK_CANAL_APROVACAO", "")  # id do canal, ex.: C0123ABCDEF
+
 # --- Follow-up (decisão 028; cadência de cerebro/vendas/handoff.md) ---
 FOLLOWUP_ESPERAS_DIAS_UTEIS = (1, 3)  # 1º lembrete após 1 dia útil; 2º (e último) após mais 3
 FOLLOWUP_VERIFICAR_A_CADA_MINUTOS = 10

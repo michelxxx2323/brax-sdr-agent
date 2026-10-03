@@ -84,7 +84,9 @@ _TEXTO_INTERNO = re.compile(
     r"solicitar_aprovacao_executivo|transferir_para_humano|registrar_opt_out|encerrar_conversa|"
     r"dados_coletados|fora_do_icp|self_service|dados_insuficientes)\b"
     # Regras do sistema narradas ao cliente (teste "mei4": "Despedidas seguintes não recebem resposta").
-    r"|\bdespedidas?\b[^.\n]{0,40}\bn[ãa]o recebe(m)? resposta",
+    r"|\bdespedidas?\b[^.\n]{0,40}\bn[ãa]o recebe(m)? resposta"
+    # Estado do sistema narrado ao cliente (teste de follow-up: a resposta foi só "Conversa encerrada.").
+    r"|\bconversa encerrada\b",
     re.IGNORECASE,
 )
 

@@ -301,3 +301,10 @@ def test_atendente_guarda_a_thread_para_o_followup(tmp_path):
     assert lead.email_contexto["thread_id"] == "t-m1"
     assert lead.email_contexto["message_id"] == "<m1@mail.example>"
     assert lead.aguardando_lead is True  # a resposta terminou com pergunta: base do follow-up
+
+
+def test_markdown_e_removido_do_email():
+    # Caso real: "**Conta digital PJ** — Pix, TED..." apareceu com asteriscos no e-mail.
+    escrito = "Além dos cartões:\n\n**Conta digital PJ** — Pix, TED e boletos.\n\nAbraço,"
+    texto = _decodificar_resposta(montar_resposta(ler_mensagem(mensagem_gmail()), escrito)).get_content()
+    assert "**" not in texto and "Conta digital PJ — Pix" in texto

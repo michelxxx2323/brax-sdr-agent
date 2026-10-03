@@ -85,6 +85,7 @@ def verificar_antes_da_api(lead: Lead, texto: str) -> tuple[str, str | None] | N
         if eh_despedida(texto):
             return "conversa_encerrada", None
         lead.encerrada = False
+        lead.dados.pop("motivo_encerramento", None)  # conversa nova: o motivo antigo deixa de valer
         lead.registrar_evento("conversa_reaberta", texto[:80])
 
     # 4. Mensagem longa demais: pede um resumo sem gastar tokens.

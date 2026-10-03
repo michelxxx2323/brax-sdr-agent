@@ -20,7 +20,7 @@ from brax_sdr.guardrails import (
     tipo_de_evento,
 )
 from brax_sdr.memoria import Lead
-from brax_sdr.mensagens import mensagem_fora_do_icp
+from brax_sdr.mensagens import mensagem_fora_do_icp, mensagem_sem_interesse
 from brax_sdr.prompt import montar_system
 from brax_sdr.protecao import eh_despedida, verificar_antes_da_api
 
@@ -145,6 +145,7 @@ class Agente:
 
         primeira = not any(m["role"] == "assistant" for m in lead.mensagens)
         faixa_inicial = lead.faixa
+        encerramento_inicial = lead.dados.get("motivo_encerramento")
         mensagens = [*lead.mensagens, {"role": "user", "content": texto}]
         resposta = Resposta(texto=None, lead=lead)
         # Cada rodada: (posição da mensagem do assistente em `mensagens`, textos escritos nela).
@@ -240,6 +241,14 @@ class Agente:
             if not lead.encerrada:
                 lead.encerrada = True
                 lead.registrar_evento("conversa_encerrada", f"fora do perfil: {lead.motivo_faixa}")
+        elif (
+            not mensagem_do_codigo
+            and lead.dados.get("motivo_encerramento") == "sem_interesse"
+            and encerramento_inicial != "sem_interesse"
+        ):
+            # Despedida cordial e padronizada (decisão 029): no teste, o modelo respondeu só "Conversa encerrada.".
+            texto_final = mensagem_sem_interesse(lead.primeiro_nome(), lead.dados.get("empresa"))
+            fixar_texto(texto_final)
         elif not mensagem_do_codigo and lead.canal == "whatsapp" and len(texto_final) > LIMITE_CARACTERES_WHATSAPP:
             # Mensagem longa no WhatsApp: pede uma versão curta ao modelo (decisão 022).
             curto = self._encurtar(texto_final, resposta.uso)

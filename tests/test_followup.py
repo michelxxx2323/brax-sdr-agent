@@ -178,3 +178,61 @@ def test_resposta_do_lead_zera_os_lembretes(tmp_path):
     Agente(client=Cliente(), pasta_leads=tmp_path).responder("ana@lumen.example", "Desculpa a demora!", canal="email")
     salvo = memoria.carregar("ana@lumen.example", pasta=tmp_path)
     assert (salvo.followups_enviados, salvo.sem_resposta, salvo.aguardando_lead) == (0, False, True)
+
+
+# --- Achados do teste real de follow-up ---
+
+def test_sem_interesse_recebe_despedida_cordial(tmp_path):
+    # Caso real: o lead disse "Não tenho mais interesse." e o P.H. respondeu só "Conversa encerrada.".
+    from anthropic.types import Message, TextBlock, ToolUseBlock, Usage
+
+    respostas = [
+        Message(id="a", type="message", role="assistant", model="claude-haiku-4-5", stop_reason="tool_use",
+                stop_sequence=None, usage=Usage(input_tokens=1, output_tokens=1),
+                content=[ToolUseBlock(type="tool_use", id="t1", name="encerrar_conversa", input={"motivo": "sem_interesse"})]),
+        Message(id="b", type="message", role="assistant", model="claude-haiku-4-5", stop_reason="end_turn",
+                stop_sequence=None, usage=Usage(input_tokens=1, output_tokens=1),
+                content=[TextBlock(type="text", text="Conversa encerrada.")]),
+    ]
+
+    class Cliente:
+        def __init__(self):
+            self.messages = self
+
+        def create(self, **kwargs):
+            return respostas.pop(0)
+
+    lead = lead_esperando(followups_enviados=2, sem_resposta=True, aguardando_lead=False, dados={"empresa": "Nuvia"})
+    lead.email_contexto["nome"] = "Paulo Souza"  # o nome só existe no remetente do e-mail
+    lead.mensagens = [{"role": "user", "content": "oi"}, {"role": "assistant", "content": "Oi! Sou o P.H., assistente virtual."}]
+    memoria.salvar(lead, pasta=tmp_path)
+    resposta = Agente(client=Cliente(), pasta_leads=tmp_path).responder("ana@lumen.example", "Não tenho mais interesse.", canal="email")
+
+    assert resposta.texto.startswith("Entendido, Paulo! Obrigado pelo seu tempo")
+    assert "Sucesso para a Nuvia!" in resposta.texto
+    assert "Conversa encerrada" not in resposta.texto
+    salvo = memoria.carregar("ana@lumen.example", pasta=tmp_path)
+    assert salvo.encerrada and salvo.dados["motivo_encerramento"] == "sem_interesse"
+    assert numero_do_followup_devido(salvo, QUARTA_10H + timedelta(days=10)) is None  # nenhum lembrete depois
+
+
+def test_conversa_encerrada_e_bloqueada_como_texto_interno():
+    from brax_sdr.guardrails import parece_texto_interno
+
+    assert parece_texto_interno("Conversa encerrada.")
+    assert not parece_texto_interno("Obrigado pela conversa, Paulo!")
+
+
+def test_lembrete_usa_o_nome_do_remetente_quando_nao_ha_nome_registrado():
+    lead = lead_esperando(dados={})
+    lead.email_contexto["nome"] = "Paulo Souza"
+    assert texto_do_followup(1, lead).startswith("Oi, Paulo! Passando para saber")
+
+
+def test_lead_que_volta_depois_de_sem_interesse_limpa_o_motivo():
+    from brax_sdr.protecao import verificar_antes_da_api
+
+    lead = lead_esperando(encerrada=True)
+    lead.dados["motivo_encerramento"] = "sem_interesse"
+    assert verificar_antes_da_api(lead, "Mudei de ideia, quanto custa o plano Growth?") is None
+    assert "motivo_encerramento" not in lead.dados and lead.encerrada is False

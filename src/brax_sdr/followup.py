@@ -52,7 +52,7 @@ def numero_do_followup_devido(lead: Lead, agora: datetime) -> int | None:
 
 
 def texto_do_followup(numero: int, lead: Lead) -> str:
-    nome = lead.dados.get("nome_contato")
+    nome = lead.primeiro_nome()
     empresa = lead.dados.get("empresa")
     saudacao = f"Oi, {nome}!" if nome else "Oi!"
     if numero == 1:

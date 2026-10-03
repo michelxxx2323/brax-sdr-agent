@@ -24,6 +24,16 @@ _FORA_DO_ICP = {
 }
 
 
+def mensagem_sem_interesse(nome: str | None = None, empresa: str | None = None) -> str:
+    """Despedida quando o lead diz que não tem interesse (achado no teste de follow-up: "Conversa encerrada.")."""
+    abertura = f"Entendido, {nome}!" if nome else "Entendido!"
+    fecho = f" Sucesso para a {empresa}!" if empresa else " Sucesso!"
+    return (
+        f"{abertura} Obrigado pelo seu tempo e pela conversa. Não vou mais te enviar lembretes. "
+        f"Se em algum momento fizer sentido, é só responder por aqui.{fecho}"
+    )
+
+
 def mensagem_fora_do_icp(motivo: str, nome: str | None = None, primeira_mensagem: bool = False) -> str:
     abertura = f"Obrigado pelo interesse, {nome}!" if nome else "Obrigado pelo interesse!"
     if primeira_mensagem:  # guardrail G4: identificar-se na primeira mensagem

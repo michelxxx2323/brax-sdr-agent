@@ -42,6 +42,11 @@ class Lead:
     criado_em: str = field(default_factory=agora)
     atualizado_em: str = field(default_factory=agora)
 
+    def primeiro_nome(self) -> str | None:
+        """Nome registrado na qualificação ou, na falta, o do remetente do e-mail (para saudações)."""
+        nome = (self.dados.get("nome_contato") or self.email_contexto.get("nome") or "").strip()
+        return nome.split()[0] if nome else None
+
     def registrar_evento(self, tipo: str, detalhe: str = "") -> None:
         self.eventos.append({"quando": agora(), "tipo": tipo, "detalhe": detalhe})
 

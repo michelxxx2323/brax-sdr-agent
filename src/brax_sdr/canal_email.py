@@ -164,6 +164,7 @@ def _corpo(texto: str) -> str:
     O texto pode juntar duas partes da resposta (decisão 027): assinaturas saem e só o último fecho ("Abraço,") fica.
     """
     corpo = _LINHA_ASSUNTO.sub("", texto.strip(), count=1)
+    corpo = corpo.replace("**", "")  # e-mail em texto simples: o markdown apareceria como asteriscos
     linhas = [linha for linha in corpo.splitlines() if not _LINHA_ASSINATURA.match(linha)]
     fechos = [i for i, linha in enumerate(linhas) if _LINHA_DE_FECHO.match(linha)]
     linhas = [linha for i, linha in enumerate(linhas) if i not in fechos[:-1]]
@@ -198,6 +199,7 @@ def contexto_da_thread(email: EmailRecebido) -> dict:
         "referencias": email.referencias,
         "assunto": email.assunto,
         "remetente": email.remetente,
+        "nome": email.nome_remetente,
     }
 
 

@@ -112,8 +112,11 @@ FERRAMENTAS = [
             "properties": {
                 "motivo": {
                     "type": "string",
-                    "enum": ["proximo_passo_entregue", "fora_do_assunto"],
-                    "description": "proximo_passo_entregue exige que rotear_lead já tenha definido a faixa.",
+                    "enum": ["proximo_passo_entregue", "fora_do_assunto", "sem_interesse"],
+                    "description": (
+                        "proximo_passo_entregue exige que rotear_lead já tenha definido a faixa. "
+                        "sem_interesse: o lead disse que não tem interesse (o sistema envia a despedida)."
+                    ),
                 }
             },
             "required": ["motivo"],
@@ -251,8 +254,8 @@ def _registrar_opt_out(lead: Lead) -> dict:
 
 def _encerrar_conversa(lead: Lead, entrada: dict) -> dict:
     motivo = entrada["motivo"]
-    if motivo not in ("proximo_passo_entregue", "fora_do_assunto"):
-        raise ValueError("motivo deve ser proximo_passo_entregue ou fora_do_assunto")
+    if motivo not in ("proximo_passo_entregue", "fora_do_assunto", "sem_interesse"):
+        raise ValueError("motivo deve ser proximo_passo_entregue, fora_do_assunto ou sem_interesse")
     # Achado no teste "mei": encerrar sem rotear deixava o CRM sem faixa nem motivo.
     if motivo == "proximo_passo_entregue" and lead.faixa is None:
         raise ValueError(
@@ -263,6 +266,10 @@ def _encerrar_conversa(lead: Lead, entrada: dict) -> dict:
         raise ValueError("os dados já permitem rotear: chame rotear_lead em vez de encerrar como fora do assunto")
     lead.encerrada = True
     lead.registrar_evento("conversa_encerrada", motivo)
+    if motivo == "sem_interesse":
+        # Motivo da perda para o CRM (Fase 5). A despedida é padronizada pelo código (decisão 029).
+        lead.dados["motivo_encerramento"] = "sem_interesse"
+        return {"ok": True, "proximo_passo": "O sistema envia a despedida padronizada. Não escreva outra mensagem."}
     return {
         "ok": True,
         "proximo_passo": (

@@ -48,7 +48,7 @@ Detalhes: `docs/arquitetura.md`. Decisões: `docs/decisoes.md`.
 - Um único agente com ferramentas (tools), sem subagentes por enquanto.
 - Python + SDK oficial da Anthropic (`anthropic`).
 - Modelos definidos em **um único arquivo de configuração** (não espalhar nomes de modelo pelo código):
-  - conversa: `claude-haiku-4-5` (leve e barato; comparar com Sonnet 5 e Opus 5.5 na Fase 6)
+  - conversa: `claude-haiku-4-5` (leve e barato; comparação de modelos adiada para quando sair um Haiku mais novo, decisão 042)
   - tarefas complexas e avaliações: `claude-sonnet-5`
   - Confirmar os IDs na documentação oficial da Anthropic antes de usar.
 - WhatsApp **somente** pela API oficial da Meta (Cloud API, número de teste). Nunca APIs não oficiais.
@@ -81,8 +81,9 @@ Texto completo: `cerebro/regras/guardrails.md`.
 3. **Canal e-mail**: ✅ concluída e aprovada (Gmail API + follow-up; testes em `docs/validacao-fase3.md`)
 4. **Canal WhatsApp**: ✅ concluída e aprovada (webhook + simulador da Meta, sem número; `docs/validacao-fase4.md`)
 5. **CRM e aprovação humana**: ✅ concluída e aprovada (HubSpot + Slack; testes em `docs/validacao-fase5.md`)
-6. Evals e métricas (LLM como juiz + painel de taxa de qualificação) ← em andamento (decisões 039 e 040)
-5b. Hospedagem + Supabase (depois da Fase 6, decisão 031)
+6. **Evals e métricas**: ✅ concluída e aprovada (3 baterias, 15/20 → 19/20, zero alertas de guardrail;
+   `docs/validacao-fase6.md`, painel em GitHub Pages). Rodar: `.venv\Scripts\python.exe rodar_evals.py`.
+5b. Hospedagem + Supabase (decisão 031) ← próxima
 7. Painel do time comercial no Lovable (leads, conversas, funil e métricas, lendo o Supabase; decisão 041)
 8. Página web pública para simular uma conversa com o P.H. (desenho a definir; decisão 041)
 

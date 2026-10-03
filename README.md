@@ -3,12 +3,14 @@
 > Um agente de IA que faz pré-vendas (SDR) inbound por WhatsApp e e-mail para uma fintech B2B,
 > qualificando leads, roteando para o canal certo e registrando tudo no CRM.
 
-**Status:** 🟢 Fases 1 a 5 concluídas: o P.H. qualifica e roteia leads no terminal, **por e-mail** (Gmail, com
+**Status:** 🟢 Fases 1 a 6 concluídas: o P.H. qualifica e roteia leads no terminal, **por e-mail** (Gmail, com
 follow-up automático) e **por WhatsApp** (webhook validado com um simulador da Meta), testado com a API real
 ([Fase 2](docs/validacao-fase2.md), [Fase 3](docs/validacao-fase3.md), [Fase 4](docs/validacao-fase4.md),
 [Fase 5](docs/validacao-fase5.md)). Tudo cai no **HubSpot** (contato, empresa e negócio no funil "BRAX Inbound"), e as
 decisões humanas acontecem no **Slack** (aprovação de executivo com botões e alertas de transferência).
-Próxima: 5b (hospedagem + Supabase).
+A qualidade é medida por **evals automáticos** ([Fase 6](docs/validacao-fase6.md)): 20 cenários com lead simulado,
+verificações em código e IA como juiz, de 15/20 para **19/20** aprovados e zero alertas de guardrail
+([painel](https://michelxxx2323.github.io/brax-sdr-agent/)). Próxima: 5b (hospedagem + Supabase).
 
 > ⚠️ **A BRAX é uma empresa fictícia**, criada para este case e **inspirada na [Brex](https://www.brex.com/)**.
 > Nome, planos, preços e funcionalidades são inventados. Não há relação com a Brex nem com nenhuma empresa real.
@@ -85,8 +87,8 @@ e, na dúvida, passa para um humano. Ver [cerebro/regras/guardrails.md](cerebro/
 | 3 | Canal e-mail | Gmail API, resposta na mesma thread e follow-up | ✅ Concluída |
 | 4 | Canal WhatsApp | Webhook da Meta Cloud API, validado com simulador (decisão 030) | ✅ Concluída |
 | 5 | CRM e aprovação humana | HubSpot (CRM) + Slack (aprovação assíncrona e alertas) | ✅ Concluída |
-| 6 | Evals e métricas | 20 cenários com lead simulado, verificações em código, LLM como juiz e [painel](https://michelxxx2323.github.io/brax-sdr-agent/) | 🟡 Em andamento |
-| 5b | Hospedagem | Railway ou Render + Supabase, com tudo integrado (decisão 031) | ⚪ Depois da 6 |
+| 6 | Evals e métricas | 20 cenários com lead simulado, verificações em código, LLM como juiz e [painel](https://michelxxx2323.github.io/brax-sdr-agent/) | ✅ Concluída |
+| 5b | Hospedagem | Railway ou Render + Supabase, com tudo integrado (decisão 031) | ⚪ Próxima |
 | 7 | Painel comercial | Front end no Lovable para o time comercial: leads, conversas, funil e métricas, lendo o Supabase (decisão 041) | ⚪ |
 | 8 | Simulador público | Página web para qualquer pessoa conversar com o P.H. (desenho a definir, decisão 041) | ⚪ |
 

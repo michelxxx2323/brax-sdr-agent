@@ -47,6 +47,7 @@
 | 039 | Evals automáticos (lead simulado + código + juiz); Fase 6 antes da hospedagem | Aceita | 2026-10-03 |
 | 040 | Correções da 1ª bateria: setor obrigatório para rotear, G4 garantido em código, juiz com o cérebro | Aceita | 2026-10-03 |
 | 041 | Duas etapas finais: painel comercial no Lovable (7) e simulador público do P.H. (8) | Aceita | 2026-10-03 |
+| 042 | Fase 6 encerrada só com o Haiku; comparação de modelos adiada para um Haiku mais novo | Aceita | 2026-10-03 |
 
 ---
 
@@ -853,3 +854,19 @@ fica fixo para as comparações seguintes. Ela ainda mostrou três pontos, corri
 
 **Motivo:** o painel mostra o lado RevOps do projeto (o que o gestor vê no dia a dia), e o simulador transforma o case em
 algo que um recrutador consegue testar em um minuto. As duas dependem do Supabase e da hospedagem, por isso vêm depois da 5b.
+
+---
+
+## 042: Fase 6 encerrada só com o Haiku; comparação de modelos adiada
+
+**Contexto:** a decisão 012 previa comparar Haiku, Sonnet e Opus na Fase 6. Depois de três baterias, o Haiku 4.5 chegou a
+19/20 cenários, 93% de roteamento correto e zero alertas de guardrail, a cerca de US$ 0,03 por conversa.
+
+**Opções:** (1) comparar agora com Sonnet e Opus (uns US$ 3 a 5); (2) encerrar a fase e comparar quando sair um Haiku mais novo.
+
+**Decisão:** opção 2. A Fase 6 fecha com o Haiku 4.5, e a comparação roda quando houver um Haiku mais novo.
+A bateria já está pronta para isso: `rodar_evals.py --modelo <id>` roda os mesmos 20 cenários com outro modelo, e o painel
+mostra as baterias lado a lado.
+
+**Motivo:** o Haiku já atende o padrão de qualidade e é o modelo mais barato; as falhas que restam foram resolvidas com
+código e prompt, não com um modelo maior. Comparar faz mais sentido quando houver um candidato que mantenha o custo baixo.

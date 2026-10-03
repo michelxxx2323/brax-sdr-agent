@@ -48,6 +48,7 @@
 | 040 | Correções da 1ª bateria: setor obrigatório para rotear, G4 garantido em código, juiz com o cérebro | Aceita | 2026-10-03 |
 | 041 | Duas etapas finais: painel comercial no Lovable (7) e simulador público do P.H. (8) | Aceita | 2026-10-03 |
 | 042 | Fase 6 encerrada só com o Haiku; comparação de modelos adiada para um Haiku mais novo | Aceita | 2026-10-03 |
+| 043 | Hospedagem no Railway (Hobby) e leads no Supabase, via API REST e com RLS fechada | Aceita | 2026-10-03 |
 
 ---
 
@@ -870,3 +871,30 @@ mostra as baterias lado a lado.
 
 **Motivo:** o Haiku já atende o padrão de qualidade e é o modelo mais barato; as falhas que restam foram resolvidas com
 código e prompt, não com um modelo maior. Comparar faz mais sentido quando houver um candidato que mantenha o custo baixo.
+
+---
+
+## 043: Hospedagem no Railway (Hobby) e leads no Supabase
+
+**Contexto:** até aqui o P.H. rodava no PC: leads em arquivos JSON e o webhook do WhatsApp exposto pelo ngrok. Para ficar
+no ar e alimentar o painel comercial (Fase 7), precisa de um servidor e de um banco. O processo único (`iniciar_brax.py`)
+precisa ficar **ligado o tempo todo**: verifica o Gmail a cada 30 segundos e mantém uma conexão aberta com o Slack.
+
+**Opções de hospedagem (preços de 2026):**
+1. **Render gratuito:** desliga o serviço depois de 15 minutos sem acesso, o que quebraria o Gmail e o Slack. Descartado.
+2. **Render Starter:** US$ 7/mês fixo por serviço.
+3. **Railway Hobby:** US$ 5/mês, que viram crédito de uso; cobra por segundo de CPU e memória. Teste gratuito de 30 dias.
+
+**Decisão:**
+- **Railway Hobby.** Um processo leve como o nosso deve caber nos US$ 5 de crédito, e o teste gratuito permite validar antes.
+- **Supabase gratuito** para os leads: uma tabela `leads` (`supabase/esquema.sql`) com o lead completo numa coluna JSON
+  (`estado`, igual ao arquivo que já existia) e colunas de resumo (faixa, empresa, custo...) para o painel filtrar.
+- **Acesso pela API REST com httpx**, sem SDK novo, como no HubSpot. Só o servidor acessa, com a **chave secreta**.
+  A proteção por linha (RLS) fica ligada e sem regras: a chave pública não lê nada. O painel terá regras próprias.
+- A troca acontece só em `memoria.py` (a interface prevista na decisão 014): com as variáveis do Supabase, a pasta padrão
+  vira o banco; testes e evals continuam em arquivos. Uma trava nos testes impede qualquer gravação no banco real.
+- `migrar_para_supabase.py` copia os leads de teste do PC para o banco.
+
+**Riscos anotados:** o Supabase gratuito pausa projetos sem uso por 1 semana (o P.H. no ar consulta o banco o tempo todo,
+o que evita a pausa); e o P.H. **não pode rodar no PC e no Railway ao mesmo tempo**, porque os dois leriam o mesmo Gmail e
+responderiam duas vezes.

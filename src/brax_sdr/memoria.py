@@ -1,7 +1,8 @@
 """Memória por lead: histórico, dados de qualificação e eventos.
 
-Fase 2: um arquivo JSON por lead em data/local/leads/ (ignorado pelo Git).
-Fase de canais: a mesma interface passa a usar o Supabase (decisão 014).
+Dois lugares, com a mesma interface (decisões 014 e 043):
+- Supabase, quando o .env tem SUPABASE_URL e SUPABASE_SECRET_KEY e a pasta é a padrão (produção);
+- um arquivo JSON por lead numa pasta local (sem Supabase, nos testes e nos evals, que passam a própria pasta).
 """
 
 import json
@@ -10,7 +11,7 @@ from dataclasses import asdict, dataclass, field, fields
 from datetime import datetime, timezone
 from pathlib import Path
 
-from brax_sdr import config
+from brax_sdr import config, supabase_leads
 
 
 def agora() -> str:
@@ -65,12 +66,21 @@ def _arquivo(lead_id: str, pasta: Path) -> Path:
     return pasta / f"{_id_seguro(lead_id)}.json"
 
 
+def _banco(pasta: Path):
+    """Cliente do Supabase quando é a pasta padrão e o banco está configurado; senão None (arquivos locais)."""
+    return supabase_leads.cliente() if pasta == config.PASTA_LEADS else None
+
+
 def carregar(lead_id: str, canal: str = "whatsapp", pasta: Path = config.PASTA_LEADS) -> Lead:
-    """Lê o lead do disco ou cria um novo, sem histórico."""
-    caminho = _arquivo(lead_id, pasta)
-    if not caminho.exists():
+    """Lê o lead (do Supabase ou do disco) ou cria um novo, sem histórico."""
+    banco = _banco(pasta)
+    if banco:
+        dados = banco.ler(_id_seguro(lead_id))
+    else:
+        caminho = _arquivo(lead_id, pasta)
+        dados = json.loads(caminho.read_text(encoding="utf-8")) if caminho.exists() else None
+    if dados is None:
         return Lead(id=_id_seguro(lead_id), canal=canal)
-    dados = json.loads(caminho.read_text(encoding="utf-8"))
     # Ignora campos que deixaram de existir (ex.: a pausa da decisão 036, removida na 038): arquivos antigos continuam abrindo.
     conhecidos = {campo.name for campo in fields(Lead)}
     return Lead(**{chave: valor for chave, valor in dados.items() if chave in conhecidos})
@@ -78,6 +88,10 @@ def carregar(lead_id: str, canal: str = "whatsapp", pasta: Path = config.PASTA_L
 
 def salvar(lead: Lead, pasta: Path = config.PASTA_LEADS) -> None:
     lead.atualizado_em = agora()
+    banco = _banco(pasta)
+    if banco:
+        banco.gravar(asdict(lead))
+        return
     pasta.mkdir(parents=True, exist_ok=True)
     caminho = _arquivo(lead.id, pasta)
     temporario = caminho.with_suffix(".tmp")
@@ -87,4 +101,7 @@ def salvar(lead: Lead, pasta: Path = config.PASTA_LEADS) -> None:
 
 def listar(pasta: Path = config.PASTA_LEADS) -> list[str]:
     """Ids de todos os leads salvos (usado pelo follow-up)."""
+    banco = _banco(pasta)
+    if banco:
+        return banco.listar_ids()
     return sorted(caminho.stem for caminho in pasta.glob("*.json")) if pasta.exists() else []

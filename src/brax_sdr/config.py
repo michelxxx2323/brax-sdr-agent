@@ -84,6 +84,10 @@ WHATSAPP_PORTA = int(os.getenv("WHATSAPP_PORTA") or 8000)
 WHATSAPP_ENVIO_HABILITADO = (os.getenv("WHATSAPP_ENVIO_HABILITADO") or "false").lower() == "true"
 PASTA_WHATSAPP = RAIZ / "data" / "local" / "whatsapp"  # saída simulada e ids já processados (fora do Git)
 
+# --- Supabase (Fase 5b, decisão 043): com as duas variáveis, os leads ficam no banco; sem elas, em PASTA_LEADS ---
+SUPABASE_URL = os.getenv("SUPABASE_URL", "")  # ex.: https://abcdefgh.supabase.co
+SUPABASE_SECRET_KEY = os.getenv("SUPABASE_SECRET_KEY", "")  # chave secreta (sb_secret_...), só no servidor
+
 # --- HubSpot (Fase 5, decisão 033) ---
 HUBSPOT_ACCESS_TOKEN = os.getenv("HUBSPOT_ACCESS_TOKEN", "")  # chave de serviço (Service key) da conta
 HUBSPOT_FUNIL = "BRAX Inbound"

@@ -111,6 +111,16 @@ Use `/estado` para ver o que o P.H. já registrou sobre o lead. O histórico fic
 Para trocar de lead, digite `/sair` antes de rodar o próximo comando. Depois de atualizar o código,
 abra uma conversa nova: uma sessão aberta continua com o código antigo.
 
+### Canal de WhatsApp (Fase 4, modo simulado)
+
+Sem número de telefone: um simulador faz o papel da Meta (decisão 030). Use dois terminais:
+```powershell
+# Terminal 1: o servidor do webhook (aprovações de executivo aparecem aqui)
+.venv\Scripts\python.exe servidor_whatsapp.py
+# Terminal 2: você conversa como lead (/audio, /foto, /documento, /repetir, /estado)
+.venv\Scripts\python.exe simular_whatsapp.py --nome "Ana" --telefone 5511900000002
+```
+
 ### Canal de e-mail (Fase 3)
 
 O P.H. atende uma caixa do Gmail dedicada à BRAX: confere e-mails novos a cada 30s, responde na mesma thread e envia

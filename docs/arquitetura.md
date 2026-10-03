@@ -82,6 +82,9 @@ O link do app (self-service) e o link de agenda (executivo) são devolvidos pela
 | `src/brax_sdr/gmail.py` | Autorização e cliente da Gmail API; quem mexe na caixa é o código, não a IA (decisão 026) |
 | `src/brax_sdr/canal_email.py` | Leitura, limpeza (citações e assinaturas), filtros anti-loop e resposta na mesma thread |
 | `src/brax_sdr/atendente_email.py` | Confere a caixa a cada 30s, responde com o P.H. e dispara os follow-ups |
+| `src/brax_sdr/canal_whatsapp.py` | Formato da Meta, assinatura, avisos repetidos e envio (simulado ou real) |
+| `src/brax_sdr/webhook_whatsapp.py` | Servidor do webhook (FastAPI): verifica, responde "ok" e atende uma mensagem por vez por lead |
+| `src/brax_sdr/simulador_whatsapp.py` | Faz o papel da Meta para testar sem número (decisão 030) |
 | `src/brax_sdr/followup.py` | Regras, cadência (dias úteis, horário comercial) e textos dos lembretes |
 
 O que cada teste real revelou e como foi corrigido: [validacao-fase2.md](validacao-fase2.md).

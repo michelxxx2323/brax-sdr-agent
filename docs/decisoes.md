@@ -35,6 +35,7 @@
 | 027 | Texto anterior a uma ferramenta só é descartado se ela puder mudar a resposta | Aceita | 2026-10-02 |
 | 028 | Follow-up com lembretes padronizados, regras em código | Aceita | 2026-10-02 |
 | 029 | "Sem interesse" como desfecho próprio, com despedida padronizada | Aceita | 2026-10-02 |
+| 030 | WhatsApp validado com um simulador da Meta, sem número de telefone | Aceita | 2026-10-02 |
 
 ---
 
@@ -549,3 +550,35 @@ qualquer contato.
 
 **Motivo:** o "não" do lead é um dado de negócio (taxa e motivos de perda) e um momento de marca: uma despedida mal feita
 fecha a porta para uma retomada. Mesmo raciocínio das decisões 023 e 028: momento curto, repetitivo e sensível vai para o código.
+
+---
+
+## 030: WhatsApp validado com um simulador da Meta, sem número de telefone
+
+**Contexto:** a WhatsApp Cloud API oferece um número de teste gratuito, mas quem conversa com ele (o "lead") precisa ser
+um WhatsApp real. Para os testes, a preferência foi não usar nenhum número pessoal.
+
+**Opções consideradas:**
+1. Usar um número pessoal como lead de teste (fica só na configuração privada da Meta).
+2. Usar outro número (chip extra ou de outra pessoa).
+3. Simular a Meta: um programa monta os avisos no formato exato da Cloud API, assina com a chave secreta e envia ao nosso
+   webhook; as respostas vão para um arquivo local em vez da API da Meta.
+
+**Decisão:** opção 3 (`simular_whatsapp.py`), com o envio real (`WHATSAPP_MODO=meta`) já implementado para quando houver número.
+
+**Motivo:** testa todo o nosso código (formato da Meta, assinatura, avisos repetidos, mensagens que não são texto, memória,
+regras) sem expor nenhum número. Fica de fora só a conexão real com a Meta. O simulador também serve para validar a
+hospedagem (4b), apontando para o endereço público.
+
+**Segurança do webhook, decidida junto:**
+- Toda mensagem é conferida pela **assinatura** (`X-Hub-Signature-256`, HMAC com a chave secreta do app). Sem assinatura
+  válida, nada é processado e a IA não é chamada.
+- **Avisos repetidos** (a Meta reenvia quando acha que falhou) são ignorados pelo id da mensagem, e o id é marcado antes do
+  atendimento: na dúvida, uma resposta a menos, nunca uma repetida.
+- O servidor responde "ok" na hora e atende em seguida, **uma mensagem por vez para cada lead** (sem duas respostas
+  simultâneas mexendo na mesma memória).
+- Áudio, foto e documento **nunca são abertos**: o P.H. é avisado e orienta (documentos só pelo app, guardrail G2).
+
+**Follow-up no WhatsApp: adiado.** Fora da janela de 24 horas após a última mensagem do lead, a Meta só permite modelos de
+mensagem pré-aprovados. O desenho fica para depois: dois modelos aprovados (equivalentes aos textos da decisão 028), com o
+envio usando o modelo em vez de texto livre quando a janela estiver fechada.

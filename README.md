@@ -85,8 +85,10 @@ e, na dúvida, passa para um humano. Ver [cerebro/regras/guardrails.md](cerebro/
 | 3 | Canal e-mail | Gmail API, resposta na mesma thread e follow-up | ✅ Concluída |
 | 4 | Canal WhatsApp | Webhook da Meta Cloud API, validado com simulador (decisão 030) | ✅ Concluída |
 | 5 | CRM e aprovação humana | HubSpot (CRM) + Slack (aprovação assíncrona e alertas) | ✅ Concluída |
-| 5b | Hospedagem | Railway ou Render + Supabase, com tudo integrado (decisão 031) | ⚪ Próxima |
-| 6 | Evals e métricas | Conversas de teste com LLM como juiz e painel de taxa de qualificação | ⚪ |
+| 6 | Evals e métricas | 20 cenários com lead simulado, verificações em código, LLM como juiz e [painel](https://michelxxx2323.github.io/brax-sdr-agent/) | 🟡 Em andamento |
+| 5b | Hospedagem | Railway ou Render + Supabase, com tudo integrado (decisão 031) | ⚪ Depois da 6 |
+| 7 | Painel comercial | Front end no Lovable para o time comercial: leads, conversas, funil e métricas, lendo o Supabase (decisão 041) | ⚪ |
+| 8 | Simulador público | Página web para qualquer pessoa conversar com o P.H. (desenho a definir, decisão 041) | ⚪ |
 
 ## Como rodar (Windows)
 

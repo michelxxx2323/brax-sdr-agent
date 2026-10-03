@@ -45,6 +45,8 @@
 | 037 | Transferência: vendedor em horário comercial e P.H. segue coletando | Aceita (simplificada pela 038) | 2026-10-03 |
 | 038 | Transferência simplificada, sem pausa nem botões | Aceita | 2026-10-03 |
 | 039 | Evals automáticos (lead simulado + código + juiz); Fase 6 antes da hospedagem | Aceita | 2026-10-03 |
+| 040 | Correções da 1ª bateria: setor obrigatório para rotear, G4 garantido em código, juiz com o cérebro | Aceita | 2026-10-03 |
+| 041 | Duas etapas finais: painel comercial no Lovable (7) e simulador público do P.H. (8) | Aceita | 2026-10-03 |
 
 ---
 
@@ -791,3 +793,63 @@ Também ficou definido que a hospedagem fica por último (depois dos evals).
 **Motivo:** transforma a validação em algo repetível e mensurável, que é como um time de RevOps acompanharia um SDR
 automatizado em produção. Já na rodada-piloto, os evals acharam um **falso positivo** num alerta criado na Fase 5
 ("deixa eu confirmar uma coisa: ...?" contava como promessa vazia).
+
+---
+
+## 040: Correções da 1ª bateria de evals: setor obrigatório, identificação garantida em código e juiz com contexto
+
+**Contexto:** a 1ª bateria completa (20 cenários, Haiku) deu **15/20 aprovados**, roteamento correto em 73% e nota média 4,55.
+Antes de corrigir, cada falha foi separada em **erro do P.H.** ou **erro da avaliação**, olhando a conversa inteira:
+
+| Cenário | O que aconteceu | Tipo |
+|---|---|---|
+| Setor especial (cripto) | O P.H. nunca perguntou o que a empresa fazia e mandou uma corretora de cripto para o executivo | P.H.: faltava exigir o setor |
+| Sem interesse | Silêncio no fim. A IA registrou "Lead" como nome do contato; a despedida padrão saiu "Entendido, Lead!" e a trava de vazamento a bloqueou (nova rodada mostrou "Entendido, User!") | P.H.: nome genérico aceito |
+| MEI, pessoa física, sem CNPJ | A IA recusou o lead com as próprias palavras, sem registrar o tipo de empresa: o CRM ficaria sem faixa nem motivo | P.H.: prompt |
+| Cliente atual / pessoa física | 1ª mensagem sem "assistente virtual" (2 de 20 conversas) | P.H.: guardrail G4 só alertava |
+| Preço | `**negrito**` no WhatsApp (aparece como asterisco) e duas perguntas numa mensagem | P.H. |
+| Pedido por uma pessoa, preço | O juiz puniu o P.H. por seguir coletando dados depois da transferência (decisão 037) e chamou de "inventadas" as tarifas que estão no cérebro | Avaliação: o juiz não tinha contexto |
+
+**Decisão:**
+- **Setor obrigatório para rotear** (app ou executivo). O código também confere o texto do setor contra a lista de análise
+  especial (cripto, câmbio, apostas, bebidas, tabaco, armas, ONGs, entidades religiosas, sede fora do Brasil), sem depender
+  só da marcação da IA. Custo: no máximo uma pergunta a mais ("O que a empresa de vocês faz?"), que um SDR faria de qualquer jeito.
+- **Nomes genéricos** ("User", "Lead", "Cliente"...) são descartados como "não informado".
+- **Guardrail G4 garantido em código:** se a 1ª mensagem não diz "assistente virtual", o código completa a apresentação.
+  `**` é removido no WhatsApp.
+- **MEI, PF e sem CNPJ:** o prompt manda registrar o tipo de empresa (o código já envia a recusa padronizada, decisão 023).
+  Fica no prompt primeiro; se a próxima bateria mostrar que não basta, vai para o código (princípio "a IA escreve, o código garante").
+- **Juiz com contexto:** recebe o cérebro (em cache, poucos centavos por bateria) e as decisões de desenho que não são falhas.
+- Os resultados passam a guardar os **eventos do lead** (ferramentas, bloqueios), para explicar uma falha sem rodar de novo.
+
+**Motivo:** é o ciclo que os evals existem para criar: medir, entender a causa, corrigir no lugar certo (código, prompt ou
+avaliação) e medir de novo. Corrigir o juiz é tão importante quanto corrigir o agente: uma nota injusta leva a "consertar"
+o que estava certo.
+
+**2ª bateria (depois das correções): 19/20 aprovados, roteamento correto em 93%, 1 alerta de guardrail.**
+MEI, pessoa física, sem CNPJ e sem interesse passaram. A nota média caiu de 4,55 para 4,36, mas as duas notas **não são
+comparáveis**: o juiz mudou (agora conhece o cérebro e os processos, e ficou mais exigente). A partir desta bateria, o juiz
+fica fixo para as comparações seguintes. Ela ainda mostrou três pontos, corrigidos em seguida:
+- **Cripto:** o P.H. agora pergunta o setor e transfere, mas sem chamar o roteamento: o CRM ficaria sem a faixa "humano".
+  Correção: setor especial é roteado na hora pelo código, como o fora do perfil (decisão 023).
+- **Pedido por uma pessoa:** depois da transferência, o roteamento mandou o link do app a um lead que esperava o vendedor.
+  Correção: lead transferido recebe a faixa no CRM, mas sem link nem agenda; o próximo passo é do vendedor.
+- **Cliente atual com problema:** o P.H. inventou o que o vendedor conseguiria fazer ("desbloqueia na hora"). Correção no prompt.
+- O juiz também passou a saber que, nos evals, a aprovação do time é simulada como imediata.
+
+---
+
+## 041: Duas etapas finais: painel comercial no Lovable e simulador público do P.H.
+
+**Contexto:** com os canais, o CRM e os evals prontos, faltam duas peças para o case: uma tela para quem **usa** o P.H.
+(o time comercial) e uma forma de qualquer pessoa (inclusive recrutadores) **experimentar** o P.H. sem WhatsApp nem e-mail.
+
+**Decisão:** depois da hospedagem com Supabase (5b), duas etapas novas:
+- **Fase 7: painel do time comercial no Lovable.** Leads, conversas, faixa, etapa do funil e métricas, lendo o Supabase.
+  O Lovable gera o front end e se conecta nativamente ao Supabase, então o painel lê os mesmos dados que o P.H. grava,
+  sem um back end novo. O HubSpot continua como CRM oficial; o painel é a visão operacional do P.H.
+- **Fase 8: página web para simular uma conversa com o P.H.** O desenho fica para depois (por exemplo: como proteger o custo
+  de API num site público, se a conversa entra no CRM e no painel, e como deixar claro que a BRAX é fictícia).
+
+**Motivo:** o painel mostra o lado RevOps do projeto (o que o gestor vê no dia a dia), e o simulador transforma o case em
+algo que um recrutador consegue testar em um minuto. As duas dependem do Supabase e da hospedagem, por isso vêm depois da 5b.

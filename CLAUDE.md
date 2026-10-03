@@ -81,8 +81,10 @@ Texto completo: `cerebro/regras/guardrails.md`.
 3. **Canal e-mail**: ✅ concluída e aprovada (Gmail API + follow-up; testes em `docs/validacao-fase3.md`)
 4. **Canal WhatsApp**: ✅ concluída e aprovada (webhook + simulador da Meta, sem número; `docs/validacao-fase4.md`)
 5. **CRM e aprovação humana**: ✅ concluída e aprovada (HubSpot + Slack; testes em `docs/validacao-fase5.md`)
-5b. Hospedagem + Supabase (movida para depois da Fase 5, decisão 031) ← próxima
-6. Evals e métricas (LLM como juiz + painel de taxa de qualificação)
+6. Evals e métricas (LLM como juiz + painel de taxa de qualificação) ← em andamento (decisões 039 e 040)
+5b. Hospedagem + Supabase (depois da Fase 6, decisão 031)
+7. Painel do time comercial no Lovable (leads, conversas, funil e métricas, lendo o Supabase; decisão 041)
+8. Página web pública para simular uma conversa com o P.H. (desenho a definir; decisão 041)
 
 ## Ambiente local
 

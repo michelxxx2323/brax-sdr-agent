@@ -1,4 +1,4 @@
-"""Cria no HubSpot os campos da BRAX e o funil "BRAX Inbound". Rode uma vez (pode repetir sem duplicar).
+r"""Cria no HubSpot os campos da BRAX e o funil "BRAX Inbound". Rode uma vez (pode repetir sem duplicar).
 
     .venv\Scripts\python.exe configurar_hubspot.py
 """

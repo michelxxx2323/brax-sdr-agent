@@ -1,4 +1,4 @@
-"""Envia ao HubSpot os leads salvos localmente (os pendentes, ou todos com --todos).
+r"""Envia ao HubSpot os leads salvos localmente (os pendentes, ou todos com --todos).
 
     .venv\Scripts\python.exe sincronizar_crm.py
     .venv\Scripts\python.exe sincronizar_crm.py --todos

@@ -16,6 +16,7 @@ import anthropic
 
 from brax_sdr import config, memoria
 from brax_sdr.agente import Agente
+from brax_sdr.cerebro import carregar_cerebro
 
 PASTA_EVALS = config.RAIZ / "evals"
 MAX_TURNOS = 10
@@ -144,7 +145,15 @@ FERRAMENTA_DO_JUIZ = {
 INSTRUCOES_DO_JUIZ = (
     "Você avalia conversas do P.H., assistente virtual de pré-vendas (SDR) da BRAX, uma conta PJ fictícia para startups. "
     "Dê notas de 1 (muito ruim) a 5 (excelente) para cada critério, com rigor: 5 só se não houver nenhum problema. "
-    "Seja específico nos problemas (cite o que foi dito). Avalie só a fala do P.H.; o lead é simulado."
+    "Seja específico nos problemas (cite o que foi dito). Avalie só a fala do P.H.; o lead é simulado.\n\n"
+    "Comportamentos que são decisões do projeto (não são falhas):\n"
+    "- Quando o lead pede uma pessoa, a transferência é feita na hora pelo sistema: o P.H. avisa que um vendedor entra "
+    "em contato em horário comercial e continua coletando dados para o vendedor chegar preparado (decisão 037). "
+    "Falha seria dizer que a pessoa está chegando agora ou ignorar o pedido.\n"
+    "- Leads fora do perfil e leads sem interesse recebem uma mensagem padronizada escrita pelo código.\n"
+    "- O link do app só é enviado depois do roteamento; o link de agenda, só depois da aprovação do time.\n"
+    "Use o cérebro da BRAX abaixo como fonte da verdade: o que está nele (preços, tarifas, prazos) não é invenção. "
+    "Comentários <!-- REVISAR --> são notas internas do projeto."
 )
 
 
@@ -154,7 +163,9 @@ def julgar(cliente, cenario: dict, conversa: list[tuple[str, str]], custos: dict
         model=config.MODELO_AVANCADO,
         max_tokens=2048,
         thinking={"type": "disabled"},  # uso forçado de ferramenta não combina com raciocínio estendido
-        system=INSTRUCOES_DO_JUIZ,
+        # O cérebro vai em cache: é igual para os 20 cenários (só o 1º paga o preço cheio).
+        system=[{"type": "text", "text": f"{INSTRUCOES_DO_JUIZ}\n\n## Cérebro da BRAX\n{carregar_cerebro()}",
+                 "cache_control": {"type": "ephemeral"}}],
         tools=[FERRAMENTA_DO_JUIZ],
         tool_choice={"type": "tool", "name": FERRAMENTA_DO_JUIZ["name"]},
         messages=[{"role": "user", "content": (
@@ -199,6 +210,7 @@ def rodar_bateria(cenarios: list[dict], cliente=None, ao_terminar_cenario=None) 
             "custo_usd": round(sum(execucao["custos"].values()), 5),
             "custo_ph_usd": round(execucao["custos"].get(config.MODELO_CONVERSA, 0.0), 5),
             "conversa": execucao["conversa"],
+            "eventos": lead.eventos,  # ferramentas, bloqueios e encerramentos: explicam uma falha sem rodar de novo
         }
         resultados.append(resultado)
         if ao_terminar_cenario:

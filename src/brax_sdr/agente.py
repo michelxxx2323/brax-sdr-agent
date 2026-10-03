@@ -103,11 +103,13 @@ class Agente:
         aprovador: Aprovador | None = None,
         pasta_leads=config.PASTA_LEADS,
         crm=None,
+        alerta_humano=None,
     ):
         self.client = client or anthropic.Anthropic()
         self.aprovador = aprovador
         self.pasta_leads = pasta_leads
         self.crm = crm  # HubSpot (Fase 5); None = sem CRM
+        self.alerta_humano = alerta_humano  # Slack (Fase 5); None = só registra o evento
         self.cerebro = carregar_cerebro()
 
     def _encurtar(self, texto: str, uso: dict) -> str:
@@ -124,6 +126,52 @@ class Agente:
         _somar_uso(uso, msg.usage)
         curto = "\n\n".join(b.text.strip() for b in msg.content if b.type == "text").strip()
         return curto if _reescrita_confiavel(texto, curto) else texto
+
+    def mensagem_proativa(self, lead_id: str, instrucao: str, link_obrigatorio: str | None, texto_padrao: str) -> str:
+        """Mensagem enviada por iniciativa do P.H. (ex.: retorno depois da aprovação no Slack, decisão 034).
+
+        A IA escreve com o contexto da conversa; o código confere (link certo, nada de texto interno, tamanho no
+        WhatsApp). Se uma trava falhar, vale o texto padronizado. Devolve o texto final, já gravado na memória.
+        Quem chama deve segurar a trava do lead.
+        """
+        lead = memoria.carregar(lead_id, pasta=self.pasta_leads)
+        uso: dict = {}
+        texto, motivo = "", ""
+        try:
+            msg = self.client.messages.create(
+                model=config.MODELO_CONVERSA,
+                max_tokens=config.MAX_TOKENS_CONVERSA,
+                system=montar_system(self.cerebro, lead),
+                # O histórico tem chamadas de ferramenta, então as ferramentas precisam ser declaradas; "none" proíbe o uso.
+                tools=FERRAMENTAS,
+                tool_choice={"type": "none"},
+                messages=[*lead.mensagens, {"role": "user", "content": (
+                    f"[Instrução interna do sistema, não é uma mensagem do lead: {instrucao} "
+                    "Escreva apenas a mensagem que o lead vai receber.]"
+                )}],
+            )
+            _somar_uso(uso, msg.usage)
+            texto = "\n\n".join(b.text.strip() for b in msg.content if b.type == "text").strip()
+        except anthropic.APIError as erro:
+            motivo = f"erro da API ({type(erro).__name__})"
+        if texto and lead.canal == "whatsapp" and len(texto) > LIMITE_CARACTERES_WHATSAPP:
+            texto = self._encurtar(texto, uso)
+        if not motivo:
+            if not texto:
+                motivo = "texto vazio"
+            elif link_obrigatorio and link_obrigatorio not in texto:
+                motivo = "link obrigatório ausente"
+            elif parece_texto_interno(texto):
+                motivo = "texto interno"
+        if motivo:
+            lead.registrar_evento("retorno_padrao_usado", motivo)
+            texto = texto_padrao
+        lead.mensagens.append({"role": "assistant", "content": texto})
+        lead.ultima_resposta_em = memoria.agora()
+        lead.aguardando_lead = "?" in texto
+        lead.custo_total_usd += config.custo_estimado_usd(config.MODELO_CONVERSA, uso)
+        memoria.salvar(lead, pasta=self.pasta_leads)
+        return texto
 
     def responder(self, lead_id: str, texto: str, canal: str = "whatsapp") -> Resposta:
         lead = memoria.carregar(lead_id, canal=canal, pasta=self.pasta_leads)
@@ -189,7 +237,7 @@ class Agente:
             resultados = []
             for bloco in (b for b in conteudo if b["type"] == "tool_use"):
                 resposta.ferramentas_usadas.append(bloco["name"])
-                saida, erro = executar(bloco["name"], bloco["input"], lead, self.aprovador)
+                saida, erro = executar(bloco["name"], bloco["input"], lead, self.aprovador, self.alerta_humano)
                 resultados.append({"type": "tool_result", "tool_use_id": bloco["id"], "content": saida, "is_error": erro})
             mensagens.append({"role": "user", "content": resultados})
         else:

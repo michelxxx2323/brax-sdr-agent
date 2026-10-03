@@ -18,6 +18,7 @@ from brax_sdr.canal_email import (
     texto_para_o_agente,
 )
 from brax_sdr.crm import sincronizar_com_seguranca
+from brax_sdr.travas import trava_do_lead
 from brax_sdr.followup import numero_do_followup_devido, registrar_followup, texto_do_followup
 
 
@@ -79,8 +80,9 @@ class AtendenteEmail:
             self._marcar_processado(mensagem_id)
             return f"ignorado ({motivo})"
 
-        primeiro_contato = not memoria.carregar(email.remetente, canal="email", pasta=self.agente.pasta_leads).mensagens
-        resposta = self.agente.responder(email.remetente, texto_para_o_agente(email, primeiro_contato), canal="email")
+        with trava_do_lead(email.remetente):
+            primeiro_contato = not memoria.carregar(email.remetente, canal="email", pasta=self.agente.pasta_leads).mensagens
+            resposta = self.agente.responder(email.remetente, texto_para_o_agente(email, primeiro_contato), canal="email")
 
         # Etiqueta ANTES de enviar: se o envio falhar, o lead fica sem resposta (e o log avisa),
         # mas nunca recebe a mesma resposta duas vezes.

@@ -15,6 +15,8 @@ from brax_sdr.roteamento import PONTOS_POR_SINAL, TIPOS_EMPRESA, prioridade, rot
 # Recebe (lead, resumo, disponibilidade) e devolve (decisao, observacao),
 # com decisao em "aprovada" | "novo_horario" | "recusada" | "pendente".
 Aprovador = Callable[[Lead, str, str], tuple[str, str]]
+# Recebe (lead, motivo) e avisa o time (ex.: no Slack) que alguém precisa assumir a conversa.
+AlertaHumano = Callable[[Lead, str], None]
 
 PERSONAS = ("founder_ceo", "financas_cfo", "operacoes_people", "outro")
 
@@ -238,8 +240,13 @@ def _solicitar_aprovacao(lead: Lead, entrada: dict, aprovador: Aprovador | None)
     return resposta
 
 
-def _transferir_para_humano(lead: Lead, entrada: dict) -> dict:
+def _transferir_para_humano(lead: Lead, entrada: dict, alerta_humano: AlertaHumano | None) -> dict:
     lead.registrar_evento("transferencia_humano", entrada["motivo"])
+    if alerta_humano:
+        try:
+            alerta_humano(lead, entrada["motivo"])  # Slack: alguém do time assume (decisão 034)
+        except Exception as erro:
+            lead.registrar_evento("alerta_humano_erro", str(erro)[:200])
     return {
         "ok": True,
         "proximo_passo": "Avise que uma pessoa do time vai continuar a conversa em horário comercial (seg a sex, 9h às 18h).",
@@ -280,7 +287,9 @@ def _encerrar_conversa(lead: Lead, entrada: dict) -> dict:
     }
 
 
-def executar(nome: str, entrada: dict, lead: Lead, aprovador: Aprovador | None = None) -> tuple[str, bool]:
+def executar(
+    nome: str, entrada: dict, lead: Lead, aprovador: Aprovador | None = None, alerta_humano: AlertaHumano | None = None
+) -> tuple[str, bool]:
     """Executa uma ferramenta. Devolve (conteúdo em JSON, é_erro)."""
     try:
         if nome == "registrar_qualificacao":
@@ -290,7 +299,7 @@ def executar(nome: str, entrada: dict, lead: Lead, aprovador: Aprovador | None =
         elif nome == "solicitar_aprovacao_executivo":
             resultado = _solicitar_aprovacao(lead, entrada, aprovador)
         elif nome == "transferir_para_humano":
-            resultado = _transferir_para_humano(lead, entrada)
+            resultado = _transferir_para_humano(lead, entrada, alerta_humano)
         elif nome == "registrar_opt_out":
             resultado = _registrar_opt_out(lead)
         elif nome == "encerrar_conversa":

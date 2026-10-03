@@ -6,7 +6,6 @@ A Meta espera resposta rápida; se demorar, ela reenvia o aviso (por isso os ids
 
 import hmac
 import json
-import threading
 from datetime import datetime
 
 from fastapi import BackgroundTasks, FastAPI, HTTPException, Query, Request
@@ -14,6 +13,7 @@ from fastapi.responses import PlainTextResponse
 
 from brax_sdr import config, memoria
 from brax_sdr.agente import Agente
+from brax_sdr.travas import trava_do_lead
 from brax_sdr.canal_whatsapp import MensagemWhatsApp, RegistroDeMensagens, assinatura_valida, ler_webhook, texto_para_o_agente
 
 
@@ -23,12 +23,6 @@ def _log(texto: str) -> None:
 
 def criar_app(agente: Agente, envio, registro: RegistroDeMensagens) -> FastAPI:
     app = FastAPI(title="BRAX SDR: webhook do WhatsApp")
-    travas_por_lead: dict[str, threading.Lock] = {}
-    trava_do_dicionario = threading.Lock()
-
-    def trava_do_lead(telefone: str) -> threading.Lock:
-        with trava_do_dicionario:
-            return travas_por_lead.setdefault(telefone, threading.Lock())
 
     def atender(mensagem: MensagemWhatsApp) -> None:
         # Uma mensagem por vez para cada lead: duas respostas simultâneas corromperiam a memória dele.

@@ -88,6 +88,13 @@ if gmail:
     threading.Thread(target=AtendenteEmail(gmail, agente).rodar, daemon=True, name="email").start()
     print("  E-mail: ligado")
 
+from brax_sdr import supabase_leads  # noqa: E402
+
+banco = supabase_leads.cliente()
+if banco:
+    # Sinal de vida a cada 6 h: o Supabase gratuito pausa projetos sem uso (achado na Fase 5b).
+    threading.Thread(target=supabase_leads.manter_ativo, args=(banco,), daemon=True, name="supabase").start()
+print(f"  Supabase: {'ligado' if banco else 'desligado (leads em data/local/leads)'}")
 print(f"  WhatsApp: modo {config.WHATSAPP_MODO} em http://{config.SERVIDOR_HOST}:{config.WHATSAPP_PORTA}/webhook", flush=True)
 if config.WHATSAPP_MODO == "meta" and not config.WHATSAPP_ENVIO_HABILITADO:
     print("            envio DESLIGADO: as respostas só aparecem no terminal")

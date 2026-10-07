@@ -5,6 +5,8 @@ A tabela é criada por supabase/esquema.sql. Só o servidor usa este módulo, co
 (nunca vai para o navegador nem para o código; fica no .env e nas variáveis da hospedagem).
 """
 
+import threading
+
 import httpx
 
 from brax_sdr import config
@@ -76,3 +78,23 @@ def cliente() -> SupabaseLeads | None:
     if _cliente is None and config.SUPABASE_URL and config.SUPABASE_SECRET_KEY:
         _cliente = SupabaseLeads(config.SUPABASE_URL, config.SUPABASE_SECRET_KEY)
     return _cliente
+
+
+INTERVALO_SINAL_DE_VIDA_S = 6 * 60 * 60
+
+
+def manter_ativo(banco: SupabaseLeads, parar: threading.Event | None = None,
+                 intervalo: float = INTERVALO_SINAL_DE_VIDA_S) -> None:
+    """Consulta leve ao banco a cada `intervalo` segundos, para o plano gratuito não pausar o projeto.
+
+    Achado na Fase 5b: o projeto pausou antes do primeiro teste no Railway, e o P.H. recebia as mensagens sem conseguir
+    gravá-las. Sem e-mail (token vencido) e sem mensagens, nada mais tocaria no banco.
+    """
+    parar = parar or threading.Event()  # no programa, ninguém sinaliza: roda até o processo terminar
+    while True:
+        try:
+            banco.listar_ids()
+        except Exception as erro:
+            print(f"[Supabase] sinal de vida falhou: {type(erro).__name__}: {erro}", flush=True)
+        if parar.wait(intervalo):
+            return

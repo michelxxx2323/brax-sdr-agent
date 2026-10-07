@@ -71,3 +71,21 @@ def test_memoria_usa_o_banco_so_na_pasta_padrao(tmp_path, monkeypatch):
     pedidos_antes = len(falso.pedidos)
     memoria.salvar(Lead(id="eval-x"), pasta=tmp_path)
     assert (tmp_path / "eval-x.json").exists() and len(falso.pedidos) == pedidos_antes
+
+
+def test_sinal_de_vida_consulta_o_banco_e_sobrevive_a_falhas():
+    import threading
+
+    chamadas = []
+
+    class BancoInstavel:
+        def listar_ids(self):
+            chamadas.append(1)
+            if len(chamadas) == 1:
+                raise httpx.ConnectError("banco pausado")  # a falha não derruba o laço
+            parar.set()
+            return []
+
+    parar = threading.Event()
+    supabase_leads.manter_ativo(BancoInstavel(), parar=parar, intervalo=0)
+    assert len(chamadas) == 2

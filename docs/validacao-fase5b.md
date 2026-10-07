@@ -61,7 +61,18 @@ Supabase e WhatsApp em modo `meta` com envio desligado.
 
 Caminho completo no ar, sem o PC: **Meta → Railway → P.H. (Claude) → Supabase + HubSpot (+ Slack para aprovações)**.
 
+## Teste 4: app do Gmail em produção (o token deixa de vencer em 7 dias)
+
+**Resultado: aprovado.** Em modo de teste, o Google invalida a autorização a cada 7 dias: no servidor, o canal de e-mail
+pararia toda semana sem aviso. Para publicar o app ("Em produção", **sem** pedir a verificação do Google, permitido para
+até 100 usuários), o Google exigiu página inicial e política de privacidade. Foram criadas no GitHub Pages:
+[sobre](https://michelxxx2323.github.io/brax-sdr-agent/sobre.html) e
+[privacidade](https://michelxxx2323.github.io/brax-sdr-agent/privacidade.html) (BRAX fictícia, dados usados, para onde
+vão, uso limitado dos dados do Google, exclusão pela LGPD). Sem logo: enviar logo obriga a verificação.
+
+Depois de publicar, um token novo foi gerado (`autorizar_gmail.py`), conferido sem expor o valor (conecta à conta da
+BRAX) e copiado para as variáveis do Railway. Os logs do novo deploy mostram o e-mail ligado.
+
 ## Pendências da fase
 
-- Publicar o app OAuth do Gmail (hoje em modo de teste, o token vence em 7 dias). Adiado: o Google pede dados de branding.
 - Confirmar o plano Hobby do Railway ao fim do teste gratuito.

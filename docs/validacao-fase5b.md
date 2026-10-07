@@ -51,8 +51,17 @@ do Gmail vencer e ninguém mandar mensagem, nada mais tocaria no banco e ele pau
 **Aprendizado:** em planos gratuitos, "ficar parado" é um modo de falha. O monitoramento precisa cobrir as dependências,
 não só o servidor: o `/saude` do Railway dizia "ok" enquanto o banco estava fora do ar.
 
+## Teste 3: webhook da Meta apontando para o Railway
+
+**Resultado: aprovado.** A URL de callback na Meta passou do ngrok para
+`https://brax-sdr-agent-production.up.railway.app/webhook`; a verificação (token) passou de primeira. O botão "Testar"
+do campo `messages` mandou a mensagem de exemplo da Meta ("this is a text message"), que chegou ao Railway, foi
+respondida pelo P.H. e gravada no Supabase. Os logs do deploy mostram todos os serviços ligados: HubSpot, Slack, e-mail,
+Supabase e WhatsApp em modo `meta` com envio desligado.
+
+Caminho completo no ar, sem o PC: **Meta → Railway → P.H. (Claude) → Supabase + HubSpot (+ Slack para aprovações)**.
+
 ## Pendências da fase
 
-- Apontar o webhook da Meta para o endereço do Railway (no lugar do ngrok) e testar com o botão "Testar" da Meta.
 - Publicar o app OAuth do Gmail (hoje em modo de teste, o token vence em 7 dias). Adiado: o Google pede dados de branding.
 - Confirmar o plano Hobby do Railway ao fim do teste gratuito.

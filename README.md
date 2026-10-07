@@ -119,6 +119,15 @@ Use `/estado` para ver o que o P.H. já registrou sobre o lead. O histórico fic
 Para trocar de lead, digite `/sair` antes de rodar o próximo comando. Depois de atualizar o código,
 abra uma conversa nova: uma sessão aberta continua com o código antigo.
 
+### No ar: Railway + Supabase (Fase 5b)
+
+O P.H. roda 24h no **Railway** (`https://brax-sdr-agent-production.up.railway.app`, rotas `/webhook` e `/saude`), com os
+leads no **Supabase**. Cada push no `main` publica a versão nova sozinho. As chaves ficam nas variáveis do Railway
+(as mesmas do `.env`, com `WHATSAPP_MODO=meta`, `PORT=8080` e `PYTHONUNBUFFERED=1`). Detalhes: decisões 043 e 044 e
+[validação da Fase 5b](docs/validacao-fase5b.md).
+
+⚠️ Não rode o `iniciar_brax.py` no PC enquanto o Railway estiver no ar: os dois leriam o mesmo Gmail e responderiam duas vezes.
+
 ### Tudo junto: WhatsApp + e-mail + Slack + HubSpot (Fase 5)
 
 ```powershell

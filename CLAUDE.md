@@ -98,6 +98,8 @@ Texto completo: `cerebro/regras/guardrails.md`.
   Lembrete: o programa lê o `.env` só ao iniciar; reinicie depois de mudar o `.env` ou o código.
 - Decisões de desenho do código: o modelo extrai dados, o código decide a faixa (013); laço manual de ferramentas (015); guardrails em camadas (017); identificação curta e humano sob demanda (020); proteção de custo e encerramento antes da API (021).
 - WhatsApp (simulado): terminal 1 `.venv\Scripts\python.exe servidor_whatsapp.py`; terminal 2 `.venv\Scripts\python.exe simular_whatsapp.py`.
+- No ar (Fase 5b): Railway `https://brax-sdr-agent-production.up.railway.app` (deploy automático a cada push no main)
+  + Supabase (leads; `supabase/esquema.sql`, `migrar_para_supabase.py`). Não rodar `iniciar_brax.py` no PC ao mesmo tempo.
 - Tudo junto (Fase 5): `.venv\Scripts\python.exe iniciar_brax.py` (WhatsApp + e-mail + Slack + HubSpot; liga o que estiver no `.env`).
   HubSpot: `configurar_hubspot.py` (uma vez) e `sincronizar_crm.py`. Transferência para humano: vendedor em horário comercial,
   P.H. segue coletando (decisões 037 e 038). Retorno após aprovação no Slack: escrito pela IA com travas (decisão 034).

@@ -83,8 +83,8 @@ Texto completo: `cerebro/regras/guardrails.md`.
 5. **CRM e aprovação humana**: ✅ concluída e aprovada (HubSpot + Slack; testes em `docs/validacao-fase5.md`)
 6. **Evals e métricas**: ✅ concluída e aprovada (3 baterias, 15/20 → 19/20, zero alertas de guardrail;
    `docs/validacao-fase6.md`, painel em GitHub Pages). Rodar: `.venv\Scripts\python.exe rodar_evals.py`.
-5b. Hospedagem + Supabase (decisão 031) ← próxima
-7. Painel do time comercial no Lovable (leads, conversas, funil e métricas, lendo o Supabase; decisão 041)
+5b. **Hospedagem + Supabase**: ✅ concluída e aprovada (Railway Hobby + Supabase, Gmail em produção; `docs/validacao-fase5b.md`)
+7. Painel do time comercial no Lovable (leads, conversas, funil e métricas, lendo o Supabase; decisão 041) ← próxima
 8. Página web pública para simular uma conversa com o P.H. (desenho a definir; decisão 041)
 
 ## Ambiente local

@@ -47,7 +47,7 @@
 | 039 | Evals automáticos (lead simulado + código + juiz); Fase 6 antes da hospedagem | Aceita | 2026-10-03 |
 | 040 | Correções da 1ª bateria: setor obrigatório para rotear, G4 garantido em código, juiz com o cérebro | Aceita | 2026-10-03 |
 | 041 | Duas etapas finais: painel comercial no Lovable (7) e simulador público do P.H. (8) | Aceita | 2026-10-03 |
-| 042 | Fase 6 encerrada só com o Haiku; comparação de modelos adiada para um Haiku mais novo | Aceita | 2026-10-03 |
+| 042 | Fase 6 encerrada só com o Haiku; comparação de modelos adiada para um Haiku mais novo | Aceita (comparação feita na 051) | 2026-10-03 |
 | 043 | Hospedagem no Railway (Hobby) e leads no Supabase, via API REST e com RLS fechada | Aceita | 2026-10-03 |
 | 044 | Programa pronto para a nuvem: porta do Railway, só modo meta no ar, aprovação pendente sem Slack | Aceita | 2026-10-03 |
 | 045 | Só dados fictícios no que é público; página aberta com aviso, mascaramento e guarda curta | Aceita | 2026-10-09 |
@@ -56,6 +56,7 @@
 | 048 | Dados para o painel em três colunas: horário por mensagem, resumo curto, temperatura, IDs do HubSpot e última mensagem | Aceita | 2026-10-09 |
 | 049 | Roteamento automático assim que os dados de qualificação ficam completos | Aceita | 2026-10-10 |
 | 050 | Resultados dos evals também no Supabase, para a aba "Qualidade" do painel | Aceita | 2026-10-10 |
+| 051 | Conversa no Claude Haiku 5.5 (sem pensamento, esforço medium) depois de bateria comparativa | Aceita | 2026-10-10 |
 
 ---
 
@@ -1069,3 +1070,51 @@ o painel do GitHub Pages.
 
 **Motivo:** para um gestor (e para o case), a qualidade do agente precisa estar ao lado da operação, no mesmo lugar.
 Guardar a cópia no banco, em vez de ler os JSON do GitHub no front, mantém o painel com uma fonte só e as mesmas regras de acesso.
+
+---
+
+## 051: Conversa no Claude Haiku 5.5
+
+**Contexto:** a decisão 042 adiou a comparação de modelos para quando saísse um Haiku mais novo. O Claude Haiku 5.5
+(`claude-haiku-5-5`) saiu em 07/10/2026; o ID foi conferido na lista de modelos da própria conta e na referência
+oficial da API, antes de qualquer mudança. Preço: US$ 0,10 / 0,50 por milhão de tokens (até 100 mil tokens por
+chamada), contra US$ 1 / 5 do Haiku 4.5.
+
+**O que muda além do nome (pela referência oficial):** o "pensamento" (raciocínio interno) vem ligado por padrão e,
+com ele, a API recusa um histórico editado. O P.H. edita o histórico de propósito (descarta textos superados, troca
+mensagens pelo texto padronizado). Outras diferenças: parâmetro de esforço (`effort`), tokenizador ~30% maior,
+recusas de segurança possíveis (o P.H. já as trata) e `temperature`/prefill proibidos (o P.H. não usa).
+
+**Opções:** (1) ligar o pensamento e tornar o histórico intocável (reescrever as travas da resposta); (2) desligar o
+pensamento, como o P.H. já rodava no Haiku 4.5, com esforço explícito; (3) ficar no Haiku 4.5.
+
+**Decisão:** opção 2. `thinking: disabled` e `effort: medium`, num lugar só (`config.PARAMETROS_POR_MODELO`), aplicados
+às quatro chamadas do modelo de conversa (resposta, mensagem proativa, encurtamento e resumo). Voltar ao 4.5 pelo
+`.env` continua funcionando. O lead simulado dos evals continua no Haiku 4.5 e o juiz no Sonnet 5, para a comparação
+medir só a troca do P.H.
+
+**Bateria comparativa (20 cenários, mesmo lead simulado e mesmo juiz):**
+
+| | Haiku 4.5 (3ª bateria) | Haiku 5.5 |
+|---|---|---|
+| Aprovados | 19/20 | **20/20** |
+| Roteamento correto | 93% | **100%** |
+| Alertas de guardrail | 0 | 0 |
+| Nota média do juiz | 4,33 | **4,55** |
+| Honestidade / guardrails / condução | 4,05 / 4,25 / 3,95 | **4,70 / 4,70 / 4,45** |
+| Custo do P.H. por conversa | US$ 0,032 | **US$ 0,0035** |
+
+**O que a bateria revelou, corrigido antes de publicar:**
+- **Mensagem com a mesma pergunta duas vezes.** O 5.5 escreve a resposta junto com a ferramenta de registro e de novo
+  depois do resultado; a regra da decisão 027 somava os dois textos. Agora o código descarta um texto quase igual
+  (semelhança ≥ 0,6) a outro que vem depois. Nos casos reais, as duplicatas tinham 0,95 e 0,75; o caso que originou a
+  decisão 027 (resposta completa e depois só "Abraço,") tem 0,06 e continua somado. Rodando de novo: 0 repetições.
+- **"Registrei os dados"**: o prompt agora proíbe narrar o registro ao lead.
+- **Empresa sem CNPJ e tipo indefinido:** a IA achou que precisava do tipo (LTDA ou S.A.), tentou um campo inexistente
+  e se perdeu. A descrição de `sem_cnpj` ficou explícita, e o erro de campo desconhecido lista os campos aceitos.
+
+**Observação:** em 1 de 4 conversas de "pessoa física", o P.H. recusou o lead com as próprias palavras, sem registrar
+o tipo (o CRM ficaria sem motivo). Já acontecia com o Haiku 4.5; fica em observação nas próximas baterias.
+
+**Motivo:** melhor em qualidade e 9 vezes mais barato. Desligar o pensamento mantém o comportamento que já foi validado
+e evita reescrever as travas que fazem o "código garantir".

@@ -92,11 +92,11 @@ O link do app e o link de agenda vêm sempre das ferramentas: o modelo nunca inv
 
 | Uso | Modelo | Por quê |
 |---|---|---|
-| Conversa com o lead, reescrita de mensagens longas, resumo curto do painel | `claude-haiku-4-5` | Rápido e barato; o raciocínio de negócio está no código (012, 048) |
+| Conversa com o lead, reescrita de mensagens longas, resumo curto do painel | `claude-haiku-5-5`, sem pensamento, esforço medium | Rápido e barato; o raciocínio de negócio está no código (012, 048, 051) |
 | Resumo do lead para o executivo (Slack e HubSpot), juiz dos evals | `claude-sonnet-5` | Mais capacidade; sem palpites no resumo |
 | Lead simulado nos evals | `claude-haiku-4-5` | Só precisa seguir a ficha do cenário |
 
-A comparação com modelos maiores fica para quando sair um Haiku mais novo (042).
+A troca do Haiku 4.5 para o 5.5 foi decidida por uma bateria comparativa de evals (051): 20/20 e custo 9x menor.
 
 ### Cérebro e memória
 
@@ -141,7 +141,7 @@ No WhatsApp, fica para depois: fora da janela de 24h, a Meta exige modelos aprov
   honestidade, guardrails e condução.
 - Resultados em `evals/resultados/` (a fonte da verdade), painel em `docs/index.html` (GitHub Pages) e cópia no
   Supabase para a aba "Qualidade" do painel comercial.
-- Histórico: 15/20 → 19/20 → 19/20 aprovados; alertas de guardrail 3 → 1 → 0.
+- Histórico: 15/20 → 19/20 → 19/20 aprovados com o Haiku 4.5; **20/20** com o Haiku 5.5 (051). Alertas de guardrail 3 → 1 → 0 → 0.
 
 ### Banco e painel comercial (Fase 7, decisões 045 a 050)
 
@@ -225,5 +225,5 @@ porque a visão é o filtro). Todos os dados são fictícios (045). Arquivos: `s
 - Responder ao lead de dentro do Slack (hoje o vendedor usa os próprios canais) (038).
 - Agenda real ligada ao CRM (reuniões do HubSpot), deixada de fora por privacidade (035).
 - Follow-up no WhatsApp com modelos aprovados pela Meta (030).
-- Comparação de modelos quando sair um Haiku mais novo (042).
+- Comparar o Haiku 5.5 com o Sonnet 5.5 nos evals, se a qualidade precisar subir (051).
 - Pesquisa automática da empresa e do decisor (planejada desde a Fase 1).

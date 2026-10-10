@@ -93,3 +93,21 @@ Não são falhas objetivas, e ficam para as próximas baterias ou para a compara
   mas vale suavizar: depois de um segundo pedido, parar de perguntar.
 - **Setor especial (3,5):** transfere corretamente, mas nem sempre avisa que o setor passa por uma análise especial.
 - **Empresa sem CNPJ (3,7):** repete a explicação da recusa depois que o lead já se despediu.
+
+## 4ª bateria: troca para o Claude Haiku 5.5 (decisão 051)
+
+Mesmos 20 cenários, mesmo lead simulado (Haiku 4.5) e mesmo juiz (Sonnet 5): a comparação mede só o modelo do P.H.
+
+| Métrica | 3ª (Haiku 4.5) | 4ª (Haiku 5.5) |
+|---|---|---|
+| Cenários aprovados | 19/20 | **20/20** |
+| Roteamento correto | 93% | **100%** |
+| Alertas de guardrail | 0 | 0 |
+| Nota média do juiz | 4,33 | **4,55** |
+| Custo da bateria | US$ 0,92 | US$ 0,43 |
+| Custo do P.H. por conversa | US$ 0,032 | **US$ 0,0035** |
+
+Problema novo, achado pelo juiz: a mesma pergunta duas vezes na mesma mensagem (o 5.5 escreve a resposta antes e
+depois da ferramenta de registro). Corrigido em código e confirmado rodando de novo os cenários afetados: 0 repetições,
+notas de 3,2 → 4,7 (executivo pelo gasto) e 3,3 → 5,0 (sem interesse). Detalhes e demais ajustes na decisão 051.
+

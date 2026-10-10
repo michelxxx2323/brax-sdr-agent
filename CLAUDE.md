@@ -48,7 +48,7 @@ Detalhes: `docs/arquitetura.md`. Decisões: `docs/decisoes.md`.
 - Um único agente com ferramentas (tools), sem subagentes por enquanto.
 - Python + SDK oficial da Anthropic (`anthropic`).
 - Modelos definidos em **um único arquivo de configuração** (não espalhar nomes de modelo pelo código):
-  - conversa: `claude-haiku-4-5` (leve e barato; comparação de modelos adiada para quando sair um Haiku mais novo, decisão 042)
+  - conversa: `claude-haiku-5-5` (decisão 051: 20/20 nos evals, 9x mais barato que o 4.5; pensamento desligado, esforço medium)
   - tarefas complexas e avaliações: `claude-sonnet-5`
   - Confirmar os IDs na documentação oficial da Anthropic antes de usar.
 - WhatsApp **somente** pela API oficial da Meta (Cloud API, número de teste). Nunca APIs não oficiais.

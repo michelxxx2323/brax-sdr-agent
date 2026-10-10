@@ -221,3 +221,8 @@ def test_dados_incompletos_nao_roteiam():
     lead = Lead(id="t", dados={"tipo_empresa": "ltda", "funcionarios": 8})
     resultado, _ = _executar("registrar_qualificacao", {"gasto_mensal": 20000}, lead)  # falta o setor
     assert lead.faixa is None and "roteamento" not in resultado
+
+
+def test_campo_desconhecido_lista_os_campos_aceitos():
+    resultado, erro = _executar("registrar_qualificacao", {"motivo": "sem cnpj"}, Lead(id="t"))
+    assert erro is True and "motivo" in resultado["erro"] and "tipo_empresa" in resultado["erro"]

@@ -35,7 +35,11 @@ FERRAMENTAS = [
                 "tipo_empresa": {
                     "type": "string",
                     "enum": list(TIPOS_EMPRESA),
-                    "description": "ltda, sa, outro_cnpj (outro tipo com CNPJ), mei, sem_cnpj ou pessoa_fisica.",
+                    "description": (
+                        "ltda, sa, outro_cnpj (outro tipo com CNPJ), mei, sem_cnpj ou pessoa_fisica. Use sem_cnpj sempre "
+                        "que a empresa ainda não tiver CNPJ, mesmo que vá abrir em breve ou que o tipo (LTDA ou S.A.) "
+                        "ainda não esteja definido."
+                    ),
                 },
                 "funcionarios": {"type": "integer", "description": "Número aproximado de pessoas na empresa."},
                 "gasto_mensal": {"type": "number", "description": "Gasto mensal estimado com cartão e despesas, em reais."},
@@ -148,7 +152,9 @@ def _validar_qualificacao(entrada: dict) -> dict:
     for campo, valor in entrada.items():
         regra = schema.get(campo)
         if regra is None:
-            raise ValueError(f"campo desconhecido: {campo}")
+            # A lista de campos aceitos ajuda a IA a se corrigir na hora (bateria do Haiku 5.5: ela tentou "motivo",
+            # recebeu só "campo desconhecido" e se perdeu, falando do sistema com o lead).
+            raise ValueError(f"campo desconhecido: {campo}. Campos aceitos: {', '.join(schema)}")
         tipo = _TIPOS_JSON[regra["type"]]
         if isinstance(valor, bool) and regra["type"] in ("integer", "number"):
             raise ValueError(f"{campo} deve ser número")

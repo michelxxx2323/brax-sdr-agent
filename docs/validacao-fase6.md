@@ -111,3 +111,8 @@ Problema novo, achado pelo juiz: a mesma pergunta duas vezes na mesma mensagem (
 depois da ferramenta de registro). Corrigido em código e confirmado rodando de novo os cenários afetados: 0 repetições,
 notas de 3,2 → 4,7 (executivo pelo gasto) e 3,3 → 5,0 (sem interesse). Detalhes e demais ajustes na decisão 051.
 
+
+**No ar:** `/saude` passou a mostrar o modelo em uso e confirmou `claude-haiku-5-5` no Railway. Uma mensagem de teste
+assinada (lead fictício, LTDA de logística, 11 pessoas, R$ 14 mil/mês) foi registrada, roteada para self-service e
+sincronizada com o HubSpot. Custo da primeira resposta, que inclui criar o cache do prompt: **US$ 0,00096**, contra
+US$ 0,031 da mesma situação no Haiku 4.5 minutos antes (o deploy ainda não tinha terminado).

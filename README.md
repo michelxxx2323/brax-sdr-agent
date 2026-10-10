@@ -10,7 +10,7 @@ follow-up automático) e **por WhatsApp** (webhook validado com um simulador da 
 decisões humanas acontecem no **Slack** (aprovação de executivo com botões e alertas de transferência).
 A qualidade é medida por **evals automáticos** ([Fase 6](docs/validacao-fase6.md)): 20 cenários com lead simulado,
 verificações em código e IA como juiz, de 15/20 para **19/20** aprovados e zero alertas de guardrail
-([painel](https://michelxxx2323.github.io/brax-sdr-agent/)). Próxima: 7 (painel do time comercial no Lovable).
+([painel](https://michelxxx2323.github.io/brax-sdr-agent/)). Em andamento: 7 (painel do time comercial no Lovable, com o banco já pronto e a segurança verificada).
 
 > ⚠️ **A BRAX é uma empresa fictícia**, criada para este case e **inspirada na [Brex](https://www.brex.com/)**.
 > Nome, planos, preços e funcionalidades são inventados. Não há relação com a Brex nem com nenhuma empresa real.
@@ -89,7 +89,7 @@ e, na dúvida, passa para um humano. Ver [cerebro/regras/guardrails.md](cerebro/
 | 5 | CRM e aprovação humana | HubSpot (CRM) + Slack (aprovação assíncrona e alertas) | ✅ Concluída |
 | 6 | Evals e métricas | 20 cenários com lead simulado, verificações em código, LLM como juiz e [painel](https://michelxxx2323.github.io/brax-sdr-agent/) | ✅ Concluída |
 | 5b | Hospedagem | Railway (Hobby) + Supabase, com tudo integrado (decisões 043 e 044, [validação](docs/validacao-fase5b.md)) | ✅ Concluída |
-| 7 | Painel comercial | Front end no Lovable para o time comercial: leads, conversas, funil e métricas, lendo o Supabase (decisão 041) | ⚪ Próxima |
+| 7 | Painel comercial | Front end no Lovable para o time comercial: leads, conversas, funil e métricas, lendo o Supabase (decisões 041 e 045 a 050; [validação](docs/validacao-fase7.md)) | 🟡 Em andamento: banco pronto, telas no Lovable |
 | 8 | Simulador público | Página web para qualquer pessoa conversar com o P.H. (desenho a definir, decisão 041) | ⚪ |
 
 ## Como rodar (Windows)

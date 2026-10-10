@@ -84,7 +84,8 @@ Texto completo: `cerebro/regras/guardrails.md`.
 6. **Evals e métricas**: ✅ concluída e aprovada (3 baterias, 15/20 → 19/20, zero alertas de guardrail;
    `docs/validacao-fase6.md`, painel em GitHub Pages). Rodar: `.venv\Scripts\python.exe rodar_evals.py`.
 5b. **Hospedagem + Supabase**: ✅ concluída e aprovada (Railway Hobby + Supabase, Gmail em produção; `docs/validacao-fase5b.md`)
-7. Painel do time comercial no Lovable (leads, conversas, funil e métricas, lendo o Supabase; decisão 041) ← próxima
+7. Painel do time comercial no Lovable (leads, conversas, funil e métricas, lendo o Supabase; decisões 041, 045 a 050) ← em andamento: banco pronto (`supabase/painel.sql`,
+   `evals.sql`, verificação `verificar_acesso_painel.py` 17/17); roteiro em `lovable/prompt-painel.md`; telas no Lovable
 8. Página web pública para simular uma conversa com o P.H. (desenho a definir; decisão 041)
 
 ## Ambiente local

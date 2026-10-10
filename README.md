@@ -1,3 +1,9 @@
+<div align="center">
+
+**Português (Brasil)** · [English](README_en.md)
+
+</div>
+
 # BRAX SDR Agent: o "P.H."
 
 > Um agente de IA que faz pré-vendas (SDR) inbound por WhatsApp e e-mail para uma fintech B2B,
@@ -168,7 +174,8 @@ até dois lembretes (follow-up) quando o lead para de responder.
 
 1. Crie uma conta Gmail para a BRAX e, no Google Cloud, um projeto com a **Gmail API** ativada e um **ID do cliente OAuth**
    do tipo *App para computador*. Coloque no `.env`: `GMAIL_CLIENT_ID`, `GMAIL_CLIENT_SECRET` e `GMAIL_REMETENTE`.
-2. Autorize uma vez (em modo de teste do Google, a autorização vale 7 dias):
+2. Autorize uma vez. Publique o app OAuth ("Em produção") para a autorização não vencer a cada 7 dias, como acontece
+   no modo de teste do Google:
    ```powershell
    .venv\Scripts\python.exe autorizar_gmail.py
    ```
@@ -200,7 +207,7 @@ brax-sdr-agent/
 
 ## Stack
 
-Python · Anthropic SDK (Claude) · Supabase · HubSpot · Slack · Meta WhatsApp Cloud API · Gmail API · Railway/Render
+Python · Anthropic SDK (Claude) · Supabase · HubSpot · Slack · Meta WhatsApp Cloud API · Gmail API · Railway · Lovable
 
 ## Sobre este case
 

@@ -17,7 +17,8 @@ import httpx  # noqa: E402
 
 from brax_sdr import config  # noqa: E402
 
-VISOES = ("painel_leads", "painel_mensagens", "painel_eventos")
+VISOES = ("painel_leads", "painel_mensagens", "painel_eventos", "painel_evals", "painel_evals_baterias")
+TABELAS = ("leads", "evals")  # só o servidor (chave secreta) acessa
 
 
 def ler(rest: str, cabecalhos: dict, alvo: str) -> tuple[int, int | None]:
@@ -46,7 +47,7 @@ def main() -> None:
 
     # 1. Visitante: chave pública, sem login.
     anonimo = {"apikey": publica}
-    for alvo in (*VISOES, "leads"):
+    for alvo in (*VISOES, *TABELAS):
         codigo, linhas = ler(rest, anonimo, alvo)
         conferir(f"visitante não lê {alvo}", not linhas, f"HTTP {codigo}, {linhas if linhas is not None else 'recusado'}")
     codigo = gravar(rest, anonimo)
@@ -65,9 +66,9 @@ def main() -> None:
         for alvo in VISOES:
             codigo, linhas = ler(rest, logado, alvo)
             conferir(f"logado lê {alvo}", bool(linhas), f"HTTP {codigo}, {linhas if linhas is not None else 'recusado'}")
-        codigo, linhas = ler(rest, logado, "leads")
-        conferir("logado NÃO lê a tabela leads (o estado completo)", not linhas,
-                 f"HTTP {codigo}, {linhas if linhas is not None else 'recusado'}")
+        for tabela in TABELAS:
+            codigo, linhas = ler(rest, logado, tabela)
+            conferir(f"logado NÃO lê a tabela {tabela}", not linhas, f"HTTP {codigo}, {linhas if linhas is not None else 'recusado'}")
         codigo = gravar(rest, logado)
         conferir("logado não grava em leads", codigo >= 400, f"HTTP {codigo}")
 

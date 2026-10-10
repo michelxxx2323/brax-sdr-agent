@@ -55,6 +55,7 @@
 | 047 | Revisão do acesso ao painel: tabela fechada ao usuário logado, conta demo não publicada, página pública só via servidor | Aceita | 2026-10-09 |
 | 048 | Dados para o painel em três colunas: horário por mensagem, resumo curto, temperatura, IDs do HubSpot e última mensagem | Aceita | 2026-10-09 |
 | 049 | Roteamento automático assim que os dados de qualificação ficam completos | Aceita | 2026-10-10 |
+| 050 | Resultados dos evals também no Supabase, para a aba "Qualidade" do painel | Aceita | 2026-10-10 |
 
 ---
 
@@ -1048,3 +1049,23 @@ descartado) e 6 cenários de roteamento dos evals com o modelo real: 6/6, com um
 
 **Efeito colateral observado:** com o setor obrigatório (decisão 040), o P.H. às vezes deixa a pergunta do setor para o
 fim, e um lead vago ("tecnologia") alonga a conversa em duas mensagens. Aceitável; fica em observação.
+
+---
+
+## 050: Resultados dos evals também no Supabase
+
+**Contexto:** uma revisão do painel (decisão 047) apontou que as notas dos evals não apareciam nas visões: o painel
+mostraria a operação, mas não a qualidade medida na Fase 6. Os resultados ficam em JSON no repositório e alimentam
+o painel do GitHub Pages.
+
+**Decisão:**
+- Tabela `evals` (`supabase/evals.sql`), com uma linha por cenário de cada bateria, e duas visões: `painel_evals`
+  (um cenário por linha, com cada critério do juiz numa coluna) e `painel_evals_baterias` (uma bateria por linha,
+  para o gráfico de evolução).
+- Mesmas regras de acesso da decisão 047: visões com a permissão do dono, tabela fechada, nada para anon.
+- O `rodar_evals.py` envia cada bateria nova ao Supabase; `enviar_evals_supabase.py` envia o histórico.
+  **O JSON continua sendo a fonte da verdade**: se o envio falhar, nada se perde, e o script reenvia depois.
+- `verificar_acesso_painel.py` passa a conferir também as duas visões novas e a tabela `evals`.
+
+**Motivo:** para um gestor (e para o case), a qualidade do agente precisa estar ao lado da operação, no mesmo lugar.
+Guardar a cópia no banco, em vez de ler os JSON do GitHub no front, mantém o painel com uma fonte só e as mesmas regras de acesso.

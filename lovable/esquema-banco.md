@@ -129,3 +129,47 @@ Tipos mais comuns e rótulos sugeridos: `qualificacao` (Dados registrados), `rot
 `retorno_enviado` (Retorno do time enviado ao lead), `alerta_guardrail` / `alerta_estilo` / `alerta_confiabilidade`
 (Alerta de qualidade), `vazamento_bloqueado` (Mensagem bloqueada pela segurança), `mensagem_encurtada` (Mensagem encurtada),
 `erro_ferramenta` / `crm_erro` / `resumo_erro` (Erro técnico). Outros tipos podem aparecer: mostrar o próprio nome.
+
+## Qualidade: resultados dos evals (decisão 050)
+
+Cada bateria de avaliação automática (`rodar_evals.py`) roda 20 conversas simuladas: uma IA faz o papel do lead, o código
+confere o resultado objetivo (faixa, transferência, opt-out, vazamentos...) e um juiz (Sonnet 5) dá notas de 1 a 5.
+Todas as conversas são simuladas e fictícias.
+
+### `painel_evals_baterias`: uma bateria por linha (evolução da qualidade)
+
+| Coluna | Tipo | Significado |
+|---|---|---|
+| `bateria` | text | Identificador da bateria (data e modelo) |
+| `data` | timestamptz | Quando rodou |
+| `modelo_conversa` | text | Modelo do P.H. avaliado (ex.: `claude-haiku-4-5`) |
+| `cenarios` | integer | Quantos cenários (20 nas completas; a piloto teve 3) |
+| `aprovados` | integer | Cenários com todas as verificações objetivas certas |
+| `taxa_aprovacao` | numeric | aprovados ÷ cenários (0 a 1) |
+| `nota_media` | numeric | Média das notas do juiz (1 a 5) |
+| `cenarios_com_alerta_de_guardrail` | integer | Cenários com algum alerta G1 a G4 |
+| `custo_total_usd` | numeric | Custo da bateria (P.H. + lead simulado + juiz) |
+| `custo_medio_ph_usd` | numeric | Custo médio do P.H. por conversa |
+
+### `painel_evals`: um cenário de uma bateria por linha
+
+| Coluna | Tipo | Significado |
+|---|---|---|
+| `bateria`, `data`, `modelo_conversa` | | Como acima (liga a `painel_evals_baterias.bateria`) |
+| `cenario` | text | Id do cenário (ex.: `mei`, `pede_humano`) |
+| `titulo` | text | Nome legível do cenário |
+| `canal` | text | `whatsapp` ou `email` |
+| `passou` | boolean | Todas as verificações objetivas certas |
+| `falhas` | jsonb (lista) | Verificações que falharam (ex.: `["faixa", "motivo_faixa"]`) |
+| `nota_media` | numeric | Média das 6 notas do juiz (vazio se o juiz falhou) |
+| `nota_tom_e_clareza`, `nota_uma_pergunta_por_vez`, `nota_nao_repete_perguntas`, `nota_honestidade`, `nota_guardrails`, `nota_conducao` | integer | Notas do juiz por critério (1 a 5) |
+| `problemas` | jsonb (lista de textos) | Problemas apontados pelo juiz |
+| `resumo_juiz` | text | Avaliação geral em uma frase |
+| `alertas` | jsonb (lista de textos) | Alertas de guardrail e de estilo durante a conversa |
+| `esperado`, `obtido` | jsonb | O resultado esperado do cenário e o que aconteceu |
+| `mensagens_do_lead` | integer | Quantas mensagens o lead simulado mandou |
+| `custo_usd`, `custo_ph_usd` | numeric | Custo do cenário (total e só do P.H.) |
+| `conversa` | jsonb | Lista de pares `["lead" ou "ph", "texto"]`, na ordem |
+
+Rótulos dos critérios: tom e clareza; uma pergunta por vez; não repete perguntas; honestidade; guardrails; condução.
+

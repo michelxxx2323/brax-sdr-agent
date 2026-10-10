@@ -83,3 +83,22 @@ def test_resumo_e_painel():
     assert "&lt;b&gt;" in pagina and "<b>Lead:</b>" in pagina  # texto da conversa escapado; marcação própria mantida
     assert "Prometeu &lt;ligação&gt;" in pagina
     assert json.loads(json.dumps(bateria))  # a bateria é serializável
+
+
+def test_bateria_vira_linhas_do_supabase():
+    from brax_sdr.supabase_evals import linhas_da_bateria
+
+    resultado = {
+        "id": "mei", "titulo": "MEI", "canal": "whatsapp", "esperado": {"faixa": "fora_do_icp"},
+        "obtido": {"faixa": None}, "verificacoes": {"faixa": False, "sem_vazamento": True}, "passou": False,
+        "notas": {**{c: 4 for c in CRITERIOS}, "problemas": ["x"], "resumo": "ok"}, "alertas": ["G4: ..."],
+        "mensagens_do_lead": 2, "custo_usd": 0.01, "custo_ph_usd": 0.005, "conversa": [("lead", "oi"), ("ph", "olá")],
+    }
+    bateria = {"data": "2026-10-03T01:49:17", "modelo_conversa": "claude-haiku-4-5", "modelo_juiz": "claude-sonnet-5",
+               "resultados": [resultado, {**resultado, "id": "erro", "notas": {"erro": "o juiz não devolveu"}}]}
+    linha, sem_notas = linhas_da_bateria(bateria, "20261003-014917-claude-haiku-4-5")
+    assert (linha["bateria"], linha["cenario"], linha["passou"]) == ("20261003-014917-claude-haiku-4-5", "mei", False)
+    assert linha["falhas"] == ["faixa"] and linha["nota_media"] == 4 and linha["problemas"] == ["x"]
+    assert linha["data"].endswith("+00:00")  # hora local convertida para UTC
+    assert sem_notas["nota_media"] is None and sem_notas["resumo_juiz"] == "o juiz não devolveu"
+    assert json.loads(json.dumps(linha))  # serializável para a API

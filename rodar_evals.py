@@ -13,9 +13,10 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent / "src"))
 
-from brax_sdr import config  # noqa: E402
+from brax_sdr import config, supabase_leads  # noqa: E402
 from brax_sdr.evals import PASTA_EVALS, carregar_cenarios, rodar_bateria  # noqa: E402
 from brax_sdr.painel import gerar_painel  # noqa: E402
+from brax_sdr.supabase_evals import gravar_bateria  # noqa: E402
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -52,3 +53,11 @@ print(f"\nAprovados: {r['aprovados']}/{r['cenarios']} | roteamento correto: {r['
       f"nota média: {r['nota_media']} | alertas de guardrail: {r['alertas_de_guardrail']}")
 print(f"Custo da bateria: US$ {r['custo_total_usd']:.2f} (P.H. por conversa: US$ {r['custo_medio_ph_usd']:.3f})")
 print(f"Resultados: {arquivo.relative_to(config.RAIZ)} | painel: {gerar_painel().relative_to(config.RAIZ)}")
+
+# Cópia no Supabase para a aba "Qualidade" do painel comercial (decisão 050). Se falhar, o JSON já está salvo.
+banco = supabase_leads.cliente()
+if banco:
+    try:
+        print(f"Supabase: {gravar_bateria(banco.http, bateria, arquivo.stem)} cenário(s) enviados")
+    except Exception as erro:
+        print(f"Supabase: não consegui enviar ({type(erro).__name__}: {erro}). Rode enviar_evals_supabase.py depois.")

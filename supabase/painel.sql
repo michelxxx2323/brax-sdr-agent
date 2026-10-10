@@ -91,4 +91,7 @@ cross join lateral jsonb_array_elements(l.estado -> 'eventos') as ev(evento);
 
 -- 5. Permissões: só usuários logados consultam as visões. Visitantes anônimos, nada.
 revoke all on public.painel_leads, public.painel_mensagens, public.painel_eventos from anon;
+-- Segunda camada na tabela: o RLS já esconde as linhas do visitante anônimo (teste da Fase 7: 0 linhas), e aqui ele perde
+-- também a permissão. O usuário logado mantém a leitura, porque as visões consultam a tabela em nome dele.
+revoke all on public.leads from anon;
 grant select on public.painel_leads, public.painel_mensagens, public.painel_eventos to authenticated;

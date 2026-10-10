@@ -72,6 +72,7 @@ def criar_app(agente: Agente, envio, registro: RegistroDeMensagens) -> FastAPI:
 
     @app.get("/saude")
     def saude():
-        return {"ok": True, "modo": config.WHATSAPP_MODO}
+        # O modelo em uso confirma de fora qual versão está no ar depois de um deploy (troca para o Haiku 5.5, decisão 051).
+        return {"ok": True, "modo": config.WHATSAPP_MODO, "modelo": config.MODELO_CONVERSA}
 
     return app

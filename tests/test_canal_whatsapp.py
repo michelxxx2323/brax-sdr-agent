@@ -206,3 +206,10 @@ def test_envio_desligado_nao_chama_a_meta(monkeypatch, capsys):
     EnvioMeta(token="t", numero_id="123", habilitado=False).enviar("16315551181", "Oi, aqui é o P.H.!")
     saida = capsys.readouterr().out
     assert "[ENVIO DESLIGADO] Teria enviado para 16315551181" in saida and "Oi, aqui é o P.H.!" in saida
+
+
+def test_saude_informa_o_modelo_em_uso(tmp_path):
+    # Decisão 051: depois de um deploy, /saude confirma de fora qual modelo está no ar.
+    servidor, _, _ = _servidor(tmp_path, [])
+    corpo = servidor.get("/saude").json()
+    assert corpo["ok"] is True and corpo["modelo"] == config.MODELO_CONVERSA

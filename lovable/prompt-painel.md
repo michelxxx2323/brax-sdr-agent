@@ -1,8 +1,8 @@
 # Prompt inicial do painel comercial no Lovable (Fase 7, decisão 046)
 
-> Como usar: crie o projeto no Lovable, conecte o projeto `brax-sdr` do Supabase e cole o texto abaixo (da linha
-> "Crie um painel..." até o fim) como primeira mensagem. Os ajustes seguintes são feitos conversando com o Lovable,
-> uma tela por vez.
+> Como usar: crie o projeto no Lovable, conecte o projeto `brax-sdr` do Supabase e cole como primeira mensagem o texto
+> abaixo (da linha "Crie um painel..." até o fim) **seguido do conteúdo inteiro de `lovable/esquema-banco.md`**, que
+> descreve cada visão e coluna. Os ajustes seguintes são feitos conversando com o Lovable, uma tela por vez.
 
 ---
 

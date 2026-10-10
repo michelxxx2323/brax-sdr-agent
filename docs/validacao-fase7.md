@@ -73,3 +73,10 @@ básico, lead completo na primeira mensagem, executivo pelo gasto, fronteira de 
 **6/6 aprovados**, cada lead com um único evento de roteamento. Na fronteira, o lead deu o último dado (setor: "é mais
 SaaS") e o link do app saiu na mesma resposta.
 
+
+## Teste 5: evals no Supabase (decisão 050)
+
+**Resultado: aprovado.** `supabase/evals.sql` rodado; `enviar_evals_supabase.py` mandou as 4 baterias (63 cenários).
+`painel_evals_baterias`, lida como a conta demo, bate com o diário da Fase 6: 2/3 na piloto, depois 15/20, 19/20 e
+19/20, com cenários com alerta de guardrail caindo de 3 para 1 e para 0. Verificação de acesso ampliada às visões e à
+tabela novas: **17/17**.

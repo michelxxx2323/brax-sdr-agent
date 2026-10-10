@@ -1,61 +1,163 @@
-# Prompt inicial do painel comercial no Lovable (Fase 7, decisão 046)
+# Painel do P.H. (BRAX): ajustes no banco + prompts do Lovable
 
-> Como usar: crie o projeto no Lovable, conecte o projeto `brax-sdr` do Supabase e cole como primeira mensagem o texto
-> abaixo (da linha "Crie um painel..." até o fim) **seguido do conteúdo inteiro de `lovable/esquema-banco.md`**, que
-> descreve cada visão e coluna. Os ajustes seguintes são feitos conversando com o Lovable, uma tela por vez.
+Layout de referência: a **experiência de WhatsApp** do hub da Woba (lista de conversas + chat) com o
+**painel de análise do lead** à direita, no estilo das plataformas de atendimento com IA.
+Identidade visual própria da BRAX: inspirar-se no layout, não copiar marcas, cores ou ícones de ninguém.
 
 ---
 
-Crie um painel web, em português do Brasil, para o time comercial da BRAX acompanhar o trabalho do P.H., um assistente
-virtual de pré-vendas (SDR) que atende leads por WhatsApp e e-mail. A BRAX é uma fintech fictícia (conta PJ e cartões
-corporativos para startups) e todos os dados são fictícios.
+## Parte A: ajustes no banco (feitos antes do Lovable)
 
-## Regras obrigatórias sobre o banco (Supabase já existente)
+✅ **Feito** em 09/10/2026 (decisão 048; diário em `docs/validacao-fase7.md`, teste 3). O pedido feito ao Claude Code:
 
-- O banco já existe e é usado por outro sistema em produção. **Não crie, altere ou apague tabelas, colunas, visões,
-  funções, políticas (RLS), gatilhos ou dados. Não rode migrações. Não crie Edge Functions.**
-- O painel é **somente leitura**. Use apenas estas três visões, com o cliente do Supabase e a chave pública (anon/publishable):
-  - `painel_leads`: um lead por linha. Colunas: `id`, `canal` (whatsapp | email), `nome_contato`, `empresa`, `cargo`,
-    `setor`, `tipo_empresa`, `funcionarios`, `gasto_mensal` (R$/mês), `dor`, `solucao_atual`, `sinais_de_compra` (lista),
-    `motivo_encerramento`, `faixa` (self_service | executivo | fora_do_icp | humano | vazio), `motivo_faixa`,
-    `aprovacao` (pendente | aprovada | novo_horario | recusada | vazio), `prioridade` (número), `opt_out`, `encerrada`,
-    `transferido_para_vendedor`, `sem_resposta`, `custo_total_usd`, `total_mensagens`, `etapa`, `criado_em`, `atualizado_em`.
-  - `painel_mensagens`: a conversa. Colunas: `lead_id`, `ordem`, `autor` (lead | ph), `texto`. Ordenar por `ordem`.
-  - `painel_eventos`: a linha do tempo. Colunas: `lead_id`, `quando`, `tipo`, `detalhe`.
-- Etapas (`etapa`) e rótulos para exibir: `em_qualificacao` → "Em qualificação", `qualificado_app` → "Qualificado (app)",
-  `reuniao_solicitada` → "Reunião solicitada", `reuniao_aprovada` → "Reunião aprovada", `com_vendedor` → "Com vendedor",
-  `fora_do_perfil` → "Fora do perfil", `perdido` → "Perdido".
-- Faixas: `self_service` → "Self-service (app)", `executivo` → "Executivo", `fora_do_icp` → "Fora do perfil",
-  `humano` → "Análise humana".
+> Vou construir no Lovable um painel em três colunas (lista de conversas, chat estilo WhatsApp e painel de
+> análise do lead). Para isso, preciso destes ajustes. Explique cada um antes de fazer, registre as decisões
+> no `docs/decisoes.md` e, no fim, atualize `supabase/painel.sql` e `lovable/esquema-banco.md`.
+>
+> 1. **Horário de cada mensagem.** Gravar a data e hora de cada mensagem no estado do lead (lead e P.H.) e
+>    expor como `quando` (timestamptz) em `painel_mensagens`. Mensagens antigas sem horário podem ficar nulas.
+> 2. **Resumo da conversa.** Gerar e guardar um resumo curto (2 a 4 frases) da conversa sempre que a faixa
+>    for definida ou a conversa for encerrada, usando o modelo leve. Expor como `resumo` em `painel_leads`.
+> 3. **Temperatura do lead.** Calcular na view `painel_leads`, a partir de `prioridade`, uma coluna
+>    `temperatura` (`quente`, `morno`, `frio`). Proponha os limites e registre como hipótese a calibrar.
+> 4. **Links do HubSpot.** Se o código já guarda os IDs de contato e de negócio do HubSpot, expor
+>    `hubspot_contato_id` e `hubspot_negocio_id` em `painel_leads`. Se não guarda, passe a guardar.
+> 5. **Última mensagem.** Expor em `painel_leads` as colunas `ultima_mensagem` (texto) e
+>    `ultima_mensagem_autor` (`lead` ou `ph`), para a lista de conversas não precisar carregar todas as mensagens.
+>
+> Mantenha tudo somente leitura para o painel e as mesmas regras de acesso (views com security_invoker,
+> nada para anon). Rode os testes e me mostre o que mudou.
 
-## Acesso
+**Diferenças em relação ao pedido:**
+- Acesso: as visões **não** usam `security_invoker`. Com ele, o usuário logado precisaria ler a tabela `leads`
+  inteira (com o estado interno), que foi o problema achado na revisão da decisão 047. As visões rodam com a
+  permissão do dono, a tabela fica fechada e nada vai para anon (verificação: `verificar_acesso_painel.py`, 11/11).
+- A mais: `hubspot_empresa_id`, `ultima_mensagem_quando` e `resumo_em`. O prefixo técnico
+  `[Nome no perfil do WhatsApp: ...]` já sai do texto nas visões.
 
-- Tela de login com e-mail e senha (Supabase Auth). **Sem cadastro, sem "criar conta"**: os usuários são criados pelo
-  administrador no Supabase. Sem login, nenhuma tela do painel aparece.
-- Botão de sair no menu.
+---
 
-## Telas
+## Parte B: prompts do Lovable
 
-1. **Visão geral**
-   - Cartões no topo: total de leads; leads qualificados (faixa self_service ou executivo); taxa de qualificação
-     (qualificados ÷ leads com faixa definida); reuniões aprovadas; leads com vendedor; custo médio de IA por lead (US$).
-   - Funil por etapa (barras horizontais, na ordem das etapas acima).
-   - Leads por faixa e leads por canal.
-   - Leads criados por dia (últimos 30 dias).
-2. **Leads**
-   - Tabela: empresa, contato, canal, faixa, etapa, funcionários, gasto mensal, prioridade, última atualização.
-   - Busca por empresa ou contato; filtros por faixa, etapa e canal; ordenar por última atualização (padrão) ou prioridade.
-   - Clicar numa linha abre o detalhe.
-3. **Detalhe do lead**
-   - Cabeçalho com empresa, contato, cargo, canal, faixa, etapa e motivo da faixa.
-   - Bloco de qualificação: tipo de empresa, setor, funcionários, gasto mensal, dor, solução atual, sinais de compra,
-     prioridade, custo de IA.
-   - A conversa no estilo de chat: mensagens do lead à esquerda, do P.H. à direita, com quebras de linha preservadas.
-   - Linha do tempo com os eventos, do mais antigo ao mais novo.
+> Crie o projeto no Lovable conectado ao **projeto Supabase existente** (`brax-sdr`) e ao GitHub.
+> Confirme a conexão antes (pergunte ao Lovable qual projeto Supabase está conectado; o ID deve ser o do `.env`).
+> Cole o **Prompt 1** e, logo abaixo, o conteúdo inteiro de `lovable/esquema-banco.md`.
+> Só envie o Prompt 2 quando o 1 estiver funcionando, e o 3 depois do 2.
+> Quando o Lovable for montar os botões do HubSpot, informe a ele o **ID da conta do HubSpot** (o número depois de
+> `/contacts/` na barra de endereço do HubSpot). Ele não fica no repositório.
 
-## Visual
+### Prompt 1: login e tela de Conversas
 
-- Limpo e profissional, com bastante espaço em branco, tons neutros e um verde-escuro como cor de destaque.
-- Modo claro e escuro. Funciona bem no celular.
-- Valores em reais no formato brasileiro (R$ 15.000) e datas como 07/10/2026 14:30.
-- Rodapé discreto em todas as telas: "Dados fictícios · A BRAX é uma empresa fictícia criada para um projeto de portfólio."
+Quero um painel web interno, em português do Brasil, para o time comercial da **BRAX**, uma fintech
+**fictícia** de conta PJ para startups. O painel mostra as conversas do **P.H.**, um assistente virtual de
+IA de pré-vendas (SDR) que atende leads por WhatsApp e e-mail, qualifica e roteia cada um.
+
+Este é um **case de portfólio** com dados fictícios. Mostre no topo: logo em texto "BRAX", avatar do P.H.
+(iniciais "PH" num círculo), o título "P.H. · SDR de IA" e o subtítulo "Conversas com leads".
+
+#### Regras obrigatórias
+- O painel é **somente leitura**. Nenhum campo de digitação, botão de enviar ou operação que grave,
+  altere ou apague dados.
+- Use **apenas** as visões `painel_leads`, `painel_mensagens` e `painel_eventos`. **Nunca** consulte a
+  tabela `leads` (o banco recusa: o usuário do painel não tem acesso a ela).
+- **Não crie tabelas, colunas, visões, funções, políticas, Edge Functions nem migrações** no Supabase.
+  O banco já está pronto e é usado por outro sistema em produção.
+- Use só a chave pública (anon/publishable), **nunca** a secreta (service_role).
+- Login com **Supabase Auth, e-mail e senha**. Sem tela de cadastro e sem "esqueci a senha" (os usuários são
+  criados pelo administrador). Sem login, nada além do login é acessível. Botão "Sair" no topo.
+
+#### Formatação
+- Datas e horas em America/Sao_Paulo, formato brasileiro. Na lista, hoje mostra só a hora (22:44);
+  ontem mostra "Ontem"; antes disso, a data (07/10).
+- Reais como R$ 15.000; custo de IA como US$ 0,0312.
+- Mostre sempre os **rótulos** em português do esquema, nunca os valores técnicos. Vazios aparecem como "—".
+
+#### Abas no topo
+"Conversas" (esta tela) e "Métricas" (vazia por enquanto).
+
+#### Tela Conversas: três colunas
+
+**Coluna 1: lista de conversas** (como a lista do WhatsApp)
+- Busca por nome, empresa ou id (o id é o telefone, no WhatsApp, ou o e-mail).
+- Chips de filtro rápido: Todas, WhatsApp, E-mail. Botão "Filtros" com etapa, faixa, temperatura e período
+  (`criado_em`, com duas datas).
+- Cada item: avatar com iniciais (cor estável derivada do id), nome do contato (ou o id, se não houver nome),
+  horário de `atualizado_em`, prévia de `ultima_mensagem` em uma linha (com "✓" quando `ultima_mensagem_autor`
+  for `ph`), e pequenas etiquetas: canal, etapa e faixa.
+- Ordenada por `atualizado_em`, mais recente primeiro. Item selecionado destacado.
+
+**Coluna 2: chat**
+- Cabeçalho: avatar, nome, e-mail ou telefone (o id), etiqueta de canal; e um interruptor
+  **"Mostrar bastidores da IA"**, desligado por padrão.
+- Fundo levemente texturizado, no clima do WhatsApp. Mensagens do **lead à esquerda em balões brancos**;
+  do **P.H. à direita em balões verde-claro**; horário (`quando`) no canto inferior de cada balão;
+  quebras de linha preservadas. O texto já vem limpo das visões (sem prefixos técnicos).
+- Ordene as mensagens por `ordem`. Separadores de data centralizados ("23 de setembro de 2026") quando o dia
+  muda, usando `quando`.
+- **Conversas antigas não têm horário** (`quando` vazio): nesses balões, não mostre hora nem separador de data.
+- Com **"Mostrar bastidores da IA" ligado**, intercale os eventos de `painel_eventos` na conversa, na ordem
+  de `quando`, como pílulas centralizadas e discretas (ex.: "Faixa definida: Executivo · 22 funcionários (> 20)").
+  Se a conversa tiver mensagens sem horário, não intercale: mostre os eventos só na aba "Linha do tempo".
+  Eventos de qualidade e segurança (`alerta_*`, `vazamento_bloqueado`, `erro_ferramenta`, `crm_erro`,
+  `resumo_erro`) em cor de alerta.
+- No rodapé, no lugar da caixa de digitação, uma barra fixa: "🔒 Somente leitura · histórico do P.H. · canal: <canal>".
+
+**Coluna 3: análise do lead**, com abas "Resumo", "Dados" e "Linha do tempo"
+- Topo: nome, cargo e empresa; botões **"Ver contato"** e **"Ver negócio"** que abrem o HubSpot em nova aba
+  quando houver `hubspot_contato_id` / `hubspot_negocio_id` (escondidos quando vazios). O formato do link está
+  no esquema; o ID da conta do HubSpot eu informo à parte.
+- **Resumo**:
+  - "Resumo da conversa" com o texto de `resumo` (ou "Resumo ainda não gerado").
+  - "Análise do lead": **temperatura** (ícone + rótulo Quente/Morno/Frio) e **prioridade** num medidor
+    semicircular de 0 a 13.
+  - "Roteamento": etapa e faixa em badges, com `motivo_faixa` abaixo.
+  - "Qualificação": checklist dos seis dados que o P.H. precisa coletar (tipo de empresa, funcionários,
+    gasto mensal, cargo/decisor, dor e solução atual), com ✓ e o valor quando preenchido, ou
+    "falta descobrir" em cinza quando vazio. Mostre o progresso no título ("4 de 6").
+  - "Sinais de compra" como chips (trocar `_` por espaço e capitalizar).
+- **Dados**: todos os campos do lead em pares rótulo/valor, mais os indicadores de opt-out (LGPD), sem resposta,
+  transferido para vendedor, custo de IA e total de mensagens.
+- **Linha do tempo**: todos os eventos em ordem cronológica, com os rótulos do esquema.
+
+#### Visual
+Fintech B2B moderna: limpa, clara, uma cor de destaque própria da BRAX para botões e seleção, e o verde-claro
+reservado aos balões do P.H. Cantos arredondados, sombras suaves. Modo claro e escuro. No celular, mostrar uma
+coluna por vez (lista → chat → análise, com botão de voltar). Rodapé discreto: "Dados fictícios · A BRAX é uma
+empresa fictícia criada para um projeto de portfólio."
+
+[COLE AQUI O CONTEÚDO DE lovable/esquema-banco.md]
+
+---
+
+### Prompt 2: aba Métricas
+
+Agora preencha a aba **Métricas**. Calcule tudo no front a partir de `painel_leads` e `painel_eventos`, sem
+criar nada no banco. Filtro de período no topo (7 dias, 30 dias, tudo), aplicado sobre `criado_em`.
+
+**Cartões:**
+- **Leads atendidos** no período.
+- **Taxa de qualificação**: faixa `self_service` ou `executivo` ÷ leads com faixa definida, com os números
+  absolutos ("18 de 40").
+- **Reuniões com executivo**: solicitadas e aprovadas.
+- **Custo de IA**: médio por lead e por lead qualificado.
+- **Alertas de qualidade**: eventos `alerta_*` e `vazamento_bloqueado`; verde quando zero.
+
+**Gráficos:**
+- Funil por etapa (barras horizontais, na ordem do esquema). Clicar numa barra abre a aba Conversas
+  filtrada por aquela etapa.
+- Distribuição por faixa e por temperatura.
+- Leads por dia, separados por canal.
+- Motivos de "fora do perfil" mais frequentes (`motivo_faixa` dos leads com faixa `fora_do_icp`).
+
+Cada gráfico com título claro e estado vazio amigável.
+
+---
+
+### Prompt 3: acabamento
+
+- Página "Sobre o P.H." (link no topo): o que o agente faz, as três faixas de roteamento e seus critérios
+  (self-service: até 20 pessoas e até R$ 50 mil/mês; executivo: acima de um dos dois, com aprovação humana;
+  fora do perfil: MEI, pessoa física, sem CNPJ ou só crédito), os guardrails do setor financeiro e o link do
+  repositório: https://github.com/michelxxx2323/brax-sdr-agent
+- Revise contraste, carregamento (skeletons), mensagens de erro e o layout no celular.
+- Confirme que não existe nenhuma operação de escrita no código e nenhuma referência à tabela `leads`.

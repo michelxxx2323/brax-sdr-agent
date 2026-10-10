@@ -50,6 +50,8 @@
 | 042 | Fase 6 encerrada só com o Haiku; comparação de modelos adiada para um Haiku mais novo | Aceita | 2026-10-03 |
 | 043 | Hospedagem no Railway (Hobby) e leads no Supabase, via API REST e com RLS fechada | Aceita | 2026-10-03 |
 | 044 | Programa pronto para a nuvem: porta do Railway, só modo meta no ar, aprovação pendente sem Slack | Aceita | 2026-10-03 |
+| 045 | Só dados fictícios no que é público; página aberta com aviso, mascaramento e guarda curta | Aceita | 2026-10-09 |
+| 046 | Painel no Lovable lê visões somente leitura, com login sem cadastro e proibição de mexer no banco | Aceita | 2026-10-09 |
 
 ---
 
@@ -918,3 +920,43 @@ simulado do WhatsApp e, sem Slack, pedia a aprovação de executivos no terminal
 
 **Motivo:** um endereço público muda o modelo de ameaça. A regra que era aceitável no PC (segredo de exemplo) vira uma porta
 aberta na internet, então a trava fica no código, e não só na documentação.
+
+---
+
+## 045: Só dados fictícios no que é público
+
+**Contexto:** o painel comercial (Fase 7) e a página para conversar com o P.H. (Fase 8) vão ser mostrados a recrutadores
+e ao público. Os testes das fases 3 a 5 chegaram a gravar dados reais (o e-mail pessoal do dono do projeto, já apagado).
+
+**Decisão:**
+- **Todos os leads são fictícios.** Os leads de teste que já existem bastam para o painel; não serão gerados outros.
+- Testes por e-mail devem usar uma conta fictícia de remetente, e não um e-mail pessoal (o canal só responde a
+  remetentes permitidos, e cada teste vira um lead).
+- **Página pública (Fase 8):** aviso antes da conversa, com confirmação ("vou usar só dados fictícios");
+  **mascaramento em código** de CPF, CNPJ, cartão, telefone e e-mail antes de gravar ou mandar à IA; **guarda curta**
+  (as conversas se apagam sozinhas depois de alguns dias); conversas marcadas como "simulador", fora do funil e do HubSpot;
+  limite de mensagens por visitante.
+
+**Motivo:** não dá para impedir que alguém digite um dado real numa página aberta, mas dá para avisar, remover e não
+guardar. É a LGPD aplicada no desenho, e não depois (privacidade por padrão).
+
+---
+
+## 046: Painel no Lovable lê visões somente leitura
+
+**Contexto:** o painel vai ser gerado no Lovable e conectado ao mesmo Supabase do P.H. O jeito oficial de conectar dá à
+IA do Lovable acesso de gestão ao banco (ela pode criar e alterar tabelas). A tabela `leads` é a memória do P.H. em produção.
+
+**Decisão:**
+- O painel lê só **três visões** (`supabase/painel.sql`): `painel_leads` (um lead por linha, com a etapa do funil
+  calculada com a mesma regra do HubSpot), `painel_mensagens` (só o texto da conversa, sem os detalhes internos das
+  ferramentas) e `painel_eventos` (linha do tempo). As visões respeitam as regras de acesso de quem consulta.
+- **RLS:** usuário logado só pode **ler**; não existe regra de escrita; visitante anônimo não vê nada.
+- **Login sem cadastro:** os usuários do time são criados no Supabase pelo administrador, e o cadastro público fica desligado.
+- O prompt do Lovable (`lovable/prompt-painel.md`) proíbe criar, alterar ou apagar tabelas, políticas, funções e dados,
+  rodar migrações e criar Edge Functions.
+- O esquema (`supabase/esquema.sql` e `painel.sql`) fica versionado no GitHub: se algo for alterado por engano, dá para recriar.
+
+**Motivo:** separar quem **escreve** (o P.H., com a chave secreta, no servidor) de quem **lê** (o painel, com a chave
+pública e login) reduz o estrago possível de um erro do painel ou da IA que o gera. As visões também desacoplam o painel
+do formato interno do lead: se o JSON mudar, só a visão muda.

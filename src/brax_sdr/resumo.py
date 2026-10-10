@@ -76,6 +76,7 @@ def resumo_curto(client, lead: Lead):
     """Resumo de 2 a 4 frases para o painel (decisão 048), com o modelo leve. Devolve (texto, uso da API)."""
     resposta = client.messages.create(
         model=config.MODELO_CONVERSA,
+        **config.parametros_conversa(),
         max_tokens=400,
         system=INSTRUCOES_CURTAS,
         messages=[{"role": "user", "content": (

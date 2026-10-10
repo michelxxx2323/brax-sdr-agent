@@ -6,6 +6,7 @@ completo (incluindo chamadas de ferramentas) na memória do lead.
 
 import re
 from dataclasses import dataclass, field
+from difflib import SequenceMatcher
 
 import anthropic
 
@@ -104,6 +105,23 @@ def _reescrita_confiavel(original: str, curto: str) -> bool:
     return bool(palavras_curto) and len(palavras_curto & _palavras(original)) / len(palavras_curto) >= 0.5
 
 
+SEMELHANCA_DE_REPETICAO = 0.6
+
+
+def _sem_repeticao(partes: list[tuple[int, list[str]]]) -> list[tuple[int, list[str]]]:
+    """Descarta a parte cujo texto é quase igual ao de uma parte seguinte (decisão 051).
+
+    Achado na 1ª bateria com o Haiku 5.5: ele escreve a resposta junto com a ferramenta de registro e, depois do
+    resultado, escreve de novo, com outras palavras. A regra da decisão 027 somava as duas: o lead recebia a mesma
+    pergunta duas vezes. Fica a versão mais nova, que já conhece o resultado da ferramenta.
+    """
+    juntar = ["\n\n".join(textos) for _, textos in partes]
+    return [
+        parte for i, parte in enumerate(partes)
+        if not any(SequenceMatcher(None, juntar[i], depois).ratio() >= SEMELHANCA_DE_REPETICAO for depois in juntar[i + 1:])
+    ]
+
+
 def _conteudo_salvavel(content) -> list[dict]:
     """Converte os blocos da resposta para dicionários, sem blocos de texto vazios (a API os rejeita)."""
     blocos = [b.to_dict() for b in content]
@@ -144,6 +162,7 @@ class Agente:
         try:
             msg = self.client.messages.create(
                 model=config.MODELO_CONVERSA,
+                **config.parametros_conversa(),
                 max_tokens=1024,
                 system=INSTRUCOES_ENCURTAR,
                 messages=[{"role": "user", "content": f"<mensagem>\n{texto}\n</mensagem>"}],
@@ -170,6 +189,7 @@ class Agente:
         try:
             msg = self.client.messages.create(
                 model=config.MODELO_CONVERSA,
+                **config.parametros_conversa(),
                 max_tokens=config.MAX_TOKENS_CONVERSA,
                 system=montar_system(self.cerebro, lead),
                 # O histórico tem chamadas de ferramenta, então as ferramentas precisam ser declaradas; "none" proíbe o uso.
@@ -270,6 +290,7 @@ class Agente:
             # Se a API falhar aqui, a exceção sobe e NADA é salvo: o histórico continua válido.
             msg = self.client.messages.create(
                 model=config.MODELO_CONVERSA,
+                **config.parametros_conversa(),
                 max_tokens=config.MAX_TOKENS_CONVERSA,
                 system=montar_system(self.cerebro, lead),
                 tools=FERRAMENTAS,
@@ -330,6 +351,7 @@ class Agente:
                 partes.append((len(mensagens) - 1, textos_finais))
             if not partes:
                 partes = [(p, t) for p, t, _ in rodadas_com_ferramenta if t][-1:]
+            partes = _sem_repeticao(partes)
             exibidas = [p for p, _ in partes]
             texto_final = "\n\n".join(t for _, textos in partes for t in textos)
         for posicao, _, _ in rodadas_com_ferramenta:

@@ -13,11 +13,24 @@ from dotenv import load_dotenv
 RAIZ = Path(__file__).resolve().parents[2]
 load_dotenv(RAIZ / ".env")
 
-# --- Modelos (IDs conferidos na referência oficial da API em 2026-09-24) ---
-MODELO_CONVERSA = os.getenv("BRAX_MODELO_CONVERSA") or "claude-haiku-4-5"
+# --- Modelos (IDs conferidos na API: lista de modelos da conta e referência oficial, em 2026-10-10) ---
+MODELO_CONVERSA = os.getenv("BRAX_MODELO_CONVERSA") or "claude-haiku-5-5"  # decisão 051 (antes: claude-haiku-4-5)
 MODELO_AVANCADO = os.getenv("BRAX_MODELO_AVANCADO") or "claude-sonnet-5"
-# Nos evals (Fase 6), uma IA faz o papel do lead: barata, porque só precisa seguir a ficha do cenário.
+# Nos evals (Fase 6), uma IA faz o papel do lead: barata, porque só precisa seguir a ficha do cenário. Fica no Haiku 4.5
+# de propósito: com o lead simulado e o juiz fixos, a comparação entre baterias mede só a troca do modelo do P.H.
 MODELO_CONVERSA_LEAD_SIMULADO = "claude-haiku-4-5"
+
+# Parâmetros extras por modelo de conversa (decisão 051). No Haiku 5.5, o "pensamento" vem ligado por padrão e, com ele,
+# a API recusa histórico editado; o P.H. edita o histórico (descarta textos superados, troca mensagens), então roda
+# sem pensamento, como no Haiku 4.5, com o esforço explícito (o padrão do modelo também é "medium").
+PARAMETROS_POR_MODELO = {
+    "claude-haiku-5-5": {"thinking": {"type": "disabled"}, "output_config": {"effort": "medium"}},
+}
+
+
+def parametros_conversa() -> dict:
+    """Os parâmetros extras do modelo de conversa em uso (lido na hora: os evals podem trocar o modelo)."""
+    return PARAMETROS_POR_MODELO.get(MODELO_CONVERSA, {})
 
 # Respostas do P.H. são curtas, mas um limite baixo demais corta a mensagem no meio.
 MAX_TOKENS_CONVERSA = 4096
@@ -33,6 +46,7 @@ LIMITE_CUSTO_POR_LEAD_USD = 0.50  # uma qualificação normal custa poucos centa
 # Preço em US$ por milhão de tokens (entrada, saída), conferido em 2026-09-24.
 # Só para ESTIMAR custo no terminal e nos evals; a fatura oficial está no Console da Anthropic.
 PRECOS_USD_POR_MILHAO = {
+    "claude-haiku-5-5": (0.10, 0.50),  # prompts de até 100 mil tokens (os do P.H. têm ~15 mil); acima, 0,50 / 2,50
     "claude-haiku-4-5": (1.00, 5.00),
     "claude-sonnet-5": (2.00, 10.00),
     "claude-opus-5-5": (4.00, 20.00),

@@ -57,6 +57,7 @@ Nunca escreva links que não vieram de uma ferramenta, nem textos de exemplo ent
 
 - registrar_qualificacao: chame na mesma resposta em que o lead revelar um dado novo (empresa, tipo de empresa, setor, \
 número de funcionários, gasto mensal, cargo, dor, solução atual, sinais de compra), sem esperar juntar vários. \
+Não diga ao lead que registrou ou anotou os dados ("registrei aqui"): isso é bastidor do sistema. \
 Envie só o que o lead de fato disse; se um dado é desconhecido, omita o campo (nunca envie "não informado" \
 ou textos parecidos). Converta estimativas para números (ex.: "uns 70 mil" vira 70000; "umas 30 pessoas" vira 30).
 - Se o lead disser que é MEI, pessoa física ou que ainda não tem CNPJ (mesmo que vá abrir em breve), não explique \

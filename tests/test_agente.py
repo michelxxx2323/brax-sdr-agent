@@ -403,3 +403,41 @@ def test_texto_antes_do_registro_que_roteia_perde_a_validade(tmp_path):
     resposta = Agente(client=cliente, pasta_leads=tmp_path).responder("rot", "Uns 20 mil por mês")
     assert resposta.texto == "Perfeito! Abre a conta aqui: https://app.brax.example/abrir-conta"
     assert memoria.carregar("rot", pasta=tmp_path).faixa == "self_service"
+
+
+def test_parametros_do_modelo_vao_em_todas_as_chamadas(tmp_path, monkeypatch):
+    # Decisão 051: no Haiku 5.5, pensamento desligado e esforço explícito, também no encurtamento e no resumo.
+    from brax_sdr import config
+
+    monkeypatch.setattr(config, "MODELO_CONVERSA", "claude-haiku-5-5")
+    cliente = ClienteFalso([
+        _msg([TextBlock(text=LONGA, type="text")], "end_turn"),
+        _msg([TextBlock(text="Paulo, abre a conta aqui: https://app.brax.example/abrir-conta", type="text")], "end_turn"),
+    ])
+    _em_andamento(tmp_path, "par")
+    Agente(client=cliente, pasta_leads=tmp_path).responder("par", "Me passa uma estimativa")
+    for chamada in cliente.chamadas:  # a resposta e o encurtamento
+        assert chamada["model"] == "claude-haiku-5-5"
+        assert chamada["thinking"] == {"type": "disabled"} and chamada["output_config"] == {"effort": "medium"}
+    # Voltando ao Haiku 4.5 pelo .env, nada extra (o 4.5 recusaria o parâmetro de esforço).
+    monkeypatch.setattr(config, "MODELO_CONVERSA", "claude-haiku-4-5")
+    assert config.parametros_conversa() == {}
+
+
+def test_texto_repetido_antes_e_depois_do_registro_sai_uma_vez(tmp_path):
+    # Decisão 051 (1ª bateria com o Haiku 5.5): a resposta veio junto com o registro e de novo depois, com outras
+    # palavras. A regra da decisão 027 somava as duas, e o lead recebia a mesma pergunta duas vezes.
+    _em_andamento(tmp_path, "dup")
+    cliente = ClienteFalso([
+        _msg([TextBlock(text="Ótimo, obrigado por confirmar!\n\nQuantas pessoas trabalham na empresa hoje, mais ou menos?",
+                        type="text"),
+              ToolUseBlock(id="t1", name="registrar_qualificacao", input={"tipo_empresa": "ltda"}, type="tool_use")],
+             "tool_use"),
+        _msg([TextBlock(text="Obrigado por confirmar!\n\nQuantas pessoas trabalham na empresa hoje, mais ou menos?",
+                        type="text")], "end_turn"),
+    ])
+    resposta = Agente(client=cliente, pasta_leads=tmp_path).responder("dup", "Somos LTDA")
+    assert resposta.texto == "Obrigado por confirmar!\n\nQuantas pessoas trabalham na empresa hoje, mais ou menos?"
+    textos_salvos = [b["text"] for m in memoria.carregar("dup", pasta=tmp_path).mensagens
+                     if isinstance(m["content"], list) for b in m["content"] if b["type"] == "text"]
+    assert textos_salvos == [resposta.texto]  # o histórico mostra só o que o lead viu

@@ -339,3 +339,52 @@ def test_nao_encerra_se_o_ph_fez_uma_pergunta(tmp_path):
     cliente = ClienteFalso([_msg([TextBlock(text="Perfeito! Pode ser amanhã às 15h?", type="text")], "end_turn")])
     Agente(client=cliente, pasta_leads=tmp_path).responder("pergunta", "ok")
     assert memoria.carregar("pergunta", pasta=tmp_path).encerrada is False
+
+
+ATUALIZAR_RESUMO_REAL = Agente._atualizar_resumo  # o conftest desliga o resumo nos outros testes
+
+
+def test_mensagens_ganham_horario_que_nao_vai_para_a_api(tmp_path):
+    # Decisão 048: o painel mostra a hora de cada mensagem; a API do Claude recusa campos extras.
+    cliente = ClienteFalso([
+        _msg([TextBlock(text="Oi! Aqui é o P.H., assistente virtual da BRAX. Qual a empresa?", type="text")], "end_turn"),
+        _msg([TextBlock(text="Legal! Quantas pessoas?", type="text")], "end_turn"),
+    ])
+    agente = Agente(client=cliente, pasta_leads=tmp_path)
+    agente.responder("hora", "Oi")
+    agente.responder("hora", "Sou da Lumen")
+    salvo = memoria.carregar("hora", pasta=tmp_path)
+    assert all(m.get("quando") for m in salvo.mensagens)  # lead e P.H., nas duas rodadas
+    assert all(set(m) == {"role", "content"} for m in cliente.chamadas[1]["messages"])
+
+
+def test_resumo_quando_a_faixa_e_definida(tmp_path, monkeypatch):
+    monkeypatch.setattr(Agente, "_atualizar_resumo", ATUALIZAR_RESUMO_REAL)
+    _em_andamento(tmp_path, "res", dados={"tipo_empresa": "ltda", "funcionarios": 6, "setor": "SaaS"})
+    cliente = ClienteFalso([
+        _msg([ToolUseBlock(id="t1", name="registrar_qualificacao", input={"gasto_mensal": 8000}, type="tool_use"),
+              ToolUseBlock(id="t2", name="rotear_lead", input={}, type="tool_use")], "tool_use"),
+        _msg([TextBlock(text="Perfeito! Abre a conta aqui: https://app.brax.example/abrir-conta", type="text")], "end_turn"),
+        _msg([TextBlock(text="Startup de SaaS com 6 pessoas e gasto de R$ 8 mil. Indicada ao app.", type="text")], "end_turn"),
+    ])
+    Agente(client=cliente, pasta_leads=tmp_path).responder("res", "Uns 8 mil por mês")
+    salvo = memoria.carregar("res", pasta=tmp_path)
+    assert salvo.faixa == "self_service"
+    assert salvo.resumo == "Startup de SaaS com 6 pessoas e gasto de R$ 8 mil. Indicada ao app." and salvo.resumo_em
+    assert cliente.chamadas[2]["max_tokens"] == 400  # a chamada do resumo, com o modelo leve
+    # Rodada sem mudança de faixa: nenhuma chamada de resumo a mais.
+    cliente.respostas.append(_msg([TextBlock(text="Qualquer dúvida, me chama!", type="text")], "end_turn"))
+    Agente(client=cliente, pasta_leads=tmp_path).responder("res", "Valeu, vou abrir agora mesmo")
+    assert len(cliente.chamadas) == 4
+
+
+def test_falha_no_resumo_nao_derruba_a_resposta(tmp_path, monkeypatch):
+    monkeypatch.setattr(Agente, "_atualizar_resumo", ATUALIZAR_RESUMO_REAL)
+    _em_andamento(tmp_path, "res2", dados={"tipo_empresa": "ltda", "funcionarios": 6, "setor": "SaaS", "gasto_mensal": 8000})
+    cliente = ClienteFalso([
+        _msg([ToolUseBlock(id="t1", name="rotear_lead", input={}, type="tool_use")], "tool_use"),
+        _msg([TextBlock(text="Abre a conta aqui: https://app.brax.example/abrir-conta", type="text")], "end_turn"),
+    ])  # sem resposta para o resumo: a chamada falha
+    resposta = Agente(client=cliente, pasta_leads=tmp_path).responder("res2", "E agora?")
+    assert "abrir-conta" in resposta.texto
+    assert memoria.carregar("res2", pasta=tmp_path).eventos[-1]["tipo"] == "resumo_erro"

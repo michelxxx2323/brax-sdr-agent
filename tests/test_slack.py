@@ -359,7 +359,7 @@ def test_nota_da_transferencia_vai_para_a_ia_mas_nao_fica_no_historico(tmp_path)
     enviado_a_ia = agente.client.chamadas[0]["messages"][-1]["content"]
     assert enviado_a_ia.startswith("Oi quero falar com uma pessoa") and "a transferência para um vendedor já foi feita" in enviado_a_ia
     salvo = memoria.carregar(TELEFONE, pasta=tmp_path)
-    assert salvo.mensagens[0] == {"role": "user", "content": "Oi quero falar com uma pessoa"}
+    assert memoria.para_api(salvo.mensagens)[0] == {"role": "user", "content": "Oi quero falar com uma pessoa"}
 
 
 def test_frase_acrescentada_nao_repete_a_apresentacao(tmp_path):

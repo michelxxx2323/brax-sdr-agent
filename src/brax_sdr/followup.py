@@ -68,7 +68,7 @@ def registrar_followup(lead: Lead, numero: int, texto: str, agora: datetime) -> 
     """Anota o lembrete na memória (o P.H. vê no histórico se o lead voltar a responder)."""
     lead.followups_enviados = numero
     lead.ultima_resposta_em = agora.isoformat(timespec="seconds")
-    lead.mensagens.append({"role": "assistant", "content": texto})
+    lead.mensagens.append({"role": "assistant", "content": texto, "quando": lead.ultima_resposta_em})
     lead.registrar_evento("followup", f"lembrete {numero}")
     if numero >= len(config.FOLLOWUP_ESPERAS_DIAS_UTEIS):
         lead.sem_resposta, lead.aguardando_lead = True, False

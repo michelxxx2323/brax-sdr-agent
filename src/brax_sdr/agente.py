@@ -28,6 +28,7 @@ from brax_sdr.mensagens import (
     mensagem_transferencia,
 )
 from brax_sdr.prompt import montar_system
+from brax_sdr.resumo import resumo_curto
 from brax_sdr.protecao import eh_despedida, pede_humano, verificar_antes_da_api
 
 # Formato de reunião que o P.H. não pode prometer: quem define é a agenda (decisão 035).
@@ -127,6 +128,16 @@ class Agente:
         self.aviso_em_atendimento = aviso_em_atendimento
         self.cerebro = carregar_cerebro()
 
+    def _atualizar_resumo(self, lead: Lead, uso: dict) -> None:
+        """Resumo curto para o painel comercial (decisão 048). Se falhar, a conversa segue e o resumo anterior fica."""
+        try:
+            texto, uso_do_resumo = resumo_curto(self.client, lead)
+            _somar_uso(uso, uso_do_resumo)
+            if texto:
+                lead.resumo, lead.resumo_em = texto, memoria.agora()
+        except Exception as erro:
+            lead.registrar_evento("resumo_erro", f"{type(erro).__name__}: {erro}"[:200])
+
     def _encurtar(self, texto: str, uso: dict) -> str:
         """Pede uma versão curta da mensagem. Na dúvida (erro ou reescrita não confiável), mantém a original."""
         try:
@@ -163,7 +174,7 @@ class Agente:
                 # O histórico tem chamadas de ferramenta, então as ferramentas precisam ser declaradas; "none" proíbe o uso.
                 tools=FERRAMENTAS,
                 tool_choice={"type": "none"},
-                messages=[*lead.mensagens, {"role": "user", "content": (
+                messages=[*memoria.para_api(lead.mensagens), {"role": "user", "content": (
                     f"[Instrução interna do sistema, não é uma mensagem do lead: {instrucao} "
                     "Escreva apenas a mensagem que o lead vai receber.]"
                 )}],
@@ -187,7 +198,7 @@ class Agente:
         if motivo:
             lead.registrar_evento("retorno_padrao_usado", motivo)
             texto = texto_padrao
-        lead.mensagens.append({"role": "assistant", "content": texto})
+        lead.mensagens.append({"role": "assistant", "content": texto, "quando": memoria.agora()})
         lead.ultima_resposta_em = memoria.agora()
         lead.aguardando_lead = "?" in texto
         lead.custo_total_usd += config.custo_estimado_usd(config.MODELO_CONVERSA, uso)
@@ -227,12 +238,15 @@ class Agente:
             lead.registrar_evento("sem_chamada_a_api", motivo)
             if resposta_fixa:
                 recebida = texto if len(texto) <= config.LIMITE_CARACTERES_MENSAGEM else f"[mensagem de {len(texto)} caracteres, não processada]"
-                lead.mensagens += [{"role": "user", "content": recebida}, {"role": "assistant", "content": resposta_fixa}]
+                agora = memoria.agora()
+                lead.mensagens += [{"role": "user", "content": recebida, "quando": agora},
+                                   {"role": "assistant", "content": resposta_fixa, "quando": agora}]
             memoria.salvar(lead, pasta=self.pasta_leads)
             return Resposta(texto=resposta_fixa, lead=lead, motivo_silencio=None if resposta_fixa else motivo)
 
         primeira = not any(m["role"] == "assistant" for m in lead.mensagens)
-        faixa_inicial = lead.faixa
+        recebida_em = memoria.agora()  # horário da mensagem do lead (decisão 048)
+        faixa_inicial, encerrada_inicial = lead.faixa, lead.encerrada
         encerramento_inicial = lead.dados.get("motivo_encerramento")
         conteudo_do_lead = texto
         if transferido_agora:
@@ -258,7 +272,7 @@ class Agente:
                 max_tokens=config.MAX_TOKENS_CONVERSA,
                 system=montar_system(self.cerebro, lead),
                 tools=FERRAMENTAS,
-                messages=mensagens,
+                messages=memoria.para_api(mensagens),
             )
             _somar_uso(resposta.uso, msg.usage)
 
@@ -395,8 +409,14 @@ class Agente:
         for alerta in resposta.alertas:
             lead.registrar_evento(tipo_de_evento(alerta), alerta)
 
-        mensagens[posicao_do_lead] = {"role": "user", "content": texto}  # o histórico guarda só o que o lead escreveu
+        # O histórico guarda só o que o lead escreveu, com o horário de cada mensagem (decisão 048).
+        mensagens[posicao_do_lead] = {"role": "user", "content": texto, "quando": recebida_em}
+        respondida_em = memoria.agora()
+        for mensagem in mensagens[posicao_do_lead + 1:]:
+            mensagem.setdefault("quando", respondida_em)
         lead.mensagens = mensagens
+        if (lead.faixa and lead.faixa != faixa_inicial) or (lead.encerrada and not encerrada_inicial):
+            self._atualizar_resumo(lead, resposta.uso)  # resumo curto para o painel (decisão 048)
         lead.custo_total_usd += resposta.custo_usd
         # Base do follow-up (decisão 028): o lead respondeu, então a contagem de lembretes recomeça.
         lead.followups_enviados, lead.sem_resposta = 0, False

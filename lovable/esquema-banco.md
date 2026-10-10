@@ -47,10 +47,39 @@ painel_leads (id) ──< painel_mensagens (lead_id)   uma conversa por lead, or
 | `transferido_para_vendedor` | boolean | Passado para um vendedor humano | `false` |
 | `sem_resposta` | boolean | Recebeu todos os lembretes (follow-up) e não respondeu | `false` |
 | `custo_total_usd` | numeric | Custo estimado de IA com este lead, em dólares | `0.0312` |
-| `total_mensagens` | integer | Mensagens no histórico (inclui as internas) | `7` |
+| `total_mensagens` | integer | Mensagens no histórico (inclui as internas; para contar as visíveis, use `painel_mensagens`) | `7` |
 | `etapa` | text | Etapa do funil, calculada pela visão | ver tabela abaixo |
 | `criado_em` | timestamptz | Primeiro contato | `2026-10-07 15:20:00+00` |
 | `atualizado_em` | timestamptz | Última atividade | `2026-10-07 15:35:14+00` |
+| `resumo` | text | Resumo de 2 a 4 frases da conversa, escrito pela IA quando a faixa é definida ou a conversa é encerrada (pode ser vazio) | `Rafael, da Nuvem Azul (SaaS, 12 pessoas), quer organizar os gastos do time. Indicado para abrir a conta pelo app.` |
+| `resumo_em` | timestamptz | Quando o resumo foi gerado | `2026-10-09 18:02:11+00` |
+| `temperatura` | text | Calor do lead, calculado a partir de `prioridade` | `quente`, `morno`, `frio` |
+| `hubspot_contato_id` | text | ID do contato no HubSpot (vazio se ainda não sincronizado) | `253636892599` |
+| `hubspot_empresa_id` | text | ID da empresa no HubSpot | `59108454708` |
+| `hubspot_negocio_id` | text | ID do negócio no HubSpot (só leads qualificados ou perdidos depois de qualificados) | `65799390904` |
+| `ultima_mensagem` | text | Texto da última mensagem da conversa, para a lista de conversas | `Valeu, vou abrir agora mesmo` |
+| `ultima_mensagem_autor` | text | Quem mandou a última mensagem | `lead`, `ph` |
+| `ultima_mensagem_quando` | timestamptz | Horário da última mensagem (vazio em conversas antigas, sem horário gravado) | `2026-10-09 18:02:09+00` |
+
+### Temperatura (`temperatura`), hipótese a calibrar
+
+| Valor | Rótulo | Regra (pontos de `prioridade`) |
+|---|---|---|
+| `quente` | 🔥 Quente | 5 ou mais (ex.: quem decide + rodada recente) |
+| `morno` | 🌤 Morno | 2 a 4 (um sinal forte, ou só ser quem decide) |
+| `frio` | ❄️ Frio | 0 ou 1 |
+
+Pontos: rodada recente 3; contratando rápido 2; primeira pessoa de finanças 2; gastos em dólar 2; novo escritório 1;
+insatisfeito com o banco 1; quem conversa é quem decide 2.
+
+### Links para o HubSpot
+
+Montar com o ID da conta do HubSpot (informado à parte, não fica no repositório):
+- Contato: `https://app.hubspot.com/contacts/<ID_DA_CONTA>/record/0-1/<hubspot_contato_id>`
+- Empresa: `https://app.hubspot.com/contacts/<ID_DA_CONTA>/record/0-2/<hubspot_empresa_id>`
+- Negócio: `https://app.hubspot.com/contacts/<ID_DA_CONTA>/record/0-3/<hubspot_negocio_id>`
+
+Mostrar o botão só quando o ID existir.
 
 ### Etapas do funil (`etapa`), na ordem de exibição
 
@@ -81,7 +110,8 @@ painel_leads (id) ──< painel_mensagens (lead_id)   uma conversa por lead, or
 | `lead_id` | text | Liga ao `painel_leads.id` |
 | `ordem` | integer | Posição na conversa (ordenar crescente). Pode pular números: mensagens internas não aparecem |
 | `autor` | text | `lead` ou `ph` (o assistente virtual) |
-| `texto` | text | Texto da mensagem, com quebras de linha. No WhatsApp, pode começar com `[Nome no perfil do WhatsApp: ...]` |
+| `texto` | text | Texto da mensagem, com quebras de linha (o prefixo técnico do nome no perfil do WhatsApp já vem removido) |
+| `quando` | timestamptz | Data e hora da mensagem. **Pode ser vazio** nas conversas antigas (antes de 09/10/2026): nesse caso, não mostrar hora |
 
 ## `painel_eventos`: a linha do tempo
 
@@ -98,4 +128,4 @@ Tipos mais comuns e rótulos sugeridos: `qualificacao` (Dados registrados), `rot
 `conversa_reaberta` (Conversa reaberta), `followup` (Lembrete enviado), `sem_resposta` (Sem resposta aos lembretes),
 `retorno_enviado` (Retorno do time enviado ao lead), `alerta_guardrail` / `alerta_estilo` / `alerta_confiabilidade`
 (Alerta de qualidade), `vazamento_bloqueado` (Mensagem bloqueada pela segurança), `mensagem_encurtada` (Mensagem encurtada),
-`erro_ferramenta` / `crm_erro` (Erro técnico). Outros tipos podem aparecer: mostrar o próprio nome.
+`erro_ferramenta` / `crm_erro` / `resumo_erro` (Erro técnico). Outros tipos podem aparecer: mostrar o próprio nome.

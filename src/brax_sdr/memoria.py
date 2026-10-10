@@ -22,7 +22,7 @@ def agora() -> str:
 class Lead:
     id: str
     canal: str = "whatsapp"
-    mensagens: list[dict] = field(default_factory=list)  # formato da Messages API
+    mensagens: list[dict] = field(default_factory=list)  # formato da Messages API + "quando" (tirado antes de ir à API)
     dados: dict = field(default_factory=dict)  # dados de qualificação coletados
     faixa: str | None = None
     motivo_faixa: str | None = None
@@ -43,6 +43,9 @@ class Lead:
     slack: dict = field(default_factory=dict)  # mensagem de aprovação no Slack (canal, ts) e resumo (decisão 034)
     # Transferência (decisão 037): o vendedor entra em contato em horário comercial e o P.H. segue coletando informações.
     transferido_para_vendedor: bool = False
+    # Resumo curto para o painel comercial (decisão 048): gerado quando a faixa é definida ou a conversa é encerrada.
+    resumo: str | None = None
+    resumo_em: str | None = None
     eventos: list[dict] = field(default_factory=list)
     criado_em: str = field(default_factory=agora)
     atualizado_em: str = field(default_factory=agora)
@@ -54,6 +57,11 @@ class Lead:
 
     def registrar_evento(self, tipo: str, detalhe: str = "") -> None:
         self.eventos.append({"quando": agora(), "tipo": tipo, "detalhe": detalhe})
+
+
+def para_api(mensagens: list[dict]) -> list[dict]:
+    """O histórico no formato da API do Claude, que recusa campos extras: tira o horário ("quando") de cada mensagem."""
+    return [{"role": m["role"], "content": m["content"]} for m in mensagens]
 
 
 def _id_seguro(lead_id: str) -> str:

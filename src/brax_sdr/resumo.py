@@ -61,3 +61,26 @@ def gerar_resumo(lead: Lead, disponibilidade: str = "", client: anthropic.Anthro
         return texto or resumo_sem_ia(lead)
     except Exception:
         return resumo_sem_ia(lead)
+
+
+INSTRUCOES_CURTAS = (
+    "Você resume conversas de pré-vendas da BRAX (conta PJ, cartões corporativos e gestão de despesas para startups) "
+    "para o painel do time comercial. Escreva 2 a 4 frases curtas em português do Brasil, sem markdown e sem títulos: "
+    "quem é e qual empresa, o que precisa e em que pé a conversa ficou (faixa, próximo passo ou motivo do encerramento). "
+    "Use só fatos ditos na conversa ou registrados nos dados. Nunca suponha cargo, gênero, intenção ou qualquer dado "
+    "que não foi dito."
+)
+
+
+def resumo_curto(client, lead: Lead):
+    """Resumo de 2 a 4 frases para o painel (decisão 048), com o modelo leve. Devolve (texto, uso da API)."""
+    resposta = client.messages.create(
+        model=config.MODELO_CONVERSA,
+        max_tokens=400,
+        system=INSTRUCOES_CURTAS,
+        messages=[{"role": "user", "content": (
+            f"Dados registrados: {lead.dados}\nFaixa: {lead.faixa or 'não definida'} ({lead.motivo_faixa or '-'})\n"
+            f"Conversa encerrada: {'sim' if lead.encerrada else 'não'}\n\nConversa:\n{_transcricao(lead)}"
+        )}],
+    )
+    return "\n".join(b.text for b in resposta.content if b.type == "text").strip(), resposta.usage

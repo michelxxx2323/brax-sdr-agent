@@ -53,6 +53,7 @@
 | 045 | Só dados fictícios no que é público; página aberta com aviso, mascaramento e guarda curta | Aceita | 2026-10-09 |
 | 046 | Painel no Lovable lê visões somente leitura, com login sem cadastro e proibição de mexer no banco | Aceita (revista pela 047) | 2026-10-09 |
 | 047 | Revisão do acesso ao painel: tabela fechada ao usuário logado, conta demo não publicada, página pública só via servidor | Aceita | 2026-10-09 |
+| 048 | Dados para o painel em três colunas: horário por mensagem, resumo curto, temperatura, IDs do HubSpot e última mensagem | Aceita | 2026-10-09 |
 
 ---
 
@@ -989,3 +990,35 @@ aqui é intencional, porque a visão é o filtro. A limitação que fica: qualqu
 aleatoriamente e fica só no `.env`; o acesso é passado diretamente a quem for avaliar o projeto. **Não foi publicada**
 no README: uma conta com senha pública pode ter a senha trocada por qualquer visitante, trancando a vitrine. Se um dia
 for publicada, a proteção prevista é o servidor do P.H. restaurar a senha periodicamente.
+
+---
+
+## 048: Dados para o painel em três colunas
+
+**Contexto:** o painel no Lovable vai ter três colunas: a lista de conversas, o chat no estilo WhatsApp e um painel de
+análise do lead. Para isso faltavam: o horário de cada mensagem, um resumo curto, uma temperatura, os IDs do HubSpot
+e a última mensagem de cada lead (para a lista não precisar carregar todas as conversas).
+
+**Decisão:**
+- **Horário por mensagem:** cada mensagem gravada ganha `quando` (lead: quando chegou; P.H.: quando foi respondida;
+  também nas mensagens proativas, nas respostas fixas da proteção e nos lembretes). A API do Claude recusa campos
+  extras, então uma função única (`memoria.para_api`) tira o horário antes de cada chamada. Mensagens antigas ficam sem horário.
+- **Resumo curto** (2 a 4 frases), com o **modelo leve**, gerado quando a faixa é definida ou a conversa é encerrada.
+  Mesma regra do resumo do Slack: só fatos ditos. Custo de uma chamada pequena por lead; atrasa 1 a 2 segundos só a
+  resposta em que isso acontece. Se falhar, a conversa segue e o resumo anterior fica (evento `resumo_erro`).
+  Opções descartadas: gerar a cada mensagem (caro e desnecessário) ou com o Sonnet (o resumo de painel não exige o
+  modelo mais forte; o do Slack, que vai para o executivo, continua com ele).
+- **Temperatura** calculada na visão a partir da prioridade: quente com 5 pontos ou mais, morno de 2 a 4, frio com
+  0 ou 1. **Hipótese a calibrar** com dados reais: hoje a prioridade só soma sinais de compra e se a pessoa decide;
+  ela não olha a faixa nem o tempo sem resposta.
+- **IDs do HubSpot** (contato, empresa e negócio), que o código já guardava desde a Fase 5, expostos na visão.
+  O ID da conta do HubSpot, necessário para montar os links, não vai para o repositório público.
+- **Última mensagem** (texto, autor e horário) calculada na visão a partir da conversa. O prefixo técnico
+  "[Nome no perfil do WhatsApp: ...]" sai do texto exibido.
+- **Acesso sem mudança:** a decisão 047 continua valendo (visões com a permissão do dono, tabela fechada, nada para
+  anon). O pedido original falava em `security_invoker`, mas foi exatamente essa opção que deixava o usuário logado ler
+  a tabela inteira.
+
+**Motivo:** o painel precisa mostrar o que um gestor de vendas olha primeiro: quem está quente, o que aconteceu em
+cada conversa (sem ler tudo) e onde está o registro no CRM. Calcular na visão o que dá para calcular (temperatura,
+última mensagem) evita guardar a mesma informação em dois lugares.

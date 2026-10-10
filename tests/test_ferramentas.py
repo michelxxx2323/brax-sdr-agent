@@ -204,3 +204,20 @@ def test_lead_transferido_e_roteado_sem_link():
     lead2 = Lead(id="t2", transferido_para_vendedor=True)
     _, erro = _executar("encerrar_conversa", {"motivo": "proximo_passo_entregue"}, lead2)
     assert erro is False and lead2.encerrada
+
+
+def test_ultimo_dado_registrado_roteia_na_hora():
+    # Decisão 049 (teste da Bianca): com tipo, setor, tamanho e gasto, a IA fez outra pergunta em vez de rotear.
+    lead = Lead(id="t", dados={"tipo_empresa": "ltda", "setor": "logística", "funcionarios": 8})
+    resultado, _ = _executar("registrar_qualificacao", {"gasto_mensal": 20000}, lead)
+    assert lead.faixa == "self_service"
+    assert resultado["roteamento"]["link_app"] == config.LINK_APP
+    # Chamar rotear_lead logo depois não duplica o evento na linha do tempo.
+    _executar("rotear_lead", {}, lead)
+    assert [e["tipo"] for e in lead.eventos].count("roteamento") == 1
+
+
+def test_dados_incompletos_nao_roteiam():
+    lead = Lead(id="t", dados={"tipo_empresa": "ltda", "funcionarios": 8})
+    resultado, _ = _executar("registrar_qualificacao", {"gasto_mensal": 20000}, lead)  # falta o setor
+    assert lead.faixa is None and "roteamento" not in resultado

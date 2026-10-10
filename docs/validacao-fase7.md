@@ -64,3 +64,12 @@ Leads antigos: sem horário e sem resumo (como previsto). Temperaturas nos 25 le
 (solução atual) em vez de rotear, e só roteou na mensagem seguinte. É a segunda vez na fase em que o Haiku deixa de chamar
 uma ferramenta que o prompt manda chamar (a primeira: não registrou os dados da "teste-supabase" na Fase 5b). Candidato a
 regra em código: rotear automaticamente quando os dados ficam completos, como já acontece com fora do perfil e setor especial.
+
+## Teste 4: roteamento automático (decisão 049)
+
+**Resultado: aprovado.** Corrige a observação do teste 3 (o P.H. não roteou a Bianca com os dados completos).
+6 cenários de roteamento dos evals rodados com o modelo real, sem salvar no painel: self-service básico, executivo
+básico, lead completo na primeira mensagem, executivo pelo gasto, fronteira de 20 pessoas e R$ 50 mil, e setor especial.
+**6/6 aprovados**, cada lead com um único evento de roteamento. Na fronteira, o lead deu o último dado (setor: "é mais
+SaaS") e o link do app saiu na mesma resposta.
+

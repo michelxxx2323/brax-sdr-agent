@@ -388,3 +388,18 @@ def test_falha_no_resumo_nao_derruba_a_resposta(tmp_path, monkeypatch):
     resposta = Agente(client=cliente, pasta_leads=tmp_path).responder("res2", "E agora?")
     assert "abrir-conta" in resposta.texto
     assert memoria.carregar("res2", pasta=tmp_path).eventos[-1]["tipo"] == "resumo_erro"
+
+
+def test_texto_antes_do_registro_que_roteia_perde_a_validade(tmp_path):
+    # Decisão 049: com o roteamento automático, registrar pode mudar a resposta. A pergunta escrita antes não vai junto
+    # com o link (o lead receberia "e quanto vocês gastam?" e o link do app na mesma mensagem).
+    _em_andamento(tmp_path, "rot", dados={"tipo_empresa": "ltda", "setor": "SaaS", "funcionarios": 8})
+    cliente = ClienteFalso([
+        _msg([TextBlock(text="Show! E quantas pessoas usariam os cartões?", type="text"),
+              ToolUseBlock(id="t1", name="registrar_qualificacao", input={"gasto_mensal": 20000}, type="tool_use")],
+             "tool_use"),
+        _msg([TextBlock(text="Perfeito! Abre a conta aqui: https://app.brax.example/abrir-conta", type="text")], "end_turn"),
+    ])
+    resposta = Agente(client=cliente, pasta_leads=tmp_path).responder("rot", "Uns 20 mil por mês")
+    assert resposta.texto == "Perfeito! Abre a conta aqui: https://app.brax.example/abrir-conta"
+    assert memoria.carregar("rot", pasta=tmp_path).faixa == "self_service"

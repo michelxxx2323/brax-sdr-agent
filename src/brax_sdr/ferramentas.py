@@ -180,9 +180,10 @@ def _registrar_qualificacao(lead: Lead, entrada: dict) -> dict:
     lead.prioridade = prioridade(lead.dados.get("sinais_de_compra"), lead.dados.get("decisor"))
     lead.registrar_evento("qualificacao", ", ".join(sorted(novos)))
     resultado = {"ok": True, "dados_coletados": lead.dados}
-    # Dado que desqualifica (MEI, sem CNPJ, PF, só crédito) ou setor especial: o código roteia na hora (decisões 023 e 040).
-    # Achado na 2ª bateria: a IA transferiu a corretora de cripto sem rotear, e o CRM ficaria sem a faixa "humano".
-    if lead.faixa is None and _rotear_dados(lead).faixa in ("fora_do_icp", "humano"):
+    # Assim que os dados permitem decidir a faixa, o código roteia na hora (decisões 023, 040 e 049): fora do perfil,
+    # setor especial (2ª bateria: a cripto foi transferida sem rotear) e, desde a Fase 7, também self-service e
+    # executivo (teste da Bianca: com tipo, setor, tamanho e gasto registrados, a IA fez outra pergunta em vez de rotear).
+    if lead.faixa is None and _rotear_dados(lead).faixa != "dados_insuficientes":
         resultado["roteamento"] = _rotear_lead(lead)
     return resultado
 
@@ -218,7 +219,8 @@ def _rotear_dados(lead: Lead):
 def _rotear_lead(lead: Lead) -> dict:
     resultado = _rotear_dados(lead)
     resposta = {"faixa": resultado.faixa, "motivo": resultado.motivo, "proximo_passo": _PROXIMO_PASSO[resultado.faixa]}
-    if resultado.faixa != "dados_insuficientes":
+    if resultado.faixa != "dados_insuficientes" and (lead.faixa, lead.motivo_faixa) != (resultado.faixa, resultado.motivo):
+        # Só registra quando muda: com o roteamento automático (decisão 049), a IA pode chamar rotear_lead logo depois.
         lead.faixa, lead.motivo_faixa = resultado.faixa, resultado.motivo
         lead.registrar_evento("roteamento", f"{resultado.faixa}: {resultado.motivo}")
     if lead.transferido_para_vendedor and resultado.faixa in ("self_service", "executivo"):

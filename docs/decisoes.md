@@ -54,6 +54,7 @@
 | 046 | Painel no Lovable lê visões somente leitura, com login sem cadastro e proibição de mexer no banco | Aceita (revista pela 047) | 2026-10-09 |
 | 047 | Revisão do acesso ao painel: tabela fechada ao usuário logado, conta demo não publicada, página pública só via servidor | Aceita | 2026-10-09 |
 | 048 | Dados para o painel em três colunas: horário por mensagem, resumo curto, temperatura, IDs do HubSpot e última mensagem | Aceita | 2026-10-09 |
+| 049 | Roteamento automático assim que os dados de qualificação ficam completos | Aceita | 2026-10-10 |
 
 ---
 
@@ -1022,3 +1023,28 @@ e a última mensagem de cada lead (para a lista não precisar carregar todas as 
 **Motivo:** o painel precisa mostrar o que um gestor de vendas olha primeiro: quem está quente, o que aconteceu em
 cada conversa (sem ler tudo) e onde está o registro no CRM. Calcular na visão o que dá para calcular (temperatura,
 última mensagem) evita guardar a mesma informação em dois lugares.
+
+---
+
+## 049: Roteamento automático assim que os dados ficam completos
+
+**Contexto:** no teste da "Bianca" no Railway (Fase 7), o P.H. tinha tipo de empresa, setor, tamanho e gasto registrados
+e, em vez de chamar `rotear_lead`, fez mais uma pergunta; só roteou na mensagem seguinte. Foi a segunda vez em pouco
+tempo que o Haiku deixou de chamar uma ferramenta que o prompt manda chamar (a primeira: não registrou os dados da
+"teste-supabase", na Fase 5b). Pelo princípio do projeto, a regra que falha duas vezes no prompt vai para o código.
+
+**Decisão:**
+- Quando `registrar_qualificacao` recebe o dado que completa a qualificação, **o código roteia na hora**, para qualquer
+  faixa (antes, só para fora do perfil e setor especial). O resultado do roteamento volta à IA junto com o registro,
+  com o próximo passo (link do app ou pedido de disponibilidade).
+- **Texto anterior perde a validade:** um texto que a IA escreve antes do registro só continuava valendo porque
+  "registrar não muda a resposta" (decisão 027). Agora registrar pode rotear; quando isso acontece, aquele texto é
+  descartado, para o lead não receber uma pergunta velha junto com o link.
+- `rotear_lead` só registra o evento de roteamento quando a faixa muda: a IA pode chamá-lo logo depois do roteamento
+  automático, e a linha do tempo do painel não deve mostrar o mesmo evento duas vezes.
+
+**Validação:** testes novos (último dado roteia; dados incompletos não roteiam; sem evento duplicado; texto anterior
+descartado) e 6 cenários de roteamento dos evals com o modelo real: 6/6, com um único evento de roteamento por lead.
+
+**Efeito colateral observado:** com o setor obrigatório (decisão 040), o P.H. às vezes deixa a pergunta do setor para o
+fim, e um lead vago ("tecnologia") alonga a conversa em duas mensagens. Aceitável; fica em observação.

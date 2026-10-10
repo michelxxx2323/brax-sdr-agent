@@ -38,7 +38,8 @@ _FORMATO_DE_REUNIAO = re.compile(
 
 _MENCIONA_HORARIO_COMERCIAL = re.compile(r"hor[áa]rio comercial|\b9h\b", re.IGNORECASE)
 
-# Ferramentas que só registram dados: o texto escrito antes delas continua valendo (decisão 027).
+# Ferramentas que só registram dados: o texto escrito antes delas continua valendo (decisão 027),
+# salvo quando o registro acabou roteando o lead (decisão 049).
 FERRAMENTAS_SO_DE_REGISTRO = {"registrar_qualificacao"}
 
 MENSAGEM_DE_SEGURANCA ="Vou te passar para uma pessoa do nosso time, que continua o atendimento em seguida."
@@ -293,13 +294,17 @@ class Agente:
                 break
 
             nomes = {b["name"] for b in conteudo if b["type"] == "tool_use"}
-            rodadas_com_ferramenta.append((len(mensagens) - 1, textos_da_rodada, nomes <= FERRAMENTAS_SO_DE_REGISTRO))
+            posicao_da_rodada, faixa_antes_da_rodada = len(mensagens) - 1, lead.faixa
 
             resultados = []
             for bloco in (b for b in conteudo if b["type"] == "tool_use"):
                 resposta.ferramentas_usadas.append(bloco["name"])
                 saida, erro = executar(bloco["name"], bloco["input"], lead, self.aprovador, self.alerta_humano)
                 resultados.append({"type": "tool_result", "tool_use_id": bloco["id"], "content": saida, "is_error": erro})
+            # Registrar dados que completam a qualificação roteia o lead (decisão 049): aí o registro MUDOU a resposta,
+            # e o texto escrito antes dele perde a validade (ex.: "e quanto vocês gastam?" junto com o link do app).
+            so_registro = nomes <= FERRAMENTAS_SO_DE_REGISTRO and lead.faixa == faixa_antes_da_rodada
+            rodadas_com_ferramenta.append((posicao_da_rodada, textos_da_rodada, so_registro))
             mensagens.append({"role": "user", "content": resultados})
         else:
             lead.registrar_evento("alerta", "limite de rodadas de ferramentas atingido")

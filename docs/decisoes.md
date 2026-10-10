@@ -51,7 +51,8 @@
 | 043 | Hospedagem no Railway (Hobby) e leads no Supabase, via API REST e com RLS fechada | Aceita | 2026-10-03 |
 | 044 | Programa pronto para a nuvem: porta do Railway, só modo meta no ar, aprovação pendente sem Slack | Aceita | 2026-10-03 |
 | 045 | Só dados fictícios no que é público; página aberta com aviso, mascaramento e guarda curta | Aceita | 2026-10-09 |
-| 046 | Painel no Lovable lê visões somente leitura, com login sem cadastro e proibição de mexer no banco | Aceita | 2026-10-09 |
+| 046 | Painel no Lovable lê visões somente leitura, com login sem cadastro e proibição de mexer no banco | Aceita (revista pela 047) | 2026-10-09 |
+| 047 | Revisão do acesso ao painel: tabela fechada ao usuário logado, conta demo não publicada, página pública só via servidor | Aceita | 2026-10-09 |
 
 ---
 
@@ -960,3 +961,31 @@ IA do Lovable acesso de gestão ao banco (ela pode criar e alterar tabelas). A t
 **Motivo:** separar quem **escreve** (o P.H., com a chave secreta, no servidor) de quem **lê** (o painel, com a chave
 pública e login) reduz o estrago possível de um erro do painel ou da IA que o gera. As visões também desacoplam o painel
 do formato interno do lead: se o JSON mudar, só a visão muda.
+
+---
+
+## 047: Revisão do acesso ao painel
+
+**Contexto:** uma revisão do desenho da decisão 046, antes de abrir o Lovable, levantou cinco pontos. Para conferir
+cada um de fora, foi criado `verificar_acesso_painel.py`, que testa o banco como visitante (chave pública, sem login) e
+como usuário logado, e mostra ✅ ou ❌ em cada verificação.
+
+| Ponto | Situação | Decisão |
+|---|---|---|
+| 1. O cadastro público está mesmo desligado? | Confirmado por teste: `signup_disabled` | Fica na verificação automática |
+| 2. Usuário logado lia a tabela `leads` inteira, inclusive o `estado` com os detalhes internos | **Confirmado** (❌ na verificação): as visões usavam `security_invoker`, que exige a permissão de leitura na tabela | Corrigido (abaixo) |
+| 3. Como um recrutador entra no painel? | Sem conta, só vê a tela de login | Conta demo somente leitura, **não publicada** |
+| 4. As notas dos evals não aparecem no painel | Os resultados ficam em JSON no repositório | Próxima peça: gravar os evals no Supabase e criar uma aba "Qualidade" |
+| 5. A página pública não pode gravar direto no banco | Abrir gravação para o visitante anônimo abriria o banco para spam | Confirmado: o visitante fala com o servidor do P.H., que valida, mascara e limita (decisão 045). O banco nunca aceita gravação anônima |
+
+**Correção do ponto 2:** as visões passam a consultar a tabela com a **permissão do dono** do banco, e o usuário logado
+perde **qualquer** acesso à tabela `leads` (sem regra de RLS e sem permissões). Ele enxerga só as colunas que as visões
+mostram. As opções eram: (1) aceitar e documentar; (2) mover as visões para um esquema separado; (3) visões com a
+permissão do dono. A 3 resolve com menos peças. O Supabase marca essas visões com o aviso "security definer view";
+aqui é intencional, porque a visão é o filtro. A limitação que fica: qualquer usuário logado vê **todos** os leads
+(não há separação por vendedor), o que é aceitável para um time pequeno e dados fictícios.
+
+**Conta demo:** `demo@brax-sdr.dev`, somente leitura, criada pela API de administração. A senha foi gerada
+aleatoriamente e fica só no `.env`; o acesso é passado diretamente a quem for avaliar o projeto. **Não foi publicada**
+no README: uma conta com senha pública pode ter a senha trocada por qualquer visitante, trancando a vitrine. Se um dia
+for publicada, a proteção prevista é o servidor do P.H. restaurar a senha periodicamente.

@@ -6,16 +6,19 @@
 --   painel_leads      um lead por linha, com os dados de qualificação e a etapa do funil já calculada
 --   painel_mensagens  a conversa de cada lead, só o texto (sem os detalhes internos das ferramentas)
 --   painel_eventos    a linha do tempo de cada lead (roteamento, aprovação, transferência...)
--- As visões usam "security_invoker": respeitam as regras de acesso (RLS) de quem está consultando.
+--
+-- Segurança (revisão da decisão 046): as visões consultam a tabela com a permissão do DONO do banco, e o usuário logado
+-- NÃO tem nenhum acesso à tabela leads. Assim ele vê só as colunas que as visões mostram (nunca o "estado" completo,
+-- com os detalhes internos das ferramentas). O Supabase mostra o aviso "security definer view": aqui é intencional,
+-- porque a visão é o filtro. Ninguém grava pelo painel: não existe permissão de escrita para usuários do painel.
 
--- 1. Regra de acesso: usuário LOGADO (o time) pode LER os leads. Não existe regra para gravar, então o painel
---    não consegue criar, alterar ou apagar nada. Visitante não logado continua sem ver nada.
+-- 1. A tabela leads fica fechada para o painel: sem regra de leitura (RLS) e sem permissões para anon e authenticated.
+--    Só o servidor do P.H. (chave secreta) acessa a tabela.
 drop policy if exists "time comercial le leads" on public.leads;
-create policy "time comercial le leads" on public.leads
-    for select to authenticated using (true);
+revoke all on public.leads from anon, authenticated;
 
 -- 2. Um lead por linha, pronto para tabelas, filtros e gráficos.
-create or replace view public.painel_leads with (security_invoker = true) as
+create or replace view public.painel_leads as
 select
     l.id,
     l.canal,
@@ -56,7 +59,7 @@ select
 from public.leads l;
 
 -- 3. A conversa de cada lead, uma mensagem por linha, só com o texto que o lead e o P.H. trocaram.
-create or replace view public.painel_mensagens with (security_invoker = true) as
+create or replace view public.painel_mensagens as
 select
     l.id            as lead_id,
     m.ordem::integer as ordem,
@@ -80,7 +83,7 @@ cross join lateral (
 where m.texto is not null and btrim(m.texto) <> '';
 
 -- 4. Linha do tempo de cada lead.
-create or replace view public.painel_eventos with (security_invoker = true) as
+create or replace view public.painel_eventos as
 select
     l.id                           as lead_id,
     (ev.evento ->> 'quando')::timestamptz as quando,
@@ -89,9 +92,11 @@ select
 from public.leads l
 cross join lateral jsonb_array_elements(l.estado -> 'eventos') as ev(evento);
 
--- 5. Permissões: só usuários logados consultam as visões. Visitantes anônimos, nada.
-revoke all on public.painel_leads, public.painel_mensagens, public.painel_eventos from anon;
--- Segunda camada na tabela: o RLS já esconde as linhas do visitante anônimo (teste da Fase 7: 0 linhas), e aqui ele perde
--- também a permissão. O usuário logado mantém a leitura, porque as visões consultam a tabela em nome dele.
-revoke all on public.leads from anon;
+-- 5. As visões rodam com a permissão do dono (desfaz o security_invoker da primeira versão deste arquivo).
+alter view public.painel_leads reset (security_invoker);
+alter view public.painel_mensagens reset (security_invoker);
+alter view public.painel_eventos reset (security_invoker);
+
+-- 6. Permissões: só usuários logados consultam as visões, e só para ler. Visitantes anônimos, nada.
+revoke all on public.painel_leads, public.painel_mensagens, public.painel_eventos from anon, authenticated;
 grant select on public.painel_leads, public.painel_mensagens, public.painel_eventos to authenticated;

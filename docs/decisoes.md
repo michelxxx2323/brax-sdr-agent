@@ -61,6 +61,7 @@
 | 053 | Temperatura mede intenção: sinais de dor explícita (+2) e urgência (+1); quente a partir de 6 pontos | Aceita | 2026-10-11 |
 | 054 | Promessa de retorno aciona o time de verdade; falhas das conversas de demonstração viram cenários de eval | Aceita | 2026-10-11 |
 | 055 | Dados de demonstração gerados por simulação (12 leads, script reproduzível) e parágrafos de bastidor removidos | Aceita | 2026-10-11 |
+| 056 | Experimento revertido: "uma pergunta por vez" pelo editor e empresa obrigatória para rotear pioraram os evals | Rejeitada (revertida) | 2026-10-11 |
 
 ---
 
@@ -1254,3 +1255,37 @@ melhoria (perguntar o nome da empresa antes de entregar o próximo passo).
 
 **Motivo:** dados de demonstração precisam ser representativos e reproduzíveis, e não sobras de testes. Gerar por
 simulação também funcionou como teste: achou uma falha real (o planejamento narrado) que nenhum cenário de eval pegava.
+
+---
+
+## 056: Experimento revertido: uma pergunta por mensagem pelo editor e empresa obrigatória para rotear
+
+**Contexto:** duas melhorias candidatas. (1) "Uma pergunta por vez" foi o critério do juiz que mais caiu com o Haiku 5.5
+(051); a ideia era chamar o editor de mensagens (022) também quando a mensagem de WhatsApp tivesse mais de uma
+pergunta, contando os "?" (sem contar cumprimentos como "tudo bem?"). (2) Exigir o nome da empresa para rotear, para o
+CRM não receber negócios sem empresa (o caso da Camila, 055).
+
+**Medição:** duas baterias completas de 23 cenários, com o mesmo lead simulado e o mesmo juiz: uma com o código antes
+das melhorias (linha de base) e outra com elas.
+
+| | Linha de base | Com as melhorias |
+|---|---|---|
+| Aprovados | 21/23 | 21/23 |
+| Roteamento correto | **100%** | 88% |
+| Nota média do juiz | **4,78** | 4,61 |
+| "Uma pergunta por vez" | **4,74** | 4,22 |
+
+**Por que piorou** (lendo os problemas apontados pelo juiz):
+- O juiz conta perguntas pelo **sentido**, e o código contava pelo **"?"**. "Me conta qual é o setor e quanto vocês gastam
+  por mês?" tem um "?" e duas perguntas. O editor reduziu "2 → 1" em 8 mensagens juntando as duas perguntas numa frase:
+  passou na checagem do código e o juiz continuou vendo duas. O código media a coisa errada.
+- A empresa obrigatória somou mais um dado a coletar antes do roteamento (tipo, setor, tamanho, gasto e empresa), e o
+  P.H. passou a juntar mais perguntas por mensagem ("qual o seu nome e o nome da empresa?").
+
+**Decisão:** reverter as duas (commit de reversão, sem apagar o histórico). Fica só a correção pontual do detector de
+bastidor ("registro os dados"). Para o CRM sem empresa, a próxima tentativa deve ser fora da conversa (por exemplo,
+nomear o negócio pelo contato quando a empresa faltar), sem aumentar o número de perguntas.
+
+**Motivo:** os evals existem para isto: uma mudança que parecia boa no papel foi medida e não melhorou o que prometia.
+Uma bateria só tem ruído (a linha de base variou de 4,55 a 4,78 entre baterias parecidas), mas aqui o mecanismo da
+piora foi identificado nos problemas apontados pelo juiz, e não só no número.

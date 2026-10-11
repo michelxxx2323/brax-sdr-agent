@@ -116,3 +116,16 @@ notas de 3,2 → 4,7 (executivo pelo gasto) e 3,3 → 5,0 (sem interesse). Detal
 assinada (lead fictício, LTDA de logística, 11 pessoas, R$ 14 mil/mês) foi registrada, roteada para self-service e
 sincronizada com o HubSpot. Custo da primeira resposta, que inclui criar o cache do prompt: **US$ 0,00096**, contra
 US$ 0,031 da mesma situação no Haiku 4.5 minutos antes (o deploy ainda não tinha terminado).
+
+## 5ª e 6ª baterias: 23 cenários (3 novos da decisão 054) e um experimento revertido (decisão 056)
+
+- **5ª (linha de base, Haiku 5.5, 23 cenários):** 21/23, roteamento 100%, nota média 4,78 (a maior até aqui), zero
+  alertas de guardrail, US$ 0,46. Os 3 cenários novos (despedidas depois do encerramento, linha de comando como
+  mensagem, pergunta fora do cérebro) passaram. Falhas: MEI (a trava bloqueou "Conversa encerrada." depois de um
+  agradecimento longo) e "sem interesse" (a lead simulada encerrou antes de desistir: oscilação da simulação).
+- **6ª (com duas melhorias candidatas):** 21/23, roteamento 88%, nota 4,61, "uma pergunta por vez" de 4,74 para 4,22.
+  As melhorias foram revertidas; a análise está na decisão 056.
+- **Teste de uma terceira ideia, descartada antes da bateria:** remover bastidor por frase, e não por parágrafo, salvaria
+  o "obrigada" da conversa do MEI, mas os testes automáticos mostraram que deixaria passar frases de bastidor sem termo
+  interno ("Wesley recebeu a orientação e se despediu naturalmente"). Ficou a remoção por parágrafo.
+

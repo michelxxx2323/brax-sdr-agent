@@ -243,3 +243,15 @@ def test_frases_reais_do_wesley_e_do_sergio():
     assert checar_confiabilidade("Não posso te passar informação errada, então vou confirmar com o time e te retorno.", [])
     assert checar_confiabilidade("De nada! Assim que eu confirmar com o time, te retorno por aqui. Abraço!", [])
     assert not checar_confiabilidade("Deixa eu confirmar uma coisa: quem mais participa dessa decisão?", [])
+
+
+def test_planejamento_narrado_e_texto_interno():
+    from brax_sdr.guardrails import sem_paragrafos_internos
+
+    assert parece_texto_interno("Vou registrar de novo, com o gasto em dólar como sinal de compra.")
+    assert parece_texto_interno("Falta confirmar o tipo de empresa para rotear. Respondo a dúvida e pergunto isso.")
+    assert sem_paragrafos_internos("Falta confirmar o tipo para rotear.\n\nQual o tipo da empresa?") == "Qual o tipo da empresa?"
+    assert sem_paragrafos_internos("Vou registrar de novo.") == ""  # tudo interno: vale o bloqueio da mensagem inteira
+    # Fala legítima continua passando (inclusive a confirmação de opt-out).
+    assert not parece_texto_interno("Pronto, registrei seu pedido: não vou mais te enviar mensagens.")
+    assert not parece_texto_interno("Para o tamanho de vocês, o caminho é abrir a conta pelo app.")

@@ -472,3 +472,18 @@ def test_promessa_com_aprovacao_pendente_nao_transfere(tmp_path):
                                                  "te retorno por aqui.", type="text")], "end_turn")])
     Agente(client=cliente, pasta_leads=tmp_path).responder("pend", "E aí, alguma novidade?")
     assert not memoria.carregar("pend", pasta=tmp_path).transferido_para_vendedor
+
+
+def test_paragrafo_de_bastidor_sai_e_a_resposta_fica(tmp_path):
+    # Decisão 055 (dados de demonstração, conversa da Patrícia): o Haiku 5.5 narrou o planejamento antes da resposta.
+    _em_andamento(tmp_path, "bast")
+    cliente = ClienteFalso([
+        _msg([TextBlock(text="Vou registrar de novo, com o gasto em dólar como sinal de compra.", type="text"),
+              ToolUseBlock(id="t1", name="registrar_qualificacao", input={"sinais_de_compra": ["gastos_em_dolar"]},
+                           type="tool_use")], "tool_use"),
+        _msg([TextBlock(text="Falta confirmar o tipo de empresa para rotear.\n\nNa prática, cada pessoa do time pode ter "
+                             "o próprio cartão. A empresa já tem CNPJ? É LTDA ou S.A.?", type="text")], "end_turn"),
+    ])
+    resposta = Agente(client=cliente, pasta_leads=tmp_path).responder("bast", "Gastamos bastante em dólar com nuvem.")
+    assert resposta.texto == "Na prática, cada pessoa do time pode ter o próprio cartão. A empresa já tem CNPJ? É LTDA ou S.A.?"
+    assert "bastidor_removido" in [e["tipo"] for e in memoria.carregar("bast", pasta=tmp_path).eventos]

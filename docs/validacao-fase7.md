@@ -100,3 +100,14 @@ simulação primeiro. A revisão das evidências derrubou 4 marcações de urgê
 sim" não são pressa) e deixou a descrição do sinal mais estrita. 8 leads alterados, todos com evidência na linha do
 tempo e HubSpot sincronizado. A Bianca foi de 5 para 7 pontos (quente pela dor, não por sorte).
 
+## Teste 8: dados de demonstração gerados por simulação (decisões 054 e 055)
+
+- Três falhas apontadas nas conversas do Wesley e do Sergio: duas já estavam corrigidas (texto interno, encurtador
+  fora do papel) e a terceira (promessa de retorno sem acionar ninguém) foi corrigida agora. Três cenários de eval
+  novos, que passaram com o modelo real.
+- Backup completo (31 leads), conferido, antes de apagar do Supabase e do HubSpot.
+- 12 leads gerados com `gerar_dados_demo.py`, todos no caminho esperado e sincronizados com o HubSpot.
+- A revisão automática das 48 falas achou planejamento narrado ao lead em duas conversas. Correção: remoção de
+  parágrafos de bastidor. As duas conversas foram geradas de novo; nenhum parágrafo de bastidor nos 12 leads.
+  Verificação de acesso: 17/17.
+

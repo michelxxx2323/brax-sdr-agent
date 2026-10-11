@@ -19,6 +19,7 @@ from brax_sdr.guardrails import (
     checar_resposta,
     parece_texto_interno,
     promete_retorno,
+    sem_paragrafos_internos,
     tipo_de_evento,
 )
 from brax_sdr.crm import sincronizar_com_seguranca
@@ -414,6 +415,14 @@ class Agente:
                 ajustado = ajustado.replace("**", "")  # o WhatsApp mostraria os asteriscos (evals: cenário de preço)
             if ajustado != texto_final:
                 texto_final = ajustado
+                fixar_texto(texto_final)
+
+        if not mensagem_do_codigo and texto_final:
+            # Parágrafos de bastidor saem; o resto da resposta continua (decisão 055).
+            limpo = sem_paragrafos_internos(texto_final)
+            if limpo and limpo != texto_final:
+                lead.registrar_evento("bastidor_removido", texto_final[:300])
+                texto_final = limpo
                 fixar_texto(texto_final)
 
         if not mensagem_do_codigo and texto_final and parece_texto_interno(texto_final):

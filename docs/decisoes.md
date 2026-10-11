@@ -60,6 +60,7 @@
 | 052 | Temperatura só para oportunidade viva; dados de demonstração com nomes e domínios fictícios | Aceita (limites revistos pela 053) | 2026-10-11 |
 | 053 | Temperatura mede intenção: sinais de dor explícita (+2) e urgência (+1); quente a partir de 6 pontos | Aceita | 2026-10-11 |
 | 054 | Promessa de retorno aciona o time de verdade; falhas das conversas de demonstração viram cenários de eval | Aceita | 2026-10-11 |
+| 055 | Dados de demonstração gerados por simulação (12 leads, script reproduzível) e parágrafos de bastidor removidos | Aceita | 2026-10-11 |
 
 ---
 
@@ -1221,3 +1222,35 @@ gravados na Fase 2). Antes de corrigir, cada mensagem foi testada contra o códi
 
 **Motivo:** "a IA escreve, o código garante". Uma promessa que ninguém cumpre é pior do que admitir que não sabe; o
 código transforma a promessa em uma ação real. E uma falha só fica resolvida de vez quando um cenário de eval a mede.
+
+---
+
+## 055: Dados de demonstração gerados por simulação; parágrafos de bastidor removidos
+
+**Contexto:** o painel mostrava sessões de teste manuais das fases 2 a 6, misturadas, algumas com falhas já corrigidas
+(decisão 054) e muitas sem nome ou empresa. A decisão 052 tinha mantido essas conversas como histórico; com o painel
+quase pronto, a decisão foi trocar tudo por dados gerados de forma controlada.
+
+**Decisão:**
+- **Backup antes de apagar:** os 31 leads foram exportados (conversas, eventos, IDs do CRM) para `data/local/backups/`
+  (fora do Git) e o arquivo foi relido e comparado com o banco. Só então foram apagados do Supabase e, pelos IDs do
+  backup, do HubSpot (19 negócios, 20 empresas, 31 contatos, recuperáveis da lixeira do HubSpot por 90 dias).
+- **12 leads gerados por simulação** (`gerar_dados_demo.py`, reproduzível): uma sessão por lead, o P.H. de verdade
+  conversando com o lead simulado dos evals, gravando no Supabase e no HubSpot. Cobre self-service, executivo, análise
+  humana, fora do perfil e perdido, nos dois canais, mais uma transferência a pedido e uma pergunta que o cérebro não
+  responde. Ids fictícios (`5511900000301` a `306` e subdomínios de `example.com`); aprovações simuladas e marcadas.
+- **Achado na revisão dos dados novos:** em duas conversas, o Haiku 5.5 narrou o próprio planejamento para o lead
+  ("Vou registrar de novo, com o gasto em dólar como sinal de compra"; "Falta confirmar o tipo de empresa para rotear";
+  "preciso registrar os dados"). Sem o pensamento ligado (051), ele às vezes "pensa em voz alta" no texto. A trava de
+  texto interno só bloqueava a mensagem inteira e não conhecia esses termos.
+- **Correção:** os parágrafos que parecem bastidor saem da mensagem e o resto da resposta é enviado (evento
+  `bastidor_removido`); se não sobrar nada, vale o bloqueio da mensagem inteira (024). Termos novos: "rotear",
+  "sinal de compra", "registrar de novo" e "registrar os dados". A confirmação de opt-out ("registrei seu pedido")
+  continua passando. Os dois leads afetados foram gerados de novo, e nenhum dos 12 tem parágrafo de bastidor.
+
+**Observação:** a lead simulada da Camila nunca disse o próprio nome nem o da empresa, e o P.H. roteou sem perguntar
+(nome e empresa não são exigidos para rotear). Não é erro do P.H., mas deixa o registro do CRM pobre: candidato a
+melhoria (perguntar o nome da empresa antes de entregar o próximo passo).
+
+**Motivo:** dados de demonstração precisam ser representativos e reproduzíveis, e não sobras de testes. Gerar por
+simulação também funcionou como teste: achou uma falha real (o planejamento narrado) que nenhum cenário de eval pegava.

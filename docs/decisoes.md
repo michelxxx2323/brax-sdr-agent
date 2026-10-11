@@ -57,6 +57,7 @@
 | 049 | Roteamento automático assim que os dados de qualificação ficam completos | Aceita | 2026-10-10 |
 | 050 | Resultados dos evals também no Supabase, para a aba "Qualidade" do painel | Aceita | 2026-10-10 |
 | 051 | Conversa no Claude Haiku 5.5 (sem pensamento, esforço medium) depois de bateria comparativa | Aceita | 2026-10-10 |
+| 052 | Temperatura só para oportunidade viva; dados de demonstração com nomes e domínios fictícios | Aceita | 2026-10-11 |
 
 ---
 
@@ -1118,3 +1119,34 @@ o tipo (o CRM ficaria sem motivo). Já acontecia com o Haiku 4.5; fica em observ
 
 **Motivo:** melhor em qualidade e 9 vezes mais barato. Desligar o pensamento mantém o comportamento que já foi validado
 e evita reescrever as travas que fazem o "código garantir".
+
+---
+
+## 052: Temperatura só para oportunidade viva; dados de demonstração com nomes e domínios fictícios
+
+**Contexto:** antes de terminar o painel no Lovable, três ajustes nos dados: mostrar os dois canais (até aqui todos os
+leads eram de WhatsApp), trocar os ids com cara de teste ("teste-supabase", "mei3", "limite2"...) e revisar os limites
+da temperatura (a Bianca, com prioridade 5 de 13, aparecia como "quente").
+
+**Temperatura:**
+- **Limites mantidos** (quente com 5 pontos ou mais, morno de 2 a 4, frio com 0 ou 1). Os 5 pontos da Bianca vêm de
+  rodada recente (3) e de ela decidir (2): dinheiro e autoridade, os dois sinais mais fortes de uma venda B2B. O máximo
+  de 13 só acontece com os seis sinais de compra ao mesmo tempo, o que é raro (2 quentes em 27 leads).
+- **Regra nova:** fora do perfil, perdido (sem interesse ou sem resposta) ou opt-out é sempre **frio**, com quaisquer
+  pontos. Antes, só os pontos decidiam: um lead fora do perfil com sinais de compra apareceria como "quente".
+  Opções descartadas: subir o limite do quente (a Bianca viraria morna, sem motivo de negócio) ou não mudar nada.
+- Continua sendo uma hipótese a calibrar com dados reais (048).
+
+**Leads de teste:** os 13 ids com cara de teste foram renomeados para telefones fictícios (`5511900000201` a `213`),
+com a mesma conversa e o mesmo registro no HubSpot. **Nenhuma conversa foi apagada**, nem as da época dos bugs da
+Fase 2 (algumas mostram texto interno que vazou e já foi corrigido): elas ficam como histórico real do projeto.
+A primeira proposta era apagar 7 delas; a decisão foi manter.
+
+**Canal de e-mail no painel:** 4 conversas geradas pelo **P.H. de verdade no modo e-mail**, com o lead simulado dos
+evals (executivo, self-service, MEI e sem interesse), sem passar pela caixa do Gmail: o canal só responde a remetentes
+autorizados, e usar um e-mail pessoal criaria um lead com dado real (045). A aprovação do executivo foi simulada e
+aparece como "aprovação simulada" na linha do tempo.
+
+**Domínios fictícios:** o domínio reservado `.example` foi recusado pelo HubSpot como e-mail inválido. Os endereços
+usam subdomínios de `example.com` (ex.: `rita.souza@ritadoces.example.com`), também reservado por norma: nunca pertence
+a uma pessoa ou empresa real, e passa na validação de e-mail dos sistemas.

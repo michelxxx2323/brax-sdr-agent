@@ -80,3 +80,16 @@ SaaS") e o link do app saiu na mesma resposta.
 `painel_evals_baterias`, lida como a conta demo, bate com o diário da Fase 6: 2/3 na piloto, depois 15/20, 19/20 e
 19/20, com cenários com alerta de guardrail caindo de 3 para 1 e para 0. Verificação de acesso ampliada às visões e à
 tabela novas: **17/17**.
+
+## Teste 6: dados de demonstração para o painel (decisão 052)
+
+- **13 leads renomeados** de ids de teste para telefones fictícios (`5511900000201` a `213`): cada conversa foi gravada
+  com o id novo e conferida antes de remover a antiga; HubSpot atualizado em todos. Nenhuma conversa apagada.
+- **4 leads de e-mail** gerados pelo P.H. de verdade (Haiku 5.5, modo e-mail) com o lead simulado: Helena Prado
+  (executivo, prioridade 9, reunião aprovada com aprovação simulada), Lucas Ferraz (self-service), Rita Souza (MEI, fora
+  do perfil) e Tiago Mendes (sem interesse). Custo das quatro: menos de US$ 0,02.
+- **Achado:** o HubSpot recusou o domínio reservado `.example` como e-mail inválido. Os ids passaram para subdomínios de
+  `example.com`, e a sincronização funcionou (contato, empresa e negócio).
+- **Observações de comportamento:** o P.H. chamou o Lucas pela empresa ("Abraço, Grão Studio!") e ainda escreveu
+  "Vou registrar esses dados primeiro" para o Tiago, mesmo com a regra nova do prompt (051). Ficam para os próximos evals.
+

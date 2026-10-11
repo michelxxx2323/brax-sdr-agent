@@ -67,7 +67,7 @@ painel_leads (id) ──< painel_mensagens (lead_id)   uma conversa por lead, or
 |---|---|---|
 | `quente` | 🔥 Quente | 5 ou mais (ex.: quem decide + rodada recente) |
 | `morno` | 🌤 Morno | 2 a 4 (um sinal forte, ou só ser quem decide) |
-| `frio` | ❄️ Frio | 0 ou 1 |
+| `frio` | ❄️ Frio | 0 ou 1, **ou** lead fora do perfil, perdido ou com opt-out (com quaisquer pontos) |
 
 Pontos: rodada recente 3; contratando rápido 2; primeira pessoa de finanças 2; gastos em dólar 2; novo escritório 1;
 insatisfeito com o banco 1; quem conversa é quem decide 2.
@@ -128,7 +128,7 @@ Tipos mais comuns e rótulos sugeridos: `qualificacao` (Dados registrados), `rot
 `conversa_reaberta` (Conversa reaberta), `followup` (Lembrete enviado), `sem_resposta` (Sem resposta aos lembretes),
 `retorno_enviado` (Retorno do time enviado ao lead), `alerta_guardrail` / `alerta_estilo` / `alerta_confiabilidade`
 (Alerta de qualidade), `vazamento_bloqueado` (Mensagem bloqueada pela segurança), `mensagem_encurtada` (Mensagem encurtada),
-`erro_ferramenta` / `crm_erro` / `resumo_erro` (Erro técnico). Outros tipos podem aparecer: mostrar o próprio nome.
+`erro_ferramenta` / `crm_erro` / `resumo_erro` (Erro técnico), `renomeado` (Lead renomeado na limpeza dos dados de demonstração). Outros tipos podem aparecer: mostrar o próprio nome.
 
 ## Qualidade: resultados dos evals (decisão 050)
 

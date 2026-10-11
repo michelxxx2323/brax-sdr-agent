@@ -92,7 +92,10 @@ select
     l.estado ->> 'resumo'                                   as resumo,
     (l.estado ->> 'resumo_em')::timestamptz                 as resumo_em,
     -- Temperatura a partir da prioridade (sinais de compra + decisor). Hipótese a calibrar com dados reais.
+    -- Só oportunidade viva esquenta: fora do perfil, perdido ou opt-out é sempre frio, com quaisquer pontos (decisão 052).
     case
+        when l.faixa = 'fora_do_icp' or l.opt_out or l.sem_resposta
+             or l.estado -> 'dados' ->> 'motivo_encerramento' is not null then 'frio'
         when l.prioridade >= 5 then 'quente'
         when l.prioridade >= 2 then 'morno'
         else 'frio'

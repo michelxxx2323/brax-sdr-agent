@@ -59,6 +59,7 @@
 | 051 | Conversa no Claude Haiku 5.5 (sem pensamento, esforço medium) depois de bateria comparativa | Aceita | 2026-10-10 |
 | 052 | Temperatura só para oportunidade viva; dados de demonstração com nomes e domínios fictícios | Aceita (limites revistos pela 053) | 2026-10-11 |
 | 053 | Temperatura mede intenção: sinais de dor explícita (+2) e urgência (+1); quente a partir de 6 pontos | Aceita | 2026-10-11 |
+| 054 | Promessa de retorno aciona o time de verdade; falhas das conversas de demonstração viram cenários de eval | Aceita | 2026-10-11 |
 
 ---
 
@@ -1193,3 +1194,30 @@ seria morna (2 pontos); um founder com rodada que diz "só estou pesquisando" se
 **Motivo:** um painel comercial usa a temperatura para decidir onde agir primeiro. Medir só o potencial esquenta quem
 tem dinheiro e não tem pressa, e esfria quem tem um problema claro. Separar potencial (os seis sinais originais) de
 intenção (os dois novos) deixa a regra explicável para o time. Continua sendo uma hipótese a calibrar com dados reais.
+
+---
+
+## 054: Promessa de retorno aciona o time de verdade; falhas antigas viram cenários de eval
+
+**Contexto:** uma revisão do painel achou três falhas nas conversas do Wesley e do Sergio (os antigos `mei3` e `mei4`,
+gravados na Fase 2). Antes de corrigir, cada mensagem foi testada contra o código atual:
+
+| Falha | Causa | Hoje |
+|---|---|---|
+| O P.H. enviou o próprio raciocínio ("Conversa encerrada... seguindo o protocolo"; "Despedidas seguintes não recebem resposta") | Quando a regra mandava não responder a uma despedida, o modelo escrevia a justificativa como resposta, e o código enviava qualquer texto | **Já corrigido** (decisão 024): as 4 mensagens seriam bloqueadas como texto interno; com a conversa encerrada, o lead fica sem resposta |
+| O encurtador respondeu como assistente ("Estou pronto para reescrever mensagens...") depois de uma linha de comando de terminal enviada como mensagem | A resposta passou do limite do WhatsApp; o encurtador (outra chamada, só para reescrever) se confundiu com a entrada estranha | **Já corrigido** (decisão 022): `_reescrita_confiavel` descarta a saída e mantém a original |
+| Promessa de retorno sem acionar ninguém ("vou confirmar com o time e te retorno"; "Assim que eu confirmar com o time, te retorno por aqui") | O prompt manda transferir quando o cérebro não tem a resposta; o modelo prometeu por conta própria. O código só registrava um alerta, e a segunda frase nem era detectada | **Aberto: corrigido agora** |
+
+**Decisão:**
+- **Promessa de retorno aciona o time de verdade.** O detector passou a reconhecer "confirmar com o time", "te retorno",
+  "retorno por aqui" e "volto a te chamar". Se o P.H. prometer um retorno sem ter usado nenhuma ferramenta, o código
+  transfere para um vendedor (alerta no Slack, evento `promessa_virou_transferencia`) e acrescenta "um vendedor do nosso
+  time vai entrar em contato em horário comercial". Exceção: com a aprovação de executivo **pendente**, "o time está
+  confirmando" é verdade. Opção descartada: só apagar a promessa do texto, que deixaria o lead sem a resposta pedida.
+- **As três falhas viraram cenários de eval** (agora 23): despedidas depois do encerramento, linha de comando como
+  mensagem e pergunta que o cérebro não responde. Nova verificação objetiva: **textos proibidos** nas falas do P.H.
+  (ex.: "protocolo", "reescrever"). Os três passaram com o modelo real.
+- As frases reais do Wesley e do Sergio ficaram presas em testes automáticos.
+
+**Motivo:** "a IA escreve, o código garante". Uma promessa que ninguém cumpre é pior do que admitir que não sabe; o
+código transforma a promessa em uma ação real. E uma falha só fica resolvida de vez quando um cenário de eval a mede.

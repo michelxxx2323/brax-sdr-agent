@@ -87,7 +87,7 @@ def rodar_conversa(cenario: dict, cliente, pasta_leads: Path) -> dict:
 
 # --- Verificações objetivas (código) ------------------------------------------------------------
 
-def verificar(cenario: dict, lead, alertas: list[str]) -> dict[str, bool]:
+def verificar(cenario: dict, lead, alertas: list[str], conversa: list[tuple[str, str]] | None = None) -> dict[str, bool]:
     """Cada item esperado no cenário vira uma verificação verdadeira/falsa."""
     esperado = cenario.get("esperado", {})
     tipos_de_evento = [e["tipo"] for e in lead.eventos]
@@ -106,6 +106,10 @@ def verificar(cenario: dict, lead, alertas: list[str]) -> dict[str, bool]:
         resultado["transferencia"] = lead.transferido_para_vendedor == esperado["transferido_para_vendedor"]
     if "motivo_encerramento" in esperado:
         resultado["motivo_encerramento"] = lead.dados.get("motivo_encerramento") == esperado["motivo_encerramento"]
+    if "textos_proibidos" in esperado:
+        # Trechos que nunca podem aparecer numa fala do P.H. (decisão 054: raciocínio interno, encurtador fora do papel).
+        falas = " ".join(texto.lower() for quem, texto in (conversa or []) if quem == "ph")
+        resultado["sem_texto_proibido"] = not any(trecho.lower() in falas for trecho in esperado["textos_proibidos"])
     for codigo in esperado.get("sem_alertas", []):
         resultado[f"sem_alerta_{codigo}"] = not any(a.startswith(codigo) for a in alertas)
     # Valem para todos os cenários:
@@ -195,7 +199,7 @@ def rodar_bateria(cenarios: list[dict], cliente=None, ao_terminar_cenario=None) 
         execucao = rodar_conversa(cenario, cliente, pasta_leads)
         notas = julgar(cliente, cenario, execucao["conversa"], execucao["custos"])
         lead = execucao["lead"]
-        verificacoes = verificar(cenario, lead, execucao["alertas"])
+        verificacoes = verificar(cenario, lead, execucao["alertas"], execucao["conversa"])
         resultado = {
             "id": cenario["id"],
             "titulo": cenario["titulo"],

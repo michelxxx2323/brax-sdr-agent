@@ -18,11 +18,13 @@ from brax_sdr.guardrails import (
     checar_confiabilidade,
     checar_resposta,
     parece_texto_interno,
+    promete_retorno,
     tipo_de_evento,
 )
 from brax_sdr.crm import sincronizar_com_seguranca
 from brax_sdr.memoria import Lead
 from brax_sdr.mensagens import (
+    AVISO_RETORNO_DO_TIME,
     garantir_identificacao,
     mensagem_fora_do_icp,
     mensagem_sem_interesse,
@@ -427,6 +429,25 @@ class Agente:
                 texto_final = MENSAGEM_DE_SEGURANCA
                 fixar_texto(texto_final)
                 lead.registrar_evento("transferencia_humano", "resposta bloqueada por conter texto interno")
+
+        if (
+            not mensagem_do_codigo
+            and texto_final
+            and not resposta.ferramentas_usadas
+            and lead.aprovacao != "pendente"  # aí "o time está confirmando" é verdade
+            and not lead.transferido_para_vendedor
+            and promete_retorno(texto_final)
+        ):
+            # Promessa de retorno sem ninguém acionado (decisão 054, conversa do Wesley: "vou confirmar com o time e te
+            # retorno"). O código aciona o time de verdade, como o prompt manda quando o cérebro não tem a resposta, e
+            # a mensagem passa a dizer quem retorna e quando.
+            executar("transferir_para_humano", {"motivo": f"o P.H. prometeu um retorno do time: {texto_final[:150]}"},
+                     lead, self.aprovador, self.alerta_humano)
+            resposta.ferramentas_usadas.append("transferir_para_humano")
+            lead.registrar_evento("promessa_virou_transferencia", texto_final[:200])
+            if not _MENCIONA_HORARIO_COMERCIAL.search(texto_final):
+                texto_final = f"{texto_final} {AVISO_RETORNO_DO_TIME}"
+                fixar_texto(texto_final)
 
         resposta.alertas = (
             checar_resposta(texto_final, primeira, lead.canal) + checar_confiabilidade(texto_final, resposta.ferramentas_usadas)

@@ -54,9 +54,16 @@ _PROMETE_ACAO_FUTURA = re.compile(
     # Achado no 1º teste com Slack: "Deixa eu confirmar com o time... Já retorno por aqui!" com a reunião já aprovada.
     # Na 1ª bateria de evals, "Deixa eu confirmar uma coisa: quem mais participa...?" (uma pergunta) disparou o alerta:
     # agora só conta quando a confirmação é "com o time".
-    r"|\bdeixa eu (confirmar|verificar|checar|ver) com (o|a) (time|equipe)\b|\bj[áa] (te )?retorno\b",
+    r"|\bdeixa eu (confirmar|verificar|checar|ver) com (o|a) (time|equipe)\b|\bj[áa] (te )?retorno\b"
+    # Decisão 054 (conversa do Wesley): "Assim que eu confirmar com o time, te retorno por aqui" passava sem alerta.
+    r"|\bconfirmar com (o|a) (time|equipe)\b|\bte retorno\b|\bretorno por aqui\b|\bvolto a te (chamar|procurar)\b",
     re.IGNORECASE,
 )
+
+
+def promete_retorno(texto: str) -> bool:
+    """Verdadeiro se o texto promete uma ação ou um retorno para depois (sem dizer quem vai fazer)."""
+    return bool(_PROMETE_ACAO_FUTURA.search(texto))
 
 
 def checar_confiabilidade(texto: str, ferramentas_usadas: list[str]) -> list[str]:

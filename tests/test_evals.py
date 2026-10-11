@@ -34,8 +34,8 @@ class ClaudeRoteirizado:
 
 def test_cenarios_sao_validos():
     cenarios = carregar_cenarios()
-    assert len(cenarios) == 20
-    assert len({c["id"] for c in cenarios}) == 20  # ids únicos
+    assert len(cenarios) == 23
+    assert len({c["id"] for c in cenarios}) == 23  # ids únicos
     for c in cenarios:
         assert c["canal"] in ("whatsapp", "email") and c["persona"] and c["esperado"]
 
@@ -102,3 +102,12 @@ def test_bateria_vira_linhas_do_supabase():
     assert linha["data"].endswith("+00:00")  # hora local convertida para UTC
     assert sem_notas["nota_media"] is None and sem_notas["resumo_juiz"] == "o juiz não devolveu"
     assert json.loads(json.dumps(linha))  # serializável para a API
+
+
+def test_textos_proibidos_nas_falas_do_ph():
+    cenario = {"esperado": {"textos_proibidos": ["Conversa encerrada"]}}
+    lead = Lead(id="x")
+    limpa = [("lead", "conversa encerrada?"), ("ph", "Abraço, Wesley!")]  # o lead pode escrever; o P.H., não
+    assert verificar(cenario, lead, [], limpa)["sem_texto_proibido"] is True
+    vazou = [("ph", "Conversa encerrada. Seguindo o protocolo.")]
+    assert verificar(cenario, lead, [], vazou)["sem_texto_proibido"] is False

@@ -26,6 +26,10 @@ _FORA_DO_ICP = {
 }
 
 
+# Decisão 054: quando o P.H. promete um retorno, o código aciona o time de verdade e diz quem vai retornar e quando.
+AVISO_RETORNO_DO_TIME = "Para isso, um vendedor do nosso time vai entrar em contato com você em horário comercial (seg a sex, 9h às 18h)."
+
+
 def mensagem_transferencia(nome: str | None = None, primeira_mensagem: bool = False) -> str:
     """Aviso de transferência, usado quando a resposta da IA não diz quando o vendedor entra em contato (decisão 037)."""
     abertura = f"Claro, {nome}!" if nome else "Claro!"

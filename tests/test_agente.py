@@ -5,7 +5,7 @@ import copy
 from anthropic.types import Message, TextBlock, ToolUseBlock, Usage
 
 from brax_sdr import memoria
-from brax_sdr.agente import Agente
+from brax_sdr.agente import Agente, _reescrita_confiavel
 
 
 def _msg(conteudo, stop_reason):
@@ -441,3 +441,34 @@ def test_texto_repetido_antes_e_depois_do_registro_sai_uma_vez(tmp_path):
     textos_salvos = [b["text"] for m in memoria.carregar("dup", pasta=tmp_path).mensagens
                      if isinstance(m["content"], list) for b in m["content"] if b["type"] == "text"]
     assert textos_salvos == [resposta.texto]  # o histórico mostra só o que o lead viu
+
+
+def test_encurtador_que_responde_como_assistente_e_descartado():
+    # Decisão 054 (conversa do Wesley): uma linha de comando como mensagem e o encurtador respondeu sobre si mesmo.
+    assert not _reescrita_confiavel(LONGA, "Entendi! Estou pronto para reescrever mensagens de WhatsApp do assistente "
+                                           "de vendas P.H. da BRAX. Envie a mensagem que precisa ser reescrita.")
+
+
+def test_promessa_de_retorno_aciona_o_time_de_verdade(tmp_path):
+    # Decisão 054 (conversa do Wesley): "vou confirmar com o time e te retorno" sem nenhuma ferramenta. O código
+    # transfere (alerta no Slack) e diz quem retorna e quando; a promessa deixa de ser vazia.
+    alertas = []
+    _em_andamento(tmp_path, "prom")
+    cliente = ClienteFalso([_msg([TextBlock(text="Boa pergunta! Vou confirmar com o time e te retorno.", type="text")],
+                                 "end_turn")])
+    agente = Agente(client=cliente, pasta_leads=tmp_path, alerta_humano=lambda lead, motivo: alertas.append(motivo))
+    resposta = agente.responder("prom", "Tem como eu usar outro CNPJ?")
+    salvo = memoria.carregar("prom", pasta=tmp_path)
+    assert salvo.transferido_para_vendedor and len(alertas) == 1
+    assert "promessa_virou_transferencia" in [e["tipo"] for e in salvo.eventos]
+    assert resposta.texto.endswith("em horário comercial (seg a sex, 9h às 18h).")
+    assert not any(a.startswith("Confiabilidade") for a in resposta.alertas)  # a promessa agora tem quem cumpra
+
+
+def test_promessa_com_aprovacao_pendente_nao_transfere(tmp_path):
+    # Com a aprovação pendente, "o time está confirmando e eu te retorno" é verdade: nada a acionar.
+    _em_andamento(tmp_path, "pend", faixa="executivo", aprovacao="pendente")
+    cliente = ClienteFalso([_msg([TextBlock(text="O time ainda está confirmando a agenda; assim que confirmar com o time, "
+                                                 "te retorno por aqui.", type="text")], "end_turn")])
+    Agente(client=cliente, pasta_leads=tmp_path).responder("pend", "E aí, alguma novidade?")
+    assert not memoria.carregar("pend", pasta=tmp_path).transferido_para_vendedor

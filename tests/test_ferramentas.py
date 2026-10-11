@@ -226,3 +226,20 @@ def test_dados_incompletos_nao_roteiam():
 def test_campo_desconhecido_lista_os_campos_aceitos():
     resultado, erro = _executar("registrar_qualificacao", {"motivo": "sem cnpj"}, Lead(id="t"))
     assert erro is True and "motivo" in resultado["erro"] and "tipo_empresa" in resultado["erro"]
+
+
+def test_frases_reais_do_wesley_e_do_sergio():
+    # Decisão 054: as três falhas das conversas de demonstração (gravadas na Fase 2) ficam presas em teste.
+    # 1. Raciocínio enviado como mensagem: bloqueado como texto interno.
+    for texto in (
+        'Conversa encerrada. Wesley recebeu a orientação sobre MEI na mensagem anterior e se despediu naturalmente com '
+        '"é nois". Não há necessidade de nova mensagem — seguindo o protocolo.',
+        "Conversa encerrada. O lead recebeu o contexto e a despedida é natural — seguindo o protocolo, não há resposta "
+        "a despedidas após o próximo passo ser entregue.",
+        "Despedidas seguintes não recebem resposta. Se tiver uma dúvida nova sobre a BRAX, é só chamar! 😊",
+    ):
+        assert parece_texto_interno(texto), texto
+    # 3. Promessa de retorno: as duas frases agora são reconhecidas.
+    assert checar_confiabilidade("Não posso te passar informação errada, então vou confirmar com o time e te retorno.", [])
+    assert checar_confiabilidade("De nada! Assim que eu confirmar com o time, te retorno por aqui. Abraço!", [])
+    assert not checar_confiabilidade("Deixa eu confirmar uma coisa: quem mais participa dessa decisão?", [])

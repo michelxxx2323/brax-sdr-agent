@@ -52,7 +52,14 @@ FERRAMENTAS = [
                 "solucao_atual": {"type": "string", "description": "Banco, cartão ou ferramenta que usam hoje."},
                 "sinais_de_compra": {
                     "type": "array",
-                    "description": "Só sinais que o lead mencionou explicitamente. Não deduza (ex.: anúncios no Facebook não indicam gastos em dólar).",
+                    "description": (
+                        "Só sinais que o lead mencionou explicitamente. Não deduza (ex.: anúncios no Facebook não indicam "
+                        "gastos em dólar). dor_explicita: o lead descreveu um problema concreto com a forma atual de pagar "
+                        "despesas (ex.: cartão pessoal dos sócios, reembolso, planilha, comprovantes perdidos); um interesse "
+                        "genérico ('quero organizar') não basta. urgencia: o lead expressou pressa com prazo "
+                        "('precisamos resolver este mês', 'quero conversar hoje', 'agora'). Informar disponibilidade "
+                        "para uma reunião, aceitar o próximo passo ou só pesquisar não contam."
+                    ),
                     "items": {"type": "string", "enum": list(PONTOS_POR_SINAL)},
                 },
                 "so_quer_credito": {"type": "boolean", "description": "Verdadeiro se o lead busca apenas crédito ou empréstimo."},

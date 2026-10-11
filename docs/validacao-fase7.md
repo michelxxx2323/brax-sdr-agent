@@ -93,3 +93,10 @@ tabela novas: **17/17**.
 - **Observações de comportamento:** o P.H. chamou o Lucas pela empresa ("Abraço, Grão Studio!") e ainda escreveu
   "Vou registrar esses dados primeiro" para o Tiago, mesmo com a regra nova do prompt (051). Ficam para os próximos evals.
 
+## Teste 7: temperatura por intenção (decisão 053)
+
+Releitura das 31 conversas pelo Haiku, marcando dor explícita e urgência só com base nas mensagens do lead, em modo
+simulação primeiro. A revisão das evidências derrubou 4 marcações de urgência (disponibilidade para reunião e "quero
+sim" não são pressa) e deixou a descrição do sinal mais estrita. 8 leads alterados, todos com evidência na linha do
+tempo e HubSpot sincronizado. A Bianca foi de 5 para 7 pontos (quente pela dor, não por sorte).
+

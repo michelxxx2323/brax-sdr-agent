@@ -62,3 +62,5 @@ def test_prioridade():
     assert prioridade(["sinal_inventado"], decisor=False) == 0
     assert prioridade(["gastos_em_dolar", "gastos_em_dolar"], decisor=None) == 2  # não conta duas vezes
     assert prioridade(None, None) == 0
+    # Decisão 053 (caso da Bianca): rodada + decide + dor explícita + urgência.
+    assert prioridade(["rodada_recente", "dor_explicita", "urgencia"], decisor=True) == 8

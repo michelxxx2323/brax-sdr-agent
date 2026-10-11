@@ -20,6 +20,9 @@ PONTOS_POR_SINAL = {
     "novo_escritorio": 1,
     "gastos_em_dolar": 2,
     "insatisfeito_com_banco": 1,
+    # Intenção, além do potencial (decisão 053): o caso da Bianca mostrou que a dor e a urgência não contavam nada.
+    "dor_explicita": 2,
+    "urgencia": 1,
 }
 PONTOS_DECISOR = 2
 

@@ -96,7 +96,7 @@ select
     case
         when l.faixa = 'fora_do_icp' or l.opt_out or l.sem_resposta
              or l.estado -> 'dados' ->> 'motivo_encerramento' is not null then 'frio'
-        when l.prioridade >= 5 then 'quente'
+        when l.prioridade >= 6 then 'quente'  -- decisão 053 (antes: 5)
         when l.prioridade >= 2 then 'morno'
         else 'frio'
     end as temperatura,

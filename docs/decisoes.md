@@ -57,7 +57,8 @@
 | 049 | Roteamento automático assim que os dados de qualificação ficam completos | Aceita | 2026-10-10 |
 | 050 | Resultados dos evals também no Supabase, para a aba "Qualidade" do painel | Aceita | 2026-10-10 |
 | 051 | Conversa no Claude Haiku 5.5 (sem pensamento, esforço medium) depois de bateria comparativa | Aceita | 2026-10-10 |
-| 052 | Temperatura só para oportunidade viva; dados de demonstração com nomes e domínios fictícios | Aceita | 2026-10-11 |
+| 052 | Temperatura só para oportunidade viva; dados de demonstração com nomes e domínios fictícios | Aceita (limites revistos pela 053) | 2026-10-11 |
+| 053 | Temperatura mede intenção: sinais de dor explícita (+2) e urgência (+1); quente a partir de 6 pontos | Aceita | 2026-10-11 |
 
 ---
 
@@ -1150,3 +1151,45 @@ aparece como "aprovação simulada" na linha do tempo.
 **Domínios fictícios:** o domínio reservado `.example` foi recusado pelo HubSpot como e-mail inválido. Os endereços
 usam subdomínios de `example.com` (ex.: `rita.souza@ritadoces.example.com`), também reservado por norma: nunca pertence
 a uma pessoa ou empresa real, e passa na validação de e-mail dos sistemas.
+
+---
+
+## 053: Temperatura mede intenção, não só potencial
+
+**Contexto:** a pergunta "a Bianca deveria ser quente ou morna?" (prioridade 5) levou a uma revisão da regra. A
+pontuação vem do cérebro e foi feita **para ordenar a fila do executivo**; na decisão 048 ela foi reaproveitada como
+temperatura de todos os leads. O problema: ela mede o **potencial** da conta (rodada, contratações, gastos em dólar),
+mas não a **intenção** de resolver agora, que é o que "quente" deveria dizer ao time.
+
+A Bianca tinha os quatro elementos clássicos de qualificação (dinheiro: rodada seed; autoridade: decide com a sócia;
+necessidade: "tudo no cartão pessoal e reembolso, uma bagunça"; momento: procurou logo depois da rodada), mas a dor
+contava zero. Ela saía quente "por sorte". Dois contraexemplos com a regra antiga: a mesma Bianca sem citar a rodada
+seria morna (2 pontos); um founder com rodada que diz "só estou pesquisando" seria quente (5 pontos).
+
+**Decisão:**
+- Dois sinais novos de **intenção**: `dor_explicita` (+2): o lead descreveu um problema concreto com a forma atual de
+  pagar despesas (cartão pessoal, reembolso, planilha); e `urgencia` (+1): pressa com prazo explícito ("hoje", "este
+  mês"). Informar disponibilidade para uma reunião ou aceitar o próximo passo **não** é urgência. Máximo: 16 pontos.
+- **Quente passa a exigir 6 pontos** (antes, 5); morno de 2 a 5. Com isso, potencial sem intenção (rodada + decide = 5)
+  fica morno, e potencial com intenção (rodada + decide + dor = 7) fica quente. A regra da 052 continua: fora do perfil,
+  perdido ou opt-out é sempre frio.
+- **Leads existentes relidos:** o Haiku leu só as mensagens de cada lead e marcou os sinais novos com a frase de
+  evidência; as marcações foram **revisadas uma a uma** antes de gravar. A revisão rejeitou 4 marcações de urgência
+  (o modelo tratou "quinta à tarde funciona" e "quero sim" como pressa) e, por isso, a descrição do sinal ficou mais
+  estrita. Cada lead alterado ganhou o evento `sinais_recalculados`, com a evidência, e o HubSpot foi atualizado.
+
+**Efeito na base:**
+
+| Lead | Antes | Depois |
+|---|---|---|
+| Bianca (rodada + decide + dor) | 5 quente | **7 quente** |
+| Helena (rodada + contratando + dólar + decide + dor) | 9 quente | 11 quente |
+| Lumen (contratando + dólar + decide + dor) | 6 quente | 8 quente |
+| Nexora (decide + dor) | 2 morno | 4 morno |
+| Rafael, Lucas (dor) | 0 frio | 2 morno |
+| Ricardo, da Lumen (decide + urgência) | 2 morno | 3 morno |
+| Sara (urgência) | 0 frio | 1 frio |
+
+**Motivo:** um painel comercial usa a temperatura para decidir onde agir primeiro. Medir só o potencial esquenta quem
+tem dinheiro e não tem pressa, e esfria quem tem um problema claro. Separar potencial (os seis sinais originais) de
+intenção (os dois novos) deixa a regra explicável para o time. Continua sendo uma hipótese a calibrar com dados reais.

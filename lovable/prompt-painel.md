@@ -109,7 +109,7 @@ Este é um **case de portfólio** com dados fictícios. Mostre no topo: logo em 
 - **Resumo**:
   - "Resumo da conversa" com o texto de `resumo` (ou "Resumo ainda não gerado").
   - "Análise do lead": **temperatura** (ícone + rótulo Quente/Morno/Frio) e **prioridade** num medidor
-    semicircular de 0 a 13.
+    semicircular de 0 a 16.
   - "Roteamento": etapa e faixa em badges, com `motivo_faixa` abaixo.
   - "Qualificação": checklist dos seis dados que o P.H. precisa coletar (tipo de empresa, funcionários,
     gasto mensal, cargo/decisor, dor e solução atual), com ✓ e o valor quando preenchido, ou

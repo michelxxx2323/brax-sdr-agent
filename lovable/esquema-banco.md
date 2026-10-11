@@ -41,7 +41,7 @@ painel_leads (id) ──< painel_mensagens (lead_id)   uma conversa por lead, or
 | `faixa` | text | Resultado da qualificação, decidido pelo código | `self_service`, `executivo`, `fora_do_icp`, `humano`, vazio (ainda qualificando) |
 | `motivo_faixa` | text | Explicação da faixa | `22 funcionários (> 20)`, `mei` |
 | `aprovacao` | text | Pedido de reunião com executivo (aprovado pelo time no Slack) | `pendente`, `aprovada`, `novo_horario`, `recusada`, vazio |
-| `prioridade` | integer | Pontos por sinais de compra (maior = mais quente) | `0` a `13` |
+| `prioridade` | integer | Pontos por sinais de compra e de intenção (maior = mais quente) | `0` a `16` |
 | `opt_out` | boolean | Pediu para não receber mais mensagens (LGPD) | `false` |
 | `encerrada` | boolean | Conversa encerrada | `true` |
 | `transferido_para_vendedor` | boolean | Passado para um vendedor humano | `false` |
@@ -65,12 +65,13 @@ painel_leads (id) ──< painel_mensagens (lead_id)   uma conversa por lead, or
 
 | Valor | Rótulo | Regra (pontos de `prioridade`) |
 |---|---|---|
-| `quente` | 🔥 Quente | 5 ou mais (ex.: quem decide + rodada recente) |
-| `morno` | 🌤 Morno | 2 a 4 (um sinal forte, ou só ser quem decide) |
+| `quente` | 🔥 Quente | 6 ou mais (ex.: rodada recente + quem decide + dor explícita) |
+| `morno` | 🌤 Morno | 2 a 5 (ex.: só ser quem decide; ou rodada + quem decide, sem dor nem urgência) |
 | `frio` | ❄️ Frio | 0 ou 1, **ou** lead fora do perfil, perdido ou com opt-out (com quaisquer pontos) |
 
 Pontos: rodada recente 3; contratando rápido 2; primeira pessoa de finanças 2; gastos em dólar 2; novo escritório 1;
-insatisfeito com o banco 1; quem conversa é quem decide 2.
+insatisfeito com o banco 1; quem conversa é quem decide 2; dor explícita com a forma atual de pagar despesas 2;
+urgência declarada 1 (decisão 053: os dois últimos medem intenção, os outros, potencial).
 
 ### Links para o HubSpot
 

@@ -54,7 +54,7 @@ def test_qualificacao_descarta_nome_generico():
 
 
 def test_rotear_self_service_devolve_link_do_app():
-    lead = Lead(id="t", dados={"tipo_empresa": "ltda", "funcionarios": 6, "gasto_mensal": 8000, "setor": "SaaS", "empresa": "Acme"})
+    lead = Lead(id="t", dados={"tipo_empresa": "ltda", "funcionarios": 6, "gasto_mensal": 8000, "setor": "SaaS"})
     resultado, _ = _executar("rotear_lead", {}, lead)
     assert resultado["faixa"] == "self_service"
     assert resultado["link_app"] == config.LINK_APP
@@ -196,7 +196,7 @@ def test_setor_especial_e_roteado_na_hora_para_humano():
 def test_lead_transferido_e_roteado_sem_link():
     # Achado na 2ª bateria: o lead esperava o vendedor e recebeu o link do app.
     lead = Lead(id="t", transferido_para_vendedor=True,
-                dados={"tipo_empresa": "ltda", "funcionarios": 15, "gasto_mensal": 30000, "setor": "B2B", "empresa": "Nexo"})
+                dados={"tipo_empresa": "ltda", "funcionarios": 15, "gasto_mensal": 30000, "setor": "B2B"})
     resultado, _ = _executar("rotear_lead", {}, lead)
     assert lead.faixa == "self_service" and "link_app" not in resultado
     assert "vendedor" in resultado["proximo_passo"]
@@ -208,7 +208,7 @@ def test_lead_transferido_e_roteado_sem_link():
 
 def test_ultimo_dado_registrado_roteia_na_hora():
     # Decisão 049 (teste da Bianca): com tipo, setor, tamanho e gasto, a IA fez outra pergunta em vez de rotear.
-    lead = Lead(id="t", dados={"tipo_empresa": "ltda", "setor": "logística", "funcionarios": 8, "empresa": "Trilha Verde"})
+    lead = Lead(id="t", dados={"tipo_empresa": "ltda", "setor": "logística", "funcionarios": 8})
     resultado, _ = _executar("registrar_qualificacao", {"gasto_mensal": 20000}, lead)
     assert lead.faixa == "self_service"
     assert resultado["roteamento"]["link_app"] == config.LINK_APP

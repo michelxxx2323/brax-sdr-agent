@@ -57,7 +57,6 @@ def rotear(
     so_quer_credito: bool = False,
     setor_especial: bool = False,
     setor: str | None = None,
-    empresa: str | None = None,
 ) -> Roteamento:
     """Aplica a tabela de roteamento na ordem definida em qualificacao.md."""
     # 1. Fora do ICP: desqualificar cedo.
@@ -80,8 +79,7 @@ def rotear(
     faltando = [
         nome
         for nome, valor in (
-            ("tipo_empresa", tipo_empresa), ("funcionarios", funcionarios), ("gasto_mensal", gasto_mensal), ("setor", setor),
-            ("empresa", empresa),
+            ("tipo_empresa", tipo_empresa), ("funcionarios", funcionarios), ("gasto_mensal", gasto_mensal), ("setor", setor)
         )
         if valor is None
     ]
@@ -93,9 +91,6 @@ def rotear(
         # Sem saber o setor, pode ser um setor de análise especial: perguntar o que a empresa faz antes.
         if setor is None:
             return Roteamento("dados_insuficientes", "falta: setor")
-        # Sem o nome da empresa, o negócio entra no CRM sem empresa (decisão 056, caso da Camila).
-        if empresa is None:
-            return Roteamento("dados_insuficientes", "falta: empresa")
         return Roteamento("executivo", " e ".join(motivos_executivo))
 
     # 4. Self-service: precisa dos DOIS critérios dentro do limite.

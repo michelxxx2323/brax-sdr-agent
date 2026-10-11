@@ -9,12 +9,12 @@ from brax_sdr.roteamento import prioridade, rotear
     ("dados", "faixa_esperada"),
     [
         # Self-service: os dois critérios dentro do limite (limites inclusivos).
-        ({"tipo_empresa": "ltda", "funcionarios": 6, "gasto_mensal": 8_000, "setor": "SaaS"}, "self_service"),
-        ({"tipo_empresa": "sa", "funcionarios": 20, "gasto_mensal": 50_000, "setor": "e-commerce"}, "self_service"),
+        ({"tipo_empresa": "ltda", "funcionarios": 6, "gasto_mensal": 8_000, "empresa": "Acme", "setor": "SaaS"}, "self_service"),
+        ({"tipo_empresa": "sa", "funcionarios": 20, "gasto_mensal": 50_000, "empresa": "Acme", "setor": "e-commerce"}, "self_service"),
         # Executivo: basta um critério acima.
-        ({"tipo_empresa": "ltda", "funcionarios": 21, "gasto_mensal": 10_000, "setor": "SaaS"}, "executivo"),
-        ({"tipo_empresa": "ltda", "funcionarios": 5, "gasto_mensal": 50_001, "setor": "marketplace"}, "executivo"),
-        ({"tipo_empresa": "ltda", "funcionarios": 28, "gasto_mensal": None, "setor": "healthtech"}, "executivo"),
+        ({"tipo_empresa": "ltda", "funcionarios": 21, "gasto_mensal": 10_000, "empresa": "Acme", "setor": "SaaS"}, "executivo"),
+        ({"tipo_empresa": "ltda", "funcionarios": 5, "gasto_mensal": 50_001, "empresa": "Acme", "setor": "marketplace"}, "executivo"),
+        ({"tipo_empresa": "ltda", "funcionarios": 28, "gasto_mensal": None, "empresa": "Acme", "setor": "healthtech"}, "executivo"),
         # Fora do ICP.
         ({"tipo_empresa": "mei", "funcionarios": 1, "gasto_mensal": 2_000}, "fora_do_icp"),
         ({"tipo_empresa": "pessoa_fisica"}, "fora_do_icp"),
@@ -42,19 +42,22 @@ def test_motivo_fora_do_icp_usa_codigo_padronizado():
 
 
 def test_motivo_executivo_explica_os_criterios():
-    motivo = rotear(tipo_empresa="ltda", funcionarios=28, gasto_mensal=70_000, setor="SaaS").motivo
+    motivo = rotear(tipo_empresa="ltda", funcionarios=28, gasto_mensal=70_000, setor="SaaS", empresa="Acme").motivo
     assert "28 funcionários" in motivo
     assert "R$ 70.000" in motivo
 
 
 def test_motivo_dados_insuficientes_lista_o_que_falta():
-    assert rotear(tipo_empresa="ltda").motivo == "falta: funcionarios, gasto_mensal, setor"
+    assert rotear(tipo_empresa="ltda").motivo == "falta: funcionarios, gasto_mensal, setor, empresa"
     assert rotear(tipo_empresa="ltda", funcionarios=30).motivo == "falta: setor"
+    # Decisão 056 (caso da Camila): sem o nome da empresa, o negócio entraria no CRM sem empresa.
+    assert rotear(tipo_empresa="ltda", funcionarios=30, setor="SaaS").motivo == "falta: empresa"
+    assert rotear(tipo_empresa="mei").faixa == "fora_do_icp"  # fora do perfil não precisa da empresa
 
 
 def test_setor_comum_nao_vira_analise_especial():
     for setor in ("SaaS de RH", "estúdio de jogos mobile", "marketplace de alimentos", "fintech de pagamentos"):
-        assert rotear(tipo_empresa="ltda", funcionarios=6, gasto_mensal=8_000, setor=setor).faixa == "self_service"
+        assert rotear(tipo_empresa="ltda", funcionarios=6, gasto_mensal=8_000, setor=setor, empresa="Acme").faixa == "self_service"
 
 
 def test_prioridade():

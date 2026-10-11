@@ -360,7 +360,7 @@ def test_mensagens_ganham_horario_que_nao_vai_para_a_api(tmp_path):
 
 def test_resumo_quando_a_faixa_e_definida(tmp_path, monkeypatch):
     monkeypatch.setattr(Agente, "_atualizar_resumo", ATUALIZAR_RESUMO_REAL)
-    _em_andamento(tmp_path, "res", dados={"tipo_empresa": "ltda", "funcionarios": 6, "setor": "SaaS"})
+    _em_andamento(tmp_path, "res", dados={"tipo_empresa": "ltda", "funcionarios": 6, "setor": "SaaS", "empresa": "Acme"})
     cliente = ClienteFalso([
         _msg([ToolUseBlock(id="t1", name="registrar_qualificacao", input={"gasto_mensal": 8000}, type="tool_use"),
               ToolUseBlock(id="t2", name="rotear_lead", input={}, type="tool_use")], "tool_use"),
@@ -380,7 +380,7 @@ def test_resumo_quando_a_faixa_e_definida(tmp_path, monkeypatch):
 
 def test_falha_no_resumo_nao_derruba_a_resposta(tmp_path, monkeypatch):
     monkeypatch.setattr(Agente, "_atualizar_resumo", ATUALIZAR_RESUMO_REAL)
-    _em_andamento(tmp_path, "res2", dados={"tipo_empresa": "ltda", "funcionarios": 6, "setor": "SaaS", "gasto_mensal": 8000})
+    _em_andamento(tmp_path, "res2", dados={"tipo_empresa": "ltda", "funcionarios": 6, "setor": "SaaS", "gasto_mensal": 8000, "empresa": "Acme"})
     cliente = ClienteFalso([
         _msg([ToolUseBlock(id="t1", name="rotear_lead", input={}, type="tool_use")], "tool_use"),
         _msg([TextBlock(text="Abre a conta aqui: https://app.brax.example/abrir-conta", type="text")], "end_turn"),
@@ -393,7 +393,7 @@ def test_falha_no_resumo_nao_derruba_a_resposta(tmp_path, monkeypatch):
 def test_texto_antes_do_registro_que_roteia_perde_a_validade(tmp_path):
     # Decisão 049: com o roteamento automático, registrar pode mudar a resposta. A pergunta escrita antes não vai junto
     # com o link (o lead receberia "e quanto vocês gastam?" e o link do app na mesma mensagem).
-    _em_andamento(tmp_path, "rot", dados={"tipo_empresa": "ltda", "setor": "SaaS", "funcionarios": 8})
+    _em_andamento(tmp_path, "rot", dados={"tipo_empresa": "ltda", "setor": "SaaS", "funcionarios": 8, "empresa": "Acme"})
     cliente = ClienteFalso([
         _msg([TextBlock(text="Show! E quantas pessoas usariam os cartões?", type="text"),
               ToolUseBlock(id="t1", name="registrar_qualificacao", input={"gasto_mensal": 20000}, type="tool_use")],
@@ -482,8 +482,36 @@ def test_paragrafo_de_bastidor_sai_e_a_resposta_fica(tmp_path):
               ToolUseBlock(id="t1", name="registrar_qualificacao", input={"sinais_de_compra": ["gastos_em_dolar"]},
                            type="tool_use")], "tool_use"),
         _msg([TextBlock(text="Falta confirmar o tipo de empresa para rotear.\n\nNa prática, cada pessoa do time pode ter "
-                             "o próprio cartão. A empresa já tem CNPJ? É LTDA ou S.A.?", type="text")], "end_turn"),
+                             "o próprio cartão. A empresa é LTDA ou S.A.?", type="text")], "end_turn"),
     ])
     resposta = Agente(client=cliente, pasta_leads=tmp_path).responder("bast", "Gastamos bastante em dólar com nuvem.")
-    assert resposta.texto == "Na prática, cada pessoa do time pode ter o próprio cartão. A empresa já tem CNPJ? É LTDA ou S.A.?"
+    assert resposta.texto == "Na prática, cada pessoa do time pode ter o próprio cartão. A empresa é LTDA ou S.A.?"
     assert "bastidor_removido" in [e["tipo"] for e in memoria.carregar("bast", pasta=tmp_path).eventos]
+
+
+def test_duas_perguntas_no_whatsapp_viram_uma(tmp_path):
+    # Decisão 056: "uma pergunta por vez" foi o critério do juiz que mais caiu com o Haiku 5.5.
+    _em_andamento(tmp_path, "duas")
+    cliente = ClienteFalso([
+        _msg([TextBlock(text="Legal! Qual é o seu papel na empresa? E a Rota Mídia já tem CNPJ?", type="text")], "end_turn"),
+        _msg([TextBlock(text="Legal! A Rota Mídia já tem CNPJ?", type="text")], "end_turn"),  # o editor
+    ])
+    resposta = Agente(client=cliente, pasta_leads=tmp_path).responder("duas", "Somos a Rota Mídia")
+    assert resposta.texto == "Legal! A Rota Mídia já tem CNPJ?"
+
+
+def test_editor_que_mantem_duas_perguntas_e_descartado(tmp_path):
+    _em_andamento(tmp_path, "duas2")
+    original = "Legal! Qual é o seu papel na empresa? E a Rota Mídia já tem CNPJ?"
+    cliente = ClienteFalso([
+        _msg([TextBlock(text=original, type="text")], "end_turn"),
+        _msg([TextBlock(text="Qual seu papel? Já tem CNPJ?", type="text")], "end_turn"),  # ainda duas
+    ])
+    assert Agente(client=cliente, pasta_leads=tmp_path).responder("duas2", "Somos a Rota Mídia").texto == original
+
+
+def test_cumprimento_nao_conta_como_pergunta():
+    from brax_sdr.agente import _perguntas
+
+    assert _perguntas("Oi, Ana! Tudo bem? Qual o nome da empresa?") == 1
+    assert _perguntas("Qual o seu papel? E já tem CNPJ?") == 2

@@ -211,7 +211,7 @@ _PROXIMO_PASSO = {
     "humano": "Diga que uma pessoa do time vai continuar o atendimento e chame transferir_para_humano.",
     "dados_insuficientes": (
         "Pergunte, uma coisa por vez, o que falta para rotear. Se faltar o setor, pergunte o que a empresa faz "
-        "e registre a resposta em setor."
+        "e registre a resposta em setor. Se faltar a empresa, pergunte o nome dela."
     ),
 }
 
@@ -226,6 +226,7 @@ def _rotear_dados(lead: Lead):
         so_quer_credito=bool(d.get("so_quer_credito")),
         setor_especial=bool(d.get("setor_especial")),
         setor=d.get("setor"),
+        empresa=d.get("empresa"),
     )
 
 

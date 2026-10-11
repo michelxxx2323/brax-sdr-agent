@@ -108,6 +108,15 @@ def _reescrita_confiavel(original: str, curto: str) -> bool:
     return bool(palavras_curto) and len(palavras_curto & _palavras(original)) / len(palavras_curto) >= 0.5
 
 
+# "Oi, tudo bem?" é cumprimento, não pergunta de qualificação: não conta para a regra de uma pergunta (decisão 056).
+_PERGUNTA_DE_CORTESIA = re.compile(r"\b(tudo (bem|certo|bom|tranquilo|joia|jóia)|beleza|como vai)\s*\?", re.IGNORECASE)
+
+
+def _perguntas(texto: str) -> int:
+    """Quantas perguntas de verdade a mensagem faz (sem contar cumprimentos)."""
+    return texto.count("?") - len(_PERGUNTA_DE_CORTESIA.findall(texto))
+
+
 SEMELHANCA_DE_REPETICAO = 0.6
 
 
@@ -174,6 +183,8 @@ class Agente:
             return texto
         _somar_uso(uso, msg.usage)
         curto = "\n\n".join(b.text.strip() for b in msg.content if b.type == "text").strip()
+        if _perguntas(texto) > 1 and _perguntas(curto) > 1:
+            return texto  # chamado para deixar uma pergunta só e não conseguiu (decisão 056)
         return curto if _reescrita_confiavel(texto, curto) else texto
 
     def mensagem_proativa(
@@ -391,11 +402,17 @@ class Agente:
             # Despedida cordial e padronizada (decisão 029): no teste, o modelo respondeu só "Conversa encerrada.".
             texto_final = mensagem_sem_interesse(lead.primeiro_nome(), lead.dados.get("empresa"))
             fixar_texto(texto_final)
-        elif not mensagem_do_codigo and lead.canal == "whatsapp" and len(texto_final) > LIMITE_CARACTERES_WHATSAPP:
-            # Mensagem longa no WhatsApp: pede uma versão curta ao modelo (decisão 022).
+        elif (
+            not mensagem_do_codigo
+            and lead.canal == "whatsapp"
+            and (len(texto_final) > LIMITE_CARACTERES_WHATSAPP or _perguntas(texto_final) > 1)
+        ):
+            # Mensagem longa (decisão 022) ou com mais de uma pergunta (decisão 056: o critério do juiz que mais caiu com o
+            # Haiku 5.5) no WhatsApp: pede uma versão curta, com no máximo uma pergunta.
             curto = self._encurtar(texto_final, resposta.uso)
             if curto != texto_final:
-                lead.registrar_evento("mensagem_encurtada", f"{len(texto_final)} → {len(curto)} caracteres")
+                lead.registrar_evento("mensagem_encurtada", f"{len(texto_final)} → {len(curto)} caracteres, "
+                                                            f"{_perguntas(texto_final)} → {_perguntas(curto)} pergunta(s)")
                 fixar_texto(curto)
                 texto_final = curto
 

@@ -101,7 +101,7 @@ _TEXTO_INTERNO = re.compile(
     # Planejamento narrado ao cliente (dados de demonstração com o Haiku 5.5, decisão 055): "Vou registrar de novo, com o
     # gasto em dólar como sinal de compra"; "Falta confirmar o tipo de empresa para rotear".
     r"|\brotear\b|\bsina(l|is) de compra\b|\bregistrar (de novo|novamente)\b"
-    r"|\b(registrar|registrei|registrando) (os|esses|estes) dados\b",
+    r"|\b(registrar|registrei|registrando|registro) (os|esses|estes) dados\b",
     re.IGNORECASE,
 )
 
@@ -112,6 +112,8 @@ def sem_paragrafos_internos(texto: str) -> str:
     Sem o "pensamento" ligado (decisão 051), o Haiku 5.5 às vezes escreve o próprio planejamento antes da resposta.
     Devolve "" se todos os parágrafos forem internos (aí vale o bloqueio da mensagem inteira, decisão 024).
     """
+    # Por parágrafo, nunca por frase: num parágrafo de bastidor, as outras frases também costumam ser bastidor, mesmo sem
+    # termo interno ("Conversa encerrada. Wesley recebeu a orientação e se despediu naturalmente."). Testado em 11/10.
     paragrafos = [p for p in texto.split("\n\n") if p.strip()]
     return "\n\n".join(p for p in paragrafos if not _TEXTO_INTERNO.search(p))
 

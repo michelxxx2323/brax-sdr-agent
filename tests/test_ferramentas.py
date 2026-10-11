@@ -255,3 +255,12 @@ def test_planejamento_narrado_e_texto_interno():
     # Fala legítima continua passando (inclusive a confirmação de opt-out).
     assert not parece_texto_interno("Pronto, registrei seu pedido: não vou mais te enviar mensagens.")
     assert not parece_texto_interno("Para o tamanho de vocês, o caminho é abrir a conta pelo app.")
+
+
+def test_bastidor_sai_por_paragrafo_inteiro():
+    # Bateria de 11/10: "Registro os dados" passava. E a remoção é por parágrafo, nunca por frase: as outras frases de
+    # um parágrafo de bastidor também são bastidor, mesmo sem termo interno.
+    from brax_sdr.guardrails import sem_paragrafos_internos
+
+    assert sem_paragrafos_internos("Registro os dados e já verifico o próximo passo.\n\nQual o setor?") == "Qual o setor?"
+    assert sem_paragrafos_internos("Conversa encerrada. Wesley recebeu a orientação e se despediu naturalmente.") == ""

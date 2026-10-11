@@ -155,9 +155,54 @@ Cada gráfico com título claro e estado vazio amigável.
 
 ### Prompt 3: acabamento
 
-- Página "Sobre o P.H." (link no topo): o que o agente faz, as três faixas de roteamento e seus critérios
-  (self-service: até 20 pessoas e até R$ 50 mil/mês; executivo: acima de um dos dois, com aprovação humana;
-  fora do perfil: MEI, pessoa física, sem CNPJ ou só crédito), os guardrails do setor financeiro e o link do
-  repositório: https://github.com/michelxxx2323/brax-sdr-agent
-- Revise contraste, carregamento (skeletons), mensagens de erro e o layout no celular.
-- Confirme que não existe nenhuma operação de escrita no código e nenhuma referência à tabela `leads`.
+Ajustes de acabamento, sem criar nem alterar nada no banco:
+
+1. **Rótulos em português.** Nos bastidores da IA e na linha do tempo, mostre sempre rótulos, nunca os valores técnicos:
+   - Faixa: `self_service` → "Self-service (app)", `executivo` → "Executivo", `fora_do_icp` → "Fora do perfil",
+     `humano` → "Análise humana". Nos eventos de roteamento, o `detalhe` começa com o valor técnico da faixa seguido
+     de dois-pontos (ex.: `self_service: 8 funcionários...`): troque o início pelo rótulo.
+   - Campos de "Dados registrados" (o `detalhe` do evento `qualificacao` é uma lista separada por vírgulas):
+     `empresa` → "empresa", `site` → "site", `tipo_empresa` → "tipo de empresa", `funcionarios` → "funcionários",
+     `gasto_mensal` → "gasto mensal", `nome_contato` → "nome", `cargo` → "cargo", `persona` → "perfil",
+     `decisor` → "quem decide", `setor` → "setor", `dor` → "dor", `solucao_atual` → "solução atual",
+     `sinais_de_compra` → "sinais de compra", `so_quer_credito` → "só quer crédito", `setor_especial` → "setor especial".
+   - Sinais de compra: `rodada_recente` → "Rodada recente", `contratando_rapido` → "Contratando rápido",
+     `primeira_pessoa_financas` → "1ª pessoa de finanças", `novo_escritorio` → "Novo escritório",
+     `gastos_em_dolar` → "Gastos em dólar", `insatisfeito_com_banco` → "Insatisfeito com o banco",
+     `dor_explicita` → "Dor explícita", `urgencia` → "Urgência".
+   - Gráfico de motivos de "fora do perfil" (`motivo_faixa`): `mei` → "MEI", `pessoa_fisica` → "Pessoa física",
+     `sem_cnpj` → "Sem CNPJ", `so_credito` → "Só quer crédito"; outros valores: troque `_` por espaço e capitalize.
+
+2. **Leads sem nome:** avatar com ícone de telefone (WhatsApp) ou de envelope (e-mail) em vez de dígitos. Telefone
+   formatado como +55 11 90000-0010 quando o id começar com 55 e tiver 13 dígitos; outros números, com "+" e o número
+   como está (ex.: +16315551181). No e-mail, mostre o endereço.
+
+3. **Card "Pedidos de reunião"** (renomeie "Reuniões com executivo"): número principal = leads com `aprovacao`
+   preenchida (`pendente`, `aprovada`, `novo_horario` ou `recusada`, isto é, incluindo os recusados); subtítulo com
+   as aprovadas (`aprovada` + `novo_horario`, como no funil do HubSpot) e a taxa de aprovação (aprovadas ÷ pedidos).
+
+4. **Medidor de prioridade:** a escala vai de 0 a 16 (troque o "de 13" por "de 16"). Faixas coloridas de fundo: frio de
+   0 a 1, morno de 2 a 5, quente de 6 a 16. A temperatura vem pronta da coluna `temperatura` da visão: **não recalcule
+   no front**. Quando a temperatura for `frio` e a prioridade for maior que 1, mostre abaixo do medidor uma nota curta
+   com o motivo, verificando nesta ordem: `faixa = fora_do_icp` → "Frio: fora do perfil"; `opt_out` → "Frio: pediu para
+   parar"; `sem_resposta` → "Frio: sem resposta aos lembretes"; `motivo_encerramento = sem_interesse` → "Frio: sem
+   interesse"; outro `motivo_encerramento` → "Frio: conversa encerrada".
+
+5. **Página "Sobre o P.H."** (link no topo), com:
+   - O que o agente faz: atende leads inbound por WhatsApp e e-mail, se apresenta como assistente virtual, qualifica,
+     roteia e registra tudo no HubSpot, com aprovação humana no Slack.
+   - As faixas de roteamento: Self-service (até 20 pessoas e até R$ 50 mil/mês, recebe o link do app); Executivo (acima
+     de um dos dois, reunião com aprovação humana); Análise humana (setores que exigem avaliação de uma pessoa, como
+     criptoativos e apostas); Fora do perfil (MEI, pessoa física, sem CNPJ ou só quer crédito). Indique que os limites
+     são hipóteses a calibrar.
+   - A temperatura: quente com 6 pontos ou mais, morno de 2 a 5, frio de 0 a 1 ou sem oportunidade viva; os pontos somam
+     sinais de potencial (rodada, contratações, gastos em dólar...) e de intenção (dor explícita, urgência).
+   - Os guardrails, exatamente estes: nunca promete aprovação de conta, limite ou crédito; nunca pede senha, código,
+     dados de cartão ou documentos por mensagem; nunca apresenta rendimento como garantido; se identifica como assistente
+     virtual e nunca finge ser humano; respeita pedidos de parada (LGPD); na dúvida, passa para um humano.
+   - Aviso de que a BRAX é fictícia, inspirada na Brex, e o link do repositório:
+     https://github.com/michelxxx2323/brax-sdr-agent
+
+6. Revise contraste, carregamento (skeletons), mensagens de erro e o layout no celular.
+
+Não adicione nenhuma operação de escrita nem consulta à tabela `leads`.

@@ -31,7 +31,8 @@ Identidade visual própria da BRAX: inspirar-se no layout, não copiar marcas, c
 **Diferenças em relação ao pedido:**
 - Acesso: as visões **não** usam `security_invoker`. Com ele, o usuário logado precisaria ler a tabela `leads`
   inteira (com o estado interno), que foi o problema achado na revisão da decisão 047. As visões rodam com a
-  permissão do dono, a tabela fica fechada e nada vai para anon (verificação: `verificar_acesso_painel.py`, 11/11).
+  permissão do dono, a tabela fica fechada e nada vai para anon (verificação: `verificar_acesso_painel.py`, 11/11 na
+  época; 17/17 depois das visões de evals).
 - A mais: `hubspot_empresa_id`, `ultima_mensagem_quando` e `resumo_em`. O prefixo técnico
   `[Nome no perfil do WhatsApp: ...]` já sai do texto nas visões.
 
@@ -42,7 +43,8 @@ Identidade visual própria da BRAX: inspirar-se no layout, não copiar marcas, c
 > Crie o projeto no Lovable conectado ao **projeto Supabase existente** (`brax-sdr`) e ao GitHub.
 > Confirme a conexão antes (pergunte ao Lovable qual projeto Supabase está conectado; o ID deve ser o do `.env`).
 > Cole o **Prompt 1** e, logo abaixo, o conteúdo inteiro de `lovable/esquema-banco.md`.
-> Só envie o Prompt 2 quando o 1 estiver funcionando, e o 3 depois do 2.
+> Só envie o Prompt 2 quando o 1 estiver funcionando, e o 3 depois do 2. No Prompt 3, cole de novo o esquema atualizado
+> logo abaixo do texto.
 > Quando o Lovable for montar os botões do HubSpot, informe a ele o **ID da conta do HubSpot** (o número depois de
 > `/contacts/` na barra de endereço do HubSpot). Ele não fica no repositório.
 
@@ -109,7 +111,7 @@ Este é um **case de portfólio** com dados fictícios. Mostre no topo: logo em 
 - **Resumo**:
   - "Resumo da conversa" com o texto de `resumo` (ou "Resumo ainda não gerado").
   - "Análise do lead": **temperatura** (ícone + rótulo Quente/Morno/Frio) e **prioridade** num medidor
-    semicircular de 0 a 16.
+    semicircular de 0 a 13.
   - "Roteamento": etapa e faixa em badges, com `motivo_faixa` abaixo.
   - "Qualificação": checklist dos seis dados que o P.H. precisa coletar (tipo de empresa, funcionários,
     gasto mensal, cargo/decisor, dor e solução atual), com ✓ e o valor quando preenchido, ou
@@ -126,6 +128,9 @@ coluna por vez (lista → chat → análise, com botão de voltar). Rodapé disc
 empresa fictícia criada para um projeto de portfólio."
 
 [COLE AQUI O CONTEÚDO DE lovable/esquema-banco.md]
+
+> A cópia colada no Lovable junto com o Prompt 1 era a versão de 09/10. Desde então mudaram a temperatura (052, 053),
+> os sinais de compra (053) e os ids de teste (052). O Prompt 3 envia o esquema atualizado.
 
 ---
 
@@ -170,8 +175,10 @@ Ajustes de acabamento, sem criar nem alterar nada no banco:
      `primeira_pessoa_financas` → "1ª pessoa de finanças", `novo_escritorio` → "Novo escritório",
      `gastos_em_dolar` → "Gastos em dólar", `insatisfeito_com_banco` → "Insatisfeito com o banco",
      `dor_explicita` → "Dor explícita", `urgencia` → "Urgência".
-   - Gráfico de motivos de "fora do perfil" (`motivo_faixa`): `mei` → "MEI", `pessoa_fisica` → "Pessoa física",
-     `sem_cnpj` → "Sem CNPJ", `so_credito` → "Só quer crédito"; outros valores: troque `_` por espaço e capitalize.
+   - Motivo da faixa (`motivo_faixa`), em todo lugar onde aparecer (badge de roteamento, dados, gráfico de motivos de
+     "fora do perfil"): `mei` → "MEI", `pessoa_fisica` → "Pessoa física", `sem_cnpj` → "Sem CNPJ", `so_credito` → "Só
+     quer crédito", `setor_analise_especial` → "Setor de análise especial". Motivos de self-service e executivo já vêm
+     em texto (ex.: "22 funcionários (> 20)"): mostre como estão.
 
 2. **Leads sem nome:** avatar com ícone de telefone (WhatsApp) ou de envelope (e-mail) em vez de dígitos. Telefone
    formatado como +55 11 90000-0010 quando o id começar com 55 e tiver 13 dígitos; outros números, com "+" e o número
@@ -206,3 +213,8 @@ Ajustes de acabamento, sem criar nem alterar nada no banco:
 6. Revise contraste, carregamento (skeletons), mensagens de erro e o layout no celular.
 
 Não adicione nenhuma operação de escrita nem consulta à tabela `leads`.
+
+Abaixo, o esquema atualizado do banco (a temperatura, os sinais de compra e os eventos mudaram desde o Prompt 1;
+use-o como referência no lugar da versão anterior):
+
+[COLE AQUI O CONTEÚDO DE lovable/esquema-banco.md]

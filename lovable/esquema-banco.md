@@ -25,7 +25,7 @@ painel_leads (id) ──< painel_mensagens (lead_id)   uma conversa por lead, or
 
 | Coluna | Tipo | Significado | Exemplos |
 |---|---|---|---|
-| `id` | text | Identificador do lead: telefone (WhatsApp) ou e-mail; nos testes, um apelido | `5511900000099`, `lumen` |
+| `id` | text | Identificador do lead: telefone (WhatsApp) ou e-mail (todos fictícios) | `5511900000099`, `rita.souza@ritadoces.example.com` |
 | `canal` | text | Canal de origem | `whatsapp`, `email` |
 | `nome_contato` | text | Nome da pessoa (pode ser vazio) | `Rafael` |
 | `empresa` | text | Nome da empresa (pode ser vazio) | `Nuvem Azul` |
@@ -129,7 +129,8 @@ Tipos mais comuns e rótulos sugeridos: `qualificacao` (Dados registrados), `rot
 `conversa_reaberta` (Conversa reaberta), `followup` (Lembrete enviado), `sem_resposta` (Sem resposta aos lembretes),
 `retorno_enviado` (Retorno do time enviado ao lead), `alerta_guardrail` / `alerta_estilo` / `alerta_confiabilidade`
 (Alerta de qualidade), `vazamento_bloqueado` (Mensagem bloqueada pela segurança), `mensagem_encurtada` (Mensagem encurtada),
-`erro_ferramenta` / `crm_erro` / `resumo_erro` (Erro técnico), `renomeado` (Lead renomeado na limpeza dos dados de demonstração). Outros tipos podem aparecer: mostrar o próprio nome.
+`erro_ferramenta` / `crm_erro` / `resumo_erro` (Erro técnico), `renomeado` (Lead renomeado na limpeza dos dados de demonstração), `sinais_recalculados` (Sinais de intenção
+recalculados, com a evidência). Outros tipos podem aparecer: mostrar o próprio nome.
 
 ## Qualidade: resultados dos evals (decisão 050)
 

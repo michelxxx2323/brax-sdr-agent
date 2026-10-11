@@ -218,3 +218,40 @@ Abaixo, o esquema atualizado do banco (a temperatura, os sinais de compra e os e
 use-o como referência no lugar da versão anterior):
 
 [COLE AQUI O CONTEÚDO DE lovable/esquema-banco.md]
+
+---
+
+### Prompt 4: aba Qualidade
+
+Agora crie a aba **"Qualidade"**, ao lado de "Conversas" e "Métricas", sem criar nem alterar nada no banco. Ela mostra
+como o P.H. é avaliado: baterias automáticas em que uma IA faz o papel do lead (conversas fictícias), o código confere o
+resultado (faixa certa, transferência, opt-out, nada de texto interno) e um juiz de IA dá notas de 1 a 5. Use **apenas**
+as visões `painel_evals_baterias` e `painel_evals` (descritas no esquema abaixo).
+
+1. **Texto de abertura** (2 linhas, discreto): o que é uma bateria, como acima, e que todas as conversas são simuladas.
+
+2. **Cartões da última bateria completa** (a mais recente com 20 cenários ou mais): aprovados ("23 de 23"), nota média
+   do juiz, cenários com alerta de guardrail (verde quando zero), custo médio do P.H. por conversa (US$ 0,0035) e o modelo
+   avaliado (`modelo_conversa`, ex.: "claude-haiku-5-5"). Em cada cartão, a variação em relação à bateria completa
+   anterior (▲ ou ▼).
+
+3. **Gráfico de evolução**: uma linha por bateria completa, em ordem de `data`, com a taxa de aprovação (0 a 100%) e a
+   nota média (1 a 5) em eixos separados. Marque no gráfico onde o `modelo_conversa` muda (ex.: "Haiku 4.5 → Haiku 5.5").
+   Ignore baterias com menos de 20 cenários (a piloto) ou mostre-as em cinza.
+
+4. **Notas por critério** da bateria selecionada: barras horizontais de 1 a 5 com a média de cada coluna `nota_*`.
+   Rótulos: tom e clareza; uma pergunta por vez; não repete perguntas; honestidade; guardrails; condução.
+
+5. **Tabela de cenários** da bateria selecionada (seletor de bateria no topo da aba, padrão: a mais recente): título,
+   canal, resultado (badge "Passou" ou "Falhou"), nota média, verificações que falharam (rótulos do esquema) e custo.
+   Ordene com as falhas primeiro e depois pela nota, da menor para a maior.
+
+6. **Detalhe do cenário** (ao clicar numa linha, painel lateral): esperado × obtido lado a lado (com os rótulos de faixa,
+   aprovação e transferência do esquema), as 6 notas, o resumo do juiz, os problemas apontados (lista), os alertas e a
+   conversa inteira no mesmo estilo de chat da tela Conversas (`conversa` é uma lista de pares `["lead" ou "ph", texto]`,
+   em ordem; não há horários).
+
+Mesmas regras de sempre: somente leitura, só as visões indicadas, nada de consultar `leads` ou `evals` diretamente.
+
+[COLE AQUI O CONTEÚDO DE lovable/esquema-banco.md]
+

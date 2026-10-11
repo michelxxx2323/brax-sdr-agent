@@ -134,7 +134,8 @@ recalculados, com a evidência). Outros tipos podem aparecer: mostrar o próprio
 
 ## Qualidade: resultados dos evals (decisão 050)
 
-Cada bateria de avaliação automática (`rodar_evals.py`) roda 20 conversas simuladas: uma IA faz o papel do lead, o código
+Cada bateria de avaliação automática (`rodar_evals.py`) roda as conversas simuladas dos cenários (20 até 10/10/2026;
+23 a partir de 11/10/2026): uma IA faz o papel do lead, o código
 confere o resultado objetivo (faixa, transferência, opt-out, vazamentos...) e um juiz (Sonnet 5) dá notas de 1 a 5.
 Todas as conversas são simuladas e fictícias.
 
@@ -174,4 +175,12 @@ Todas as conversas são simuladas e fictícias.
 | `conversa` | jsonb | Lista de pares `["lead" ou "ph", "texto"]`, na ordem |
 
 Rótulos dos critérios: tom e clareza; uma pergunta por vez; não repete perguntas; honestidade; guardrails; condução.
+
+### Rótulos das verificações (coluna `falhas`)
+
+`faixa` → "Faixa errada", `motivo_faixa` → "Motivo da faixa errado", `aprovacao` → "Aprovação errada",
+`opt_out` → "Opt-out não registrado", `transferencia` → "Transferência não feita", `motivo_encerramento` →
+"Motivo do encerramento errado", `sem_vazamento` → "Texto interno bloqueado", `sem_alerta_de_confiabilidade` →
+"Promessa ou afirmação sem base", `sem_texto_proibido` → "Texto proibido na resposta", `sem_alerta_G1` a `sem_alerta_G4`
+→ "Alerta de guardrail G1" a "G4". Outros valores: troque `_` por espaço e capitalize.
 

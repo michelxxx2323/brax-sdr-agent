@@ -104,7 +104,16 @@ FERRAMENTAS = [
         ),
         "input_schema": {
             "type": "object",
-            "properties": {"motivo": {"type": "string"}},
+            "properties": {
+                "motivo": {"type": "string"},
+                "cliente_atual": {
+                    "type": "boolean",
+                    "description": (
+                        "Verdadeiro se quem escreve já é cliente da BRAX e o assunto é suporte (ex.: cartão bloqueado, "
+                        "problema na conta). Aí não há qualificação de vendas a fazer."
+                    ),
+                },
+            },
             "required": ["motivo"],
             "additionalProperties": False,
         },
@@ -284,18 +293,33 @@ PROXIMO_PASSO_TRANSFERENCIA = (
 )
 
 
+# Decisão 059: com cliente atual em suporte, nada de questionário de vendas (os evals mostraram o P.H. perguntando
+# funcionários e gasto a quem estava com o cartão bloqueado, e induzindo o envio do CNPJ completo).
+PROXIMO_PASSO_SUPORTE = (
+    "Quem escreve já é cliente e o assunto é suporte: não faça perguntas de qualificação de vendas (tipo de empresa, "
+    "funcionários, gasto, setor). Diga que uma pessoa do nosso time de atendimento vai entrar em contato em horário "
+    "comercial (seg a sex, 9h às 18h), sem prometer prazo nem o que ela vai conseguir fazer. Pergunte, no máximo, uma "
+    "coisa que ajude a entender o problema, e nunca peça CNPJ, documentos, senha ou dados do cartão."
+)
+
+
 def _transferir_para_humano(lead: Lead, entrada: dict, alerta_humano: AlertaHumano | None) -> dict:
-    """Passa o lead a um vendedor, que entra em contato em horário comercial; o P.H. segue coletando (decisão 037)."""
+    """Passa o lead a um vendedor, que entra em contato em horário comercial; o P.H. segue coletando (decisão 037).
+
+    Se for cliente atual em suporte, o P.H. não segue coletando dados de vendas (decisão 059).
+    """
+    proximo_passo = PROXIMO_PASSO_SUPORTE if entrada.get("cliente_atual") else PROXIMO_PASSO_TRANSFERENCIA
     if lead.transferido_para_vendedor:
-        return {"ok": True, "ja_transferido": True, "proximo_passo": PROXIMO_PASSO_TRANSFERENCIA}  # um alerta só
+        return {"ok": True, "ja_transferido": True, "proximo_passo": proximo_passo}  # um alerta só
     lead.transferido_para_vendedor = True
-    lead.registrar_evento("transferencia_humano", entrada["motivo"])
+    detalhe = f"cliente atual (suporte): {entrada['motivo']}" if entrada.get("cliente_atual") else entrada["motivo"]
+    lead.registrar_evento("transferencia_humano", detalhe)
     if alerta_humano:
         try:
             alerta_humano(lead, entrada["motivo"])  # Slack: alerta com o botão "Assumir conversa"
         except Exception as erro:
             lead.registrar_evento("alerta_humano_erro", str(erro)[:200])
-    return {"ok": True, "proximo_passo": PROXIMO_PASSO_TRANSFERENCIA}
+    return {"ok": True, "proximo_passo": proximo_passo}
 
 
 def _registrar_opt_out(lead: Lead) -> dict:

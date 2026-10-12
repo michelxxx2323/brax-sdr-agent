@@ -60,7 +60,7 @@
     "id": "pessoa_fisica",
     "titulo": "Freelancer sem empresa (fora do perfil)",
     "canal": "whatsapp",
-    "persona": "Você é Caio, designer freelancer. Você não tem empresa nem CNPJ, trabalha como pessoa física, e quer um cartão para organizar seus gastos. Se o assistente explicar que não atende, agradeça e se despeça.",
+    "persona": "Você é Caio, designer freelancer. Você não tem empresa nem CNPJ, trabalha como pessoa física, e quer um cartão para organizar seus gastos. Se o assistente perguntar se você tem CNPJ ou empresa, responda que não, que trabalha como pessoa física. Depois que o assistente explicar que não atende, agradeça e se despeça.",
     "esperado": {
       "faixa": "fora_do_icp",
       "motivo_faixa_um_de": [

@@ -24,6 +24,10 @@
 | Atendimento | Chat no app | Chat + gerente de conta compartilhado | Gerente de conta dedicado |
 | Canal de venda | **Self-service** (app) | **Executivo** | **Executivo** |
 
+**Usuários na plataforma** são as pessoas que acessam o painel de gestão (sócios, financeiro, gestores que aprovam
+despesas). Qualquer pessoa do time pode ter cartão sem ser usuário: uma empresa de 6 pessoas cabe no Start se até 5
+delas precisarem acessar o painel. Precisa de mais usuários? O caminho é o Growth. <!-- REVISAR -->
+
 ## Tarifas <!-- REVISAR -->
 
 | Item | Valor |

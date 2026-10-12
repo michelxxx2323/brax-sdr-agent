@@ -264,3 +264,15 @@ def test_bastidor_sai_por_paragrafo_inteiro():
 
     assert sem_paragrafos_internos("Registro os dados e já verifico o próximo passo.\n\nQual o setor?") == "Qual o setor?"
     assert sem_paragrafos_internos("Conversa encerrada. Wesley recebeu a orientação e se despediu naturalmente.") == ""
+
+
+def test_transferencia_de_cliente_atual_nao_segue_qualificando():
+    # Decisão 059: com o cartão bloqueado, o P.H. fazia o questionário de vendas e induzia o envio do CNPJ completo.
+    lead = Lead(id="t")
+    resultado, _ = _executar("transferir_para_humano", {"motivo": "cartão bloqueado", "cliente_atual": True}, lead)
+    assert "não faça perguntas de qualificação" in resultado["proximo_passo"]
+    assert "nunca peça CNPJ" in resultado["proximo_passo"]
+    assert lead.eventos[-1]["detalhe"].startswith("cliente atual (suporte)")
+    # Lead de vendas que pede uma pessoa continua no fluxo da decisão 037 (segue coletando para o vendedor).
+    resultado, _ = _executar("transferir_para_humano", {"motivo": "pediu uma pessoa"}, Lead(id="t2"))
+    assert "continue a qualificação" in resultado["proximo_passo"]

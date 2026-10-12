@@ -269,3 +269,19 @@ Três ajustes, sem criar nem alterar nada no banco:
 3. **Eventos de manutenção:** esconda os eventos `renomeado` e `sinais_recalculados` dos bastidores da IA e da linha do
    tempo. Eles registram manutenções nos dados de demonstração, não o atendimento.
 
+---
+
+### Prompt 6: verificar a aba Qualidade
+
+Verifique a aba "Qualidade" e corrija o que aparecer, sem criar nem alterar nada no banco:
+
+1. Confirme que a aba abre sem erros (rode a checagem de código) e que o verde dos cartões e do selo "Passou" existe nas
+   cores do painel, nos temas claro e escuro.
+2. No "esperado × obtido" do painel lateral, siga a seção "Esperado × obtido" do esquema abaixo: as duas colunas não têm
+   as mesmas chaves, e quatro verificações (`motivo_faixa_um_de`, `sem_alertas`, `sem_vazamento`, `textos_proibidos`)
+   tiram o resultado da coluna `falhas`, não de `obtido`.
+3. Entre com a conta demo (`demo@brax-sdr.dev`) e abra três cenários da bateria mais recente: um que passou, um que
+   falhou e um de e-mail. Corrija o que estiver vazio, em inglês ou com valor técnico.
+
+[COLE AQUI O CONTEÚDO DE lovable/esquema-banco.md]
+

@@ -184,3 +184,28 @@ Rótulos dos critérios: tom e clareza; uma pergunta por vez; não repete pergun
 "Promessa ou afirmação sem base", `sem_texto_proibido` → "Texto proibido na resposta", `sem_alerta_G1` a `sem_alerta_G4`
 → "Alerta de guardrail G1" a "G4". Outros valores: troque `_` por espaço e capitalize.
 
+### Esperado × obtido (colunas `esperado` e `obtido`)
+
+As duas colunas **não têm as mesmas chaves**. `obtido` sempre traz seis: `faixa`, `motivo_faixa`, `aprovacao`, `opt_out`,
+`transferido_para_vendedor` e `motivo_encerramento`. `esperado` traz só o que o cenário exige. Mostre **uma linha por chave
+de `esperado`**, nesta forma:
+
+| Chave em `esperado` | Rótulo | De onde vem o obtido | Passou quando |
+|---|---|---|---|
+| `faixa` | Faixa | `obtido.faixa` | iguais |
+| `motivo_faixa` | Motivo da faixa | `obtido.motivo_faixa` | iguais |
+| `motivo_faixa_um_de` (lista) | Motivo da faixa (um destes) | `obtido.motivo_faixa` | o obtido está na lista |
+| `aprovacao` | Aprovação | `obtido.aprovacao` | iguais |
+| `opt_out` | Pediu para parar (opt-out) | `obtido.opt_out` | iguais |
+| `transferido_para_vendedor` | Transferido para vendedor | `obtido.transferido_para_vendedor` | iguais |
+| `motivo_encerramento` | Motivo do encerramento | `obtido.motivo_encerramento` | iguais |
+| `sem_alertas` (lista, ex.: `["G1"]`) | Sem alertas de guardrail (G1...) | coluna `alertas` | `falhas` não contém `sem_alerta_G1` etc. |
+| `sem_vazamento` | Sem texto interno bloqueado | coluna `falhas` | `falhas` não contém `sem_vazamento` |
+| `textos_proibidos` (lista) | Textos proibidos (mostre a lista) | coluna `falhas` | `falhas` não contém `sem_texto_proibido` |
+
+Valores: `null` → "—"; `true`/`false` → "Sim"/"Não"; faixa, aprovação e motivo da faixa pelos rótulos do esquema;
+`sem_interesse` → "Sem interesse". `motivo_faixa` de self-service e executivo já vem em texto ("12 funcionários e gasto
+de R$ 15.000/mês"): mostre como está. Duas verificações valem para todos os cenários, mesmo sem chave em `esperado`:
+"Sem texto interno bloqueado" e "Sem promessa sem base" (`sem_alerta_de_confiabilidade`); mostre-as quando estiverem em
+`falhas`.
+

@@ -20,6 +20,8 @@ except (AttributeError, ValueError):
 todos = "--todos" in sys.argv
 hubspot = HubSpot()
 for lead_id in memoria.listar():
+    if lead_id.startswith("sim-"):
+        continue  # conversas da página pública não vão para o HubSpot (decisão 060)
     lead = memoria.carregar(lead_id)
     if not todos and lead.crm.get("sincronizado_em") and not lead.crm.get("pendente"):
         continue

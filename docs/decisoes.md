@@ -65,7 +65,7 @@
 | 057 | Etapa "Com vendedor": transferência acima de qualificado, no painel e no HubSpot | Aceita | 2026-10-11 |
 | 058 | Login da conta demo publicado no README, com restauração automática de senha e e-mail | Aceita | 2026-10-11 |
 | 059 | Cliente atual em suporte sem questionário de vendas; bastidor em inglês bloqueado; observação nas baterias | Aceita | 2026-10-11 |
-| 060 | Desenho da página pública (Fase 8): rota pública no Lovable falando só com o servidor, bastidores ao vivo, 7 dias, US$ 0,30/dia | Proposta | 2026-10-12 |
+| 060 | Página pública (Fase 8): rota pública no Lovable falando só com o servidor, WhatsApp ou e-mail, bastidores ao vivo, 7 dias, US$ 0,30/dia | Aceita | 2026-10-12 |
 
 ---
 
@@ -1376,6 +1376,15 @@ parte do sistema aberta a desconhecidos: muda o modelo de ameaça (dados pessoai
   que mostra o "a IA escreve, o código garante" funcionando (opções: só o chat; resumo no fim).
 - **Guarda:** 7 dias e apagar (opções: não guardar; guardar sem prazo).
 - **Teto de custo:** US$ 0,30 por dia, cerca de 75 conversas com o Haiku 5.5 (opções: US$ 1, US$ 3).
+- **Canal (pedido na aprovação):** depois do aviso, o visitante escolhe testar pelo WhatsApp ou por e-mail. O P.H. segue
+  as regras de cada canal (tamanho, número de perguntas) e, no e-mail, a resposta sai com o mesmo assunto ("Re: ...") e
+  a mesma assinatura que um lead real recebe (`canal_email._corpo`). O e-mail é simulado na página, sem envio real: pedir
+  o e-mail verdadeiro do visitante traria dado pessoal real (045).
+
+**Etapa 1 (servidor) feita:** `src/brax_sdr/simulador_publico.py` e a rota `POST /simulador/mensagem` no mesmo processo
+do webhook (outro agente, sem HubSpot, Slack nem follow-up; aprovações simuladas). Conversa real de teste nos dois canais:
+CPF e e-mail trocados por [removido] antes da IA, bastidores corretos, e-mail com assunto e assinatura. As visões do
+painel ignoram `origem = simulador`. O fuso usa UTC-3 fixo, como o follow-up (o Windows não traz a base de fusos do Python).
 
 **Desenho:** `docs/fase8-desenho.md`. O código garante: mascaramento de dados pessoais antes da IA e do banco; origem
 "simulador" fora do funil, do HubSpot e do Slack; limites por sessão e por endereço de internet; teto diário; limpeza

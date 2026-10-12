@@ -25,10 +25,12 @@ Tudo o que o visitante vê vem da resposta do servidor.
 ## Experiência
 
 1. **Abertura:** o que é a BRAX (fictícia) e o P.H., e o aviso: "Use só dados fictícios. Não informe CPF, CNPJ,
-   telefone, e-mail ou dados de cartão reais." Uma caixa "Entendi" libera o chat.
+   telefone, e-mail ou dados de cartão reais." O botão "Entendi" libera a **escolha do canal**: "Testar pelo WhatsApp"
+   (balões de chat, respostas curtas, uma pergunta por vez) ou "Testar por e-mail" (campo de assunto, respostas mais
+   completas, com "Re: assunto" e a assinatura da BRAX). O e-mail é simulado na página, sem envio real.
 2. **Sugestões para começar** (botões que preenchem a primeira mensagem): "Sou founder de um SaaS com 12 pessoas",
    "Sou CFO de uma empresa de 60 pessoas", "Sou MEI", "Quero falar com uma pessoa". O visitante também pode escrever livre.
-3. **Chat** no estilo WhatsApp (como a coluna de conversas do painel), com o P.H. respondendo como faria a um lead real.
+3. **Conversa** no estilo do canal escolhido, com o P.H. respondendo como faria a um lead real.
 4. **Bastidores ao lado**, ao vivo: dados registrados, faixa, etapa do funil, temperatura (com o medidor de 0 a 16) e os
    eventos de cada resposta ("Faixa definida: Self-service", "Transferido para vendedor", "Bastidor removido"...).
    No celular, os bastidores ficam numa aba.

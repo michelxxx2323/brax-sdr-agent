@@ -118,6 +118,14 @@ def manter_ativo(banco: SupabaseLeads, parar: threading.Event | None = None,
             banco.listar_ids()
         except Exception as erro:
             print(f"[Supabase] sinal de vida falhou: {type(erro).__name__}: {erro}", flush=True)
+        try:  # decisão 060: conversas da página pública guardadas por 7 dias
+            from brax_sdr.simulador_publico import apagar_conversas_antigas
+
+            apagadas = apagar_conversas_antigas(banco)
+            if apagadas:
+                print(f"[Supabase] {apagadas} conversa(s) do simulador com mais de 7 dias apagada(s)", flush=True)
+        except Exception as erro:
+            print(f"[Supabase] limpeza do simulador falhou: {type(erro).__name__}: {erro}", flush=True)
         if config.SUPABASE_DEMO_EMAIL and config.SUPABASE_DEMO_SENHA:
             try:  # decisão 058: a vitrine não fica trancada se um visitante trocar a senha publicada
                 banco.restaurar_conta_demo(config.SUPABASE_DEMO_EMAIL, config.SUPABASE_DEMO_SENHA)

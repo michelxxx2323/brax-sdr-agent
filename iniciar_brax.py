@@ -100,6 +100,18 @@ if config.WHATSAPP_MODO == "meta" and not config.WHATSAPP_ENVIO_HABILITADO:
     print("            envio DESLIGADO: as respostas só aparecem no terminal")
 print()
 try:
-    uvicorn.run(criar_app(agente, envio_whatsapp, RegistroDeMensagens()), host=config.SERVIDOR_HOST, port=config.WHATSAPP_PORTA, log_level="warning")
+    app = criar_app(agente, envio_whatsapp, RegistroDeMensagens())
+    # Simulador público (decisão 060): outro agente, sem HubSpot, Slack nem follow-up; aprovações simuladas.
+    from brax_sdr.simulador_publico import SimuladorPublico, custo_simulador_hoje, registrar_rotas
+
+    agente_simulador = Agente(
+        aprovador=lambda lead, resumo, disp: ("aprovada", "aprovação simulada (página pública, sem Slack)"),
+        alerta_humano=lambda lead, motivo: None,
+    )
+    custo_do_dia = (lambda: custo_simulador_hoje(banco)) if banco else (lambda: 0.0)
+    registrar_rotas(app, SimuladorPublico(agente_simulador, custo_do_dia), config.SIMULADOR_ORIGENS)
+    print(f"  Simulador público: /simulador/mensagem (origens: {', '.join(config.SIMULADOR_ORIGENS) or 'nenhuma configurada'}; "
+          f"teto US$ {config.SIMULADOR_TETO_DIARIO_USD:.2f}/dia)", flush=True)
+    uvicorn.run(app, host=config.SERVIDOR_HOST, port=config.WHATSAPP_PORTA, log_level="warning")
 except KeyboardInterrupt:
     pass

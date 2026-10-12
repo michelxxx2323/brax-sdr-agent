@@ -34,7 +34,7 @@ def numero_do_followup_devido(lead: Lead, agora: datetime) -> int | None:
         return None
     if lead.faixa == "fora_do_icp" or not lead.aguardando_lead or not lead.ultima_resposta_em:
         return None
-    if lead.canal != "email" or not lead.email_contexto:
+    if lead.origem == "simulador" or lead.canal != "email" or not lead.email_contexto:  # decisão 060
         return None  # por enquanto só e-mail; o WhatsApp tem regras próprias da Meta (Fase 4)
     numero = lead.followups_enviados + 1
     if numero > len(config.FOLLOWUP_ESPERAS_DIAS_UTEIS):

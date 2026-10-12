@@ -109,6 +109,14 @@ SUPABASE_SECRET_KEY = os.getenv("SUPABASE_SECRET_KEY", "")  # chave secreta (sb_
 SUPABASE_DEMO_EMAIL = os.getenv("SUPABASE_DEMO_EMAIL", "")
 SUPABASE_DEMO_SENHA = os.getenv("SUPABASE_DEMO_SENHA", "")
 
+# --- Simulador público (Fase 8, decisão 060): a página do painel conversa com o P.H. por este servidor ---
+SIMULADOR_TETO_DIARIO_USD = float(os.getenv("BRAX_SIMULADOR_TETO_DIARIO_USD") or 0.30)
+SIMULADOR_LIMITE_POR_SESSAO = 20  # mensagens do visitante por conversa
+SIMULADOR_LIMITE_POR_IP_DIA = 60  # mensagens por endereço de internet por dia
+SIMULADOR_DIAS_DE_GUARDA = 7
+# Endereços da página (painel no Lovable) autorizados a chamar o simulador, separados por vírgula (CORS).
+SIMULADOR_ORIGENS = [o.strip() for o in os.getenv("BRAX_SIMULADOR_ORIGENS", "").split(",") if o.strip()]
+
 # --- HubSpot (Fase 5, decisão 033) ---
 HUBSPOT_ACCESS_TOKEN = os.getenv("HUBSPOT_ACCESS_TOKEN", "")  # chave de serviço (Service key) da conta
 HUBSPOT_FUNIL = "BRAX Inbound"

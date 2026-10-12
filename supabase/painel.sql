@@ -47,7 +47,8 @@ cross join lateral (
         ) as texto
     from jsonb_array_elements(l.estado -> 'mensagens') with ordinality as e(mensagem, ordem)
 ) m
-where m.texto is not null and btrim(m.texto) <> '';
+where m.texto is not null and btrim(m.texto) <> ''
+  and coalesce(l.estado ->> 'origem', '') <> 'simulador';  -- decisão 060: a página pública fica fora do painel comercial
 
 -- 3. Um lead por linha, pronto para a lista de conversas, tabelas, filtros e gráficos.
 create or replace view public.painel_leads as
@@ -115,7 +116,8 @@ left join lateral (
     where pm.lead_id = l.id
     order by pm.ordem desc
     limit 1
-) u on true;
+) u on true
+where coalesce(l.estado ->> 'origem', '') <> 'simulador';  -- decisão 060
 
 -- 4. Linha do tempo de cada lead.
 create or replace view public.painel_eventos as
@@ -125,7 +127,8 @@ select
     ev.evento ->> 'tipo'           as tipo,
     ev.evento ->> 'detalhe'        as detalhe
 from public.leads l
-cross join lateral jsonb_array_elements(l.estado -> 'eventos') as ev(evento);
+cross join lateral jsonb_array_elements(l.estado -> 'eventos') as ev(evento)
+where coalesce(l.estado ->> 'origem', '') <> 'simulador';  -- decisão 060
 
 -- 5. As visões rodam com a permissão do dono (desfaz o security_invoker da primeira versão deste arquivo).
 alter view public.painel_leads reset (security_invoker);

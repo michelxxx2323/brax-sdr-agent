@@ -46,6 +46,8 @@ class Lead:
     # Resumo curto para o painel comercial (decisão 048): gerado quando a faixa é definida ou a conversa é encerrada.
     resumo: str | None = None
     resumo_em: str | None = None
+    # "simulador" = conversa da página pública (decisão 060): fora do HubSpot, do Slack, do follow-up e do painel comercial.
+    origem: str = ""
     eventos: list[dict] = field(default_factory=list)
     criado_em: str = field(default_factory=agora)
     atualizado_em: str = field(default_factory=agora)

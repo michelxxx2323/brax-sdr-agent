@@ -153,6 +153,7 @@ Todas as conversas são simuladas e fictícias.
 | `cenarios_com_alerta_de_guardrail` | integer | Cenários com algum alerta G1 a G4 |
 | `custo_total_usd` | numeric | Custo da bateria (P.H. + lead simulado + juiz) |
 | `custo_medio_ph_usd` | numeric | Custo médio do P.H. por conversa |
+| `observacao` | text | Nota sobre a bateria, quando houver (ex.: "Experimento revertido (decisão 056)"): mostre junto da bateria no gráfico, no seletor e nos cartões |
 
 ### `painel_evals`: um cenário de uma bateria por linha
 

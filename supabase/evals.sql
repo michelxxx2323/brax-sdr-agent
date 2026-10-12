@@ -32,6 +32,9 @@ create table if not exists public.evals (
 );
 
 alter table public.evals enable row level security;
+-- Observação da bateria (decisão 059): ex.: "Experimento revertido (decisão 056)", para o painel não confundir um
+-- experimento com o P.H. que está no ar. Repetida em todas as linhas da bateria.
+alter table public.evals add column if not exists observacao text;
 revoke all on public.evals from anon, authenticated;
 
 -- 2. Um cenário por linha, com cada critério do juiz numa coluna.
@@ -75,7 +78,8 @@ select
     round(avg(e.nota_media), 2)                              as nota_media,
     count(*) filter (where e.alertas::text ~ '"G[1-4]:')::integer as cenarios_com_alerta_de_guardrail,
     round(sum(e.custo_usd), 2)                               as custo_total_usd,
-    round(avg(e.custo_ph_usd), 4)                            as custo_medio_ph_usd
+    round(avg(e.custo_ph_usd), 4)                            as custo_medio_ph_usd,
+    max(e.observacao)                                        as observacao
 from public.evals e
 group by e.bateria;
 

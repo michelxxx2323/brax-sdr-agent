@@ -285,3 +285,31 @@ Verifique a aba "Qualidade" e corrija o que aparecer, sem criar nem alterar nada
 
 [COLE AQUI O CONTEÚDO DE lovable/esquema-banco.md]
 
+---
+
+### Prompt 7: ajustes da aba Qualidade
+
+Quatro ajustes na aba "Qualidade", sem criar nem alterar nada no banco:
+
+1. **Esperado × obtido:** os valores ainda aparecem técnicos ("pessoa_fisica, sem_cnpj") e há duas linhas para o mesmo
+   item. Junte `motivo_faixa` e `motivo_faixa_um_de` numa linha só, "Motivo da faixa"; quando vier a lista, mostre "um
+   destes: Pessoa física, Sem CNPJ". Use os rótulos de motivo do esquema (`mei` → "MEI", `pessoa_fisica` → "Pessoa
+   física", `sem_cnpj` → "Sem CNPJ", `so_credito` → "Só quer crédito", `setor_analise_especial` → "Setor de análise
+   especial") também dentro de listas.
+2. **Eixo do gráfico de evolução:** várias baterias rodaram no mesmo dia, e "03/10" aparece quatro vezes. Use o número
+   da bateria em ordem de `data` ("#1", "#2"...) no eixo e mostre data e hora ("03/10 01:49", fuso America/Sao_Paulo) e o
+   modelo na dica ao passar o mouse.
+3. **Linha da troca de modelo:** ordene as baterias por `data` e desenhe uma linha vertical tracejada entre duas baterias
+   vizinhas quando `modelo_conversa` mudar, com o rótulo "Haiku 4.5 → Haiku 5.5" (troque `claude-haiku-4-5` por
+   "Haiku 4.5" e `claude-haiku-5-5` por "Haiku 5.5"). Hoje a troca acontece entre a bateria de 03/10 05:20 UTC e a de
+   10/10 03:23 UTC.
+4. **Custos:** na tabela de cenários, renomeie a coluna para "Custo total do teste" (P.H. + lead simulado + juiz). O
+   cartão continua "Custo do P.H. por conversa". Assim os dois números deixam de parecer contraditórios.
+
+E um item novo do esquema: `painel_evals_baterias.observacao`. Quando preenchida (ex.: "Experimento revertido (decisão
+056)"), mostre-a junto da bateria: no seletor, na dica do gráfico e como aviso discreto nos cartões se ela for a
+selecionada. A bateria com observação de experimento **não** deve ser a padrão dos cartões: use a mais recente sem
+observação.
+
+[COLE AQUI O CONTEÚDO DE lovable/esquema-banco.md]
+

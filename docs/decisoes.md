@@ -64,6 +64,7 @@
 | 056 | Experimento revertido: "uma pergunta por vez" pelo editor e empresa obrigatória para rotear pioraram os evals | Rejeitada (revertida) | 2026-10-11 |
 | 057 | Etapa "Com vendedor": transferência acima de qualificado, no painel e no HubSpot | Aceita | 2026-10-11 |
 | 058 | Login da conta demo publicado no README, com restauração automática de senha e e-mail | Aceita | 2026-10-11 |
+| 059 | Cliente atual em suporte sem questionário de vendas; bastidor em inglês bloqueado; observação nas baterias | Aceita | 2026-10-11 |
 
 ---
 
@@ -1331,3 +1332,30 @@ e não cria contas (`verificar_acesso_painel.py`, 17/17). O pior caso é a vitri
 
 **Opções descartadas:** manter sem publicar (o painel não serve de vitrine) e publicar sem proteção (um visitante
 trancaria a conta para todos, sem prazo).
+
+---
+
+## 059: Cliente atual em suporte, bastidor em inglês e observação nas baterias
+
+**Contexto:** a revisão da aba "Qualidade" do painel apontou cenários com nota baixa. Comparando com a bateria do código
+que está no ar (a "última" no painel era a do experimento revertido na 056), a maioria das notas baixas vinha do
+experimento. Um problema aparecia nas duas: com o cliente que está com o cartão bloqueado, o P.H. transferia certo e
+depois fazia o questionário de vendas inteiro (tipo de empresa, funcionários, gasto), e chegou a induzir o envio do CNPJ
+completo. A regra de seguir coletando dados depois da transferência (037) vale para lead de vendas, não para suporte.
+
+**Decisão:**
+- `transferir_para_humano` ganhou `cliente_atual`. Com ele, o próximo passo é outro: nada de perguntas de vendas, aviso
+  de que o time de atendimento entra em contato em horário comercial, sem prazo nem promessa, no máximo uma pergunta
+  sobre o problema e nunca pedir CNPJ, documentos, senha ou dados do cartão. O evento marca "cliente atual (suporte)".
+- O cérebro explica o que é "usuário" no plano (quem acessa o painel; qualquer pessoa do time pode ter cartão). Sem
+  isso, o P.H. transferia a dúvida "somos 6 e o Start tem 5 usuários" em vez de responder.
+- **Bastidor em inglês:** a bateria nova achou o P.H. narrando ao lead, em inglês, uma falha de ferramenta ("The
+  registration failed because of an unknown field... I'll retry"). O detector de texto interno passou a reconhecer
+  esse tipo de frase; na conferência seguinte, o código removeu um parágrafo assim antes do envio.
+- **Cenários:** a ficha do freelancer passou a responder à pergunta de confirmação do P.H., e a do "sem interesse" diz
+  em que mensagem desistir (as duas falhavam pela simulação, não pelo P.H.).
+- **Observação nas baterias** (`evals.observacao`): marca, por exemplo, a bateria do experimento revertido, para o painel
+  não apresentá-la como o P.H. que está no ar.
+
+**Bateria com o código atual (7ª):** 22/23, roteamento 100%, nota média 4,73, zero alertas de guardrail. A falha
+restante (sem interesse) era da simulação e foi corrigida no cenário.

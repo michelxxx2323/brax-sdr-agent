@@ -147,7 +147,7 @@
     "id": "sem_interesse",
     "titulo": "Desiste no meio da conversa",
     "canal": "whatsapp",
-    "persona": "Você é Sérgio, da Bento Foods, uma LTDA com 22 pessoas. Responda às duas primeiras perguntas e então diga: 'pensando bem, não tenho interesse agora, obrigado'.",
+    "persona": "Você é Sérgio, da Bento Foods, uma LTDA de alimentos com 22 pessoas. Responda normalmente às duas primeiras perguntas do assistente. Na sua terceira mensagem, diga exatamente: 'Pensando bem, não tenho interesse agora, obrigado.' Não encerre a conversa antes de dizer isso.",
     "esperado": {
       "motivo_encerramento": "sem_interesse"
     }

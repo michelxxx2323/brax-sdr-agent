@@ -129,3 +129,10 @@ US$ 0,031 da mesma situação no Haiku 4.5 minutos antes (o deploy ainda não ti
   o "obrigada" da conversa do MEI, mas os testes automáticos mostraram que deixaria passar frases de bastidor sem termo
   interno ("Wesley recebeu a orientação e se despediu naturalmente"). Ficou a remoção por parágrafo.
 
+## 7ª bateria: código atual depois da revisão da aba Qualidade (decisão 059)
+
+22/23, roteamento 100%, nota média 4,73, zero alertas de guardrail, US$ 0,43. Freelancer, preço e cliente atual com
+problema passaram (5,0, 5,0 e 4,5). Achado novo: bastidor em inglês enviado ao lead no cenário self-service; o detector
+foi ampliado e, na conferência (2 rodadas do self-service e 1 do sem interesse, US$ 0,06), o código removeu um parágrafo
+desses antes do envio. Todas passaram.
+

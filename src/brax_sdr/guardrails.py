@@ -101,7 +101,10 @@ _TEXTO_INTERNO = re.compile(
     # Planejamento narrado ao cliente (dados de demonstração com o Haiku 5.5, decisão 055): "Vou registrar de novo, com o
     # gasto em dólar como sinal de compra"; "Falta confirmar o tipo de empresa para rotear".
     r"|\brotear\b|\bsina(l|is) de compra\b|\bregistrar (de novo|novamente)\b"
-    r"|\b(registrar|registrei|registrando|registro) (os|esses|estes) dados\b",
+    r"|\b(registrar|registrei|registrando|registro) (os|esses|estes) dados\b"
+    # Bastidor em inglês (bateria de 11/10, cenário self-service: "The registration failed because of an unknown field,
+    # and routing still needs the company's sector. I'll retry..."). O P.H. só fala português com o lead.
+    r"|\b(the|because|I'll|I will|retry|routing|registration|unknown field|still needs?)\b",
     re.IGNORECASE,
 )
 

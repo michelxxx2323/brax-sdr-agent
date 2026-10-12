@@ -276,3 +276,12 @@ def test_transferencia_de_cliente_atual_nao_segue_qualificando():
     # Lead de vendas que pede uma pessoa continua no fluxo da decisão 037 (segue coletando para o vendedor).
     resultado, _ = _executar("transferir_para_humano", {"motivo": "pediu uma pessoa"}, Lead(id="t2"))
     assert "continue a qualificação" in resultado["proximo_passo"]
+
+
+def test_bastidor_em_ingles_e_texto_interno():
+    # Bateria de 11/10: o P.H. narrou em inglês uma falha de ferramenta para o lead.
+    assert parece_texto_interno("The registration failed because of an unknown field, and routing still needs the "
+                                "company's sector. I'll retry the registration with the valid fields.")
+    # Palavras estrangeiras comuns numa fala em português continuam passando.
+    assert not parece_texto_interno("Você pode pagar o software em dólar com o cartão internacional, e o app faz o resto.")
+    assert not parece_texto_interno("Os comprovantes ficam no app, inclusive de assinaturas como Google Workspace e Slack.")

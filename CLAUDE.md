@@ -84,9 +84,12 @@ Texto completo: `cerebro/regras/guardrails.md`.
 6. **Evals e métricas**: ✅ concluída e aprovada (3 baterias, 15/20 → 19/20, zero alertas de guardrail;
    `docs/validacao-fase6.md`, painel em GitHub Pages). Rodar: `.venv\Scripts\python.exe rodar_evals.py`.
 5b. **Hospedagem + Supabase**: ✅ concluída e aprovada (Railway Hobby + Supabase, Gmail em produção; `docs/validacao-fase5b.md`)
-7. Painel do time comercial no Lovable (leads, conversas, funil e métricas, lendo o Supabase; decisões 041, 045 a 050) ← em andamento: banco pronto (`supabase/painel.sql`,
-   `evals.sql`, verificação `verificar_acesso_painel.py` 17/17); roteiro em `lovable/prompt-painel.md`; telas no Lovable
-8. Página web pública para simular uma conversa com o P.H. (desenho a definir; decisão 041)
+7. Painel do time comercial no Lovable (decisões 041, 045 a 059) ← em andamento: banco pronto (`supabase/painel.sql`,
+   `evals.sql`, verificação `verificar_acesso_painel.py` 17/17); conversas, métricas e aba Qualidade feitas; conta demo
+   pública (`demo@brax-sdr.dev`, restaurada pelo servidor). Prompts em `lovable/prompt-painel.md`: falta colar o 7.
+8. Página pública "Converse com o P.H." (decisão 060, desenho em `docs/fase8-desenho.md`) ← em andamento: servidor no ar
+   (`POST /simulador/mensagem`, `src/brax_sdr/simulador_publico.py`); falta a página no Lovable (Prompt 8), a variável
+   `BRAX_SIMULADOR_ORIGENS` no Railway e a validação (`docs/validacao-fase8.md`).
 
 ## Ambiente local
 

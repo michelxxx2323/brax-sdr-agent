@@ -313,3 +313,58 @@ observação.
 
 [COLE AQUI O CONTEÚDO DE lovable/esquema-banco.md]
 
+---
+
+### Prompt 8: página pública "Converse com o P.H." (Fase 8, decisão 060)
+
+Crie uma página **pública** (sem login) na rota `/simular`, com um link "Converse com o P.H." na tela de login e no topo do
+painel. Ela deixa qualquer visitante conversar com o P.H. de verdade, como se fosse um lead.
+
+#### Regras obrigatórias
+- Esta página **não usa o Supabase** (nem cliente, nem chave, nem autenticação). Ela só conversa com o servidor do P.H.:
+  `POST https://brax-sdr-agent-production.up.railway.app/simulador/mensagem`.
+- Não crie tabelas, funções, Edge Functions nem nada no banco. Não guarde a conversa em lugar nenhum além da memória da
+  página (o servidor guarda por 7 dias).
+
+#### Como chamar o servidor
+Envie JSON: `{ "sessao": "<uuid>", "texto": "<mensagem>", "canal": "whatsapp" | "email", "assunto": "<só no e-mail>" }`.
+Gere a `sessao` com `crypto.randomUUID()` ao começar e guarde em `sessionStorage`; "Reiniciar" gera outra.
+A resposta tem:
+- `texto`: a resposta do P.H. (pode ser `null`: o P.H. ficou em silêncio de propósito, por exemplo depois de uma despedida;
+  mostre uma nota discreta "O P.H. não respondeu: a conversa estava encerrada").
+- `mensagem_do_lead`: o que foi de fato enviado ao P.H. Mostre esse texto no balão do visitante (no lugar do que ele
+  digitou). Se `dados_pessoais_removidos` for maior que zero, mostre abaixo: "Removemos dados pessoais da sua mensagem."
+- `assunto` (só no e-mail): o assunto da resposta, ex.: "Re: Cartões para o time".
+- `bastidores`: `dados` (campos de qualificação), `faixa`, `motivo_faixa`, `etapa`, `temperatura`, `prioridade` (0 a 16),
+  `aprovacao`, `transferido_para_vendedor`, `resumo` e `eventos` (só os desta resposta: `[{tipo, detalhe}]`).
+- `bloqueado` (às vezes) com um `texto` de aviso: `teto_diario`, `limite_ip`, `limite_sessao` ou `texto_vazio`. Mostre o
+  aviso como mensagem do sistema; nos três primeiros, desabilite o envio (no `limite_sessao`, deixe só o "Reiniciar").
+Tempo limite de 60 segundos; em erro, "Não consegui falar com o P.H. agora. Tente de novo." com botão de tentar de novo.
+
+#### Fluxo da página
+1. **Abertura:** "A BRAX é uma fintech fictícia, criada para um projeto de portfólio. O P.H. é o assistente virtual de
+   pré-vendas dela: ele qualifica o lead, indica o caminho certo e registra tudo." Aviso destacado: "Use só dados
+   fictícios. Não informe CPF, CNPJ, telefone, e-mail ou dados de cartão reais." Botão **"Entendi"**.
+2. **Escolha do canal** (aparece depois do "Entendi"): dois cartões, **"Testar pelo WhatsApp"** e **"Testar por e-mail"**,
+   cada um com uma linha explicando a diferença (no WhatsApp, mensagens curtas e uma pergunta por vez; no e-mail, respostas
+   mais completas, com assunto e assinatura).
+3. **Sugestões para começar** (botões que preenchem a primeira mensagem): "Sou founder de um SaaS com 12 pessoas e
+   gastamos uns R$ 15 mil por mês", "Sou CFO de uma empresa de 60 pessoas", "Sou MEI e quero um cartão", "Quero falar
+   com uma pessoa". O visitante também pode escrever livremente.
+4. **Conversa:**
+   - WhatsApp: balões como na tela Conversas do painel; "P.H. está digitando..." enquanto espera.
+   - E-mail: um campo "Assunto" (só no primeiro e-mail) e o corpo; a conversa aparece como uma sequência de e-mails
+     ("Você" e "P.H. · BRAX"), cada um com o assunto e o texto com quebras de linha preservadas.
+5. **Bastidores ao lado** (no celular, numa aba "Bastidores"): os dados registrados com os rótulos do esquema; faixa,
+   etapa e temperatura com os mesmos rótulos e cores do painel; o medidor de prioridade de 0 a 16; o resumo, quando
+   houver; e uma linha do tempo que **acumula** os eventos de todas as respostas, com os rótulos do esquema (inclua
+   `dados_pessoais_removidos` → "Dados pessoais removidos" e `bastidor_removido` → "Texto interno removido antes do
+   envio"). Uma nota fixa: "Nesta demonstração, ninguém entra em contato de verdade: aprovações e transferências são
+   simuladas."
+6. Botão **"Reiniciar"** (nova sessão, volta à escolha do canal) e rodapé: "Dados fictícios · A BRAX é uma empresa
+   fictícia criada para um projeto de portfólio."
+
+Visual igual ao do painel (mesmas cores, modo claro e escuro), e funcionando bem no celular.
+
+[COLE AQUI O CONTEÚDO DE lovable/esquema-banco.md]  (para os rótulos de faixa, etapa, temperatura e eventos)
+

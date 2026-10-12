@@ -81,9 +81,11 @@ select
         when l.opt_out or l.sem_resposta
              or l.estado -> 'dados' ->> 'motivo_encerramento' is not null     then 'perdido'
         when l.faixa = 'executivo' and l.aprovacao in ('aprovada', 'novo_horario') then 'reuniao_aprovada'
+        -- Decisão 057: transferência acima de "qualificado" e "reunião solicitada" (o vendedor assumiu o próximo passo),
+        -- abaixo de reunião aprovada. Mesma ordem de etapa_do_negocio em src/brax_sdr/crm.py.
+        when l.faixa = 'humano' or l.transferido_para_vendedor                then 'com_vendedor'
         when l.faixa = 'executivo' and l.aprovacao is distinct from 'recusada'     then 'reuniao_solicitada'
         when l.faixa in ('self_service', 'executivo')                         then 'qualificado_app'
-        when l.faixa = 'humano' or l.transferido_para_vendedor                then 'com_vendedor'
         else 'em_qualificacao'
     end as etapa,
     l.criado_em,

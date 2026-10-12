@@ -100,6 +100,14 @@ def lead_lumen(**mudancas) -> Lead:
         ({"faixa": "fora_do_icp", "motivo_faixa": "mei"}, False, None),  # fora do perfil não vira negócio
         ({"faixa": None}, False, None),  # ainda sem faixa
         ({"faixa": None, "sem_resposta": True}, False, None),
+        # Decisão 057 (o Otávio aparecia como "Qualificado" depois de transferido): a transferência tem prioridade...
+        ({"faixa": "self_service", "transferido_para_vendedor": True}, False, "com_vendedor"),
+        ({"faixa": None, "transferido_para_vendedor": True}, False, "com_vendedor"),
+        ({"faixa": "humano", "motivo_faixa": "setor_analise_especial"}, False, "com_vendedor"),
+        # ...menos sobre uma reunião já aprovada (passo mais adiante) e sobre fora do perfil.
+        ({"aprovacao": "aprovada", "transferido_para_vendedor": True}, False, "reuniao_aprovada"),
+        ({"faixa": "fora_do_icp", "motivo_faixa": "mei", "transferido_para_vendedor": True}, False, None),
+        ({"transferido_para_vendedor": True, "opt_out": True}, True, "perdido"),
     ],
 )
 def test_etapa_do_negocio(mudancas, ja_tem, etapa):

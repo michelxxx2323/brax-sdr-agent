@@ -45,6 +45,7 @@ CAMPOS = {
 ETAPAS = [
     ("qualificado_app", "Qualificado – abertura pelo app", "0.4"),
     ("reuniao_solicitada", "Reunião solicitada", "0.5"),
+    ("com_vendedor", "Com vendedor", "0.5"),  # decisão 057: transferidos e análise humana
     ("reuniao_aprovada", "Reunião aprovada", "0.7"),
     ("perdido", "Perdido", "0.0"),
 ]
@@ -52,6 +53,7 @@ ETAPAS = [
 ETAPAS_DO_FUNIL_PADRAO = {
     "qualificado_app": "qualifiedtobuy",
     "reuniao_solicitada": "appointmentscheduled",
+    "com_vendedor": "decisionmakerboughtin",
     "reuniao_aprovada": "presentationscheduled",
     "perdido": "closedlost",
 }
@@ -72,10 +74,20 @@ def motivo_de_perda(lead: Lead) -> str | None:
 
 
 def etapa_do_negocio(lead: Lead, ja_tem_negocio: bool) -> str | None:
-    """Em que etapa do funil o negócio deve estar, ou None se o lead não gera negócio."""
+    """Em que etapa do funil o negócio deve estar, ou None se o lead não gera negócio.
+
+    A mesma ordem da visão painel_leads (supabase/painel.sql), decisão 057: fora do perfil e perda primeiro; reunião
+    aprovada acima da transferência (é um passo mais adiante); transferência acima de "qualificado" e "reunião solicitada"
+    (o vendedor assumiu o próximo passo).
+    """
     qualificado = lead.faixa in ("self_service", "executivo")
-    if motivo_de_perda(lead) and (ja_tem_negocio or qualificado):
+    com_vendedor = lead.faixa == "humano" or (lead.transferido_para_vendedor and lead.faixa != "fora_do_icp")
+    if motivo_de_perda(lead) and (ja_tem_negocio or qualificado or com_vendedor):
         return "perdido"
+    if lead.faixa == "executivo" and lead.aprovacao in ("aprovada", "novo_horario"):
+        return "reuniao_aprovada"
+    if com_vendedor:
+        return "com_vendedor"
     if lead.faixa == "self_service":
         return "qualificado_app"
     if lead.faixa == "executivo":
@@ -183,8 +195,17 @@ class HubSpot:
 
     def _garantir_funil(self) -> str:
         funis = self._pedir("GET", "/crm/v3/pipelines/deals").get("results", [])
-        if any(f["label"] == config.HUBSPOT_FUNIL for f in funis):
-            return f"'{config.HUBSPOT_FUNIL}' já existia"
+        proprio = next((f for f in funis if f["label"] == config.HUBSPOT_FUNIL), None)
+        if proprio:
+            # Funil já existe: acrescenta as etapas que faltam (decisão 057: "Com vendedor").
+            existentes = {e["label"] for e in proprio["stages"]}
+            novas = []
+            for i, (_, rotulo, prob) in enumerate(ETAPAS):
+                if rotulo not in existentes:
+                    self._pedir("POST", f"/crm/v3/pipelines/deals/{proprio['id']}/stages",
+                                {"label": rotulo, "displayOrder": i, "metadata": {"probability": prob}})
+                    novas.append(rotulo)
+            return f"'{config.HUBSPOT_FUNIL}' já existia" + (f"; etapas acrescentadas: {', '.join(novas)}" if novas else "")
         r = self.http.post("/crm/v3/pipelines/deals", json={
             "label": config.HUBSPOT_FUNIL,
             "displayOrder": 1,

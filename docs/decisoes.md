@@ -62,6 +62,7 @@
 | 054 | Promessa de retorno aciona o time de verdade; falhas das conversas de demonstração viram cenários de eval | Aceita | 2026-10-11 |
 | 055 | Dados de demonstração gerados por simulação (12 leads, script reproduzível) e parágrafos de bastidor removidos | Aceita | 2026-10-11 |
 | 056 | Experimento revertido: "uma pergunta por vez" pelo editor e empresa obrigatória para rotear pioraram os evals | Rejeitada (revertida) | 2026-10-11 |
+| 057 | Etapa "Com vendedor": transferência acima de qualificado, no painel e no HubSpot | Aceita | 2026-10-11 |
 
 ---
 
@@ -1289,3 +1290,22 @@ nomear o negócio pelo contato quando a empresa faltar), sem aumentar o número 
 **Motivo:** os evals existem para isto: uma mudança que parecia boa no papel foi medida e não melhorou o que prometia.
 Uma bateria só tem ruído (a linha de base variou de 4,55 a 4,78 entre baterias parecidas), mas aqui o mecanismo da
 piora foi identificado nos problemas apontados pelo juiz, e não só no número.
+
+---
+
+## 057: Etapa "Com vendedor", com a mesma ordem no painel e no HubSpot
+
+**Contexto:** uma revisão do painel no Lovable achou o Otávio (transferido para um vendedor depois de perguntar algo que o
+cérebro não responde) como "Qualificado (app)". Na visão, a regra da etapa olhava "self-service" antes de "transferido".
+No HubSpot era pior: a etapa "Com vendedor" nem existia no funil, transferências não mudavam a etapa do negócio, e leads
+de análise humana (cripto, apostas) ficavam sem negócio.
+
+**Decisão:** uma ordem só, igual na visão `painel_leads` e em `etapa_do_negocio` (crm.py):
+1. fora do perfil; 2. perdido; 3. reunião aprovada (passo mais adiante que a transferência);
+4. **com vendedor** (análise humana ou transferido); 5. reunião solicitada; 6. qualificado (app); 7. em qualificação.
+O funil "BRAX Inbound" ganhou a etapa "Com vendedor" (`configurar_hubspot.py` agora acrescenta etapas que faltam num funil
+existente). A etapa foi criada antes de publicar o código, para nenhuma sincronização falhar, e os 12 leads foram
+ressincronizados: os 4 transferidos ou de análise humana estão em "Com vendedor".
+
+**Motivo:** painel e CRM precisam contar a mesma história; um lead que um vendedor assumiu não está mais esperando abrir a
+conta pelo app.

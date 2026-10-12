@@ -255,3 +255,17 @@ Mesmas regras de sempre: somente leitura, só as visões indicadas, nada de cons
 
 [COLE AQUI O CONTEÚDO DE lovable/esquema-banco.md]
 
+---
+
+### Prompt 5: ajustes finos
+
+Três ajustes, sem criar nem alterar nada no banco:
+
+1. **Botões do HubSpot:** o ID da conta do HubSpot é `<ID_DA_CONTA>` (informado no chat, não fica no repositório). Monte os
+   links "Ver contato" e "Ver negócio" com o formato do esquema e mostre os botões sempre que `hubspot_contato_id` /
+   `hubspot_negocio_id` existirem.
+2. **Horário da lista de conversas:** use `ultima_mensagem_quando` como horário de cada item e para ordenar a lista; quando
+   estiver vazio (conversas antigas), use `atualizado_em`. Assim, manutenções no banco não mudam o horário exibido.
+3. **Eventos de manutenção:** esconda os eventos `renomeado` e `sinais_recalculados` dos bastidores da IA e da linha do
+   tempo. Eles registram manutenções nos dados de demonstração, não o atendimento.
+

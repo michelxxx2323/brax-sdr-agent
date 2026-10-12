@@ -65,6 +65,7 @@
 | 057 | Etapa "Com vendedor": transferência acima de qualificado, no painel e no HubSpot | Aceita | 2026-10-11 |
 | 058 | Login da conta demo publicado no README, com restauração automática de senha e e-mail | Aceita | 2026-10-11 |
 | 059 | Cliente atual em suporte sem questionário de vendas; bastidor em inglês bloqueado; observação nas baterias | Aceita | 2026-10-11 |
+| 060 | Desenho da página pública (Fase 8): rota pública no Lovable falando só com o servidor, bastidores ao vivo, 7 dias, US$ 0,30/dia | Proposta | 2026-10-12 |
 
 ---
 
@@ -1359,3 +1360,23 @@ completo. A regra de seguir coletando dados depois da transferência (037) vale 
 
 **Bateria com o código atual (7ª):** 22/23, roteamento 100%, nota média 4,73, zero alertas de guardrail. A falha
 restante (sem interesse) era da simulação e foi corrigida no cenário.
+
+---
+
+## 060: Desenho da página pública para conversar com o P.H. (Fase 8)
+
+**Contexto:** a página deixa qualquer pessoa (inclusive recrutadores) conversar com o P.H. de verdade. É a primeira
+parte do sistema aberta a desconhecidos: muda o modelo de ameaça (dados pessoais digitados por engano, abuso, custo).
+
+**Escolhas do dono do projeto:**
+- **Onde:** uma rota pública dentro do painel no Lovable (opções: GitHub Pages, servida pelo Railway). Consequência: a
+  rota não pode falar com o banco (o painel exige login, e a chave pública não lê nada). Ela fala só com o servidor do
+  P.H. no Railway, que devolve a resposta e os bastidores.
+- **O que o visitante vê:** chat e, ao lado, os bastidores ao vivo (dados, faixa, etapa, temperatura e eventos). É o
+  que mostra o "a IA escreve, o código garante" funcionando (opções: só o chat; resumo no fim).
+- **Guarda:** 7 dias e apagar (opções: não guardar; guardar sem prazo).
+- **Teto de custo:** US$ 0,30 por dia, cerca de 75 conversas com o Haiku 5.5 (opções: US$ 1, US$ 3).
+
+**Desenho:** `docs/fase8-desenho.md`. O código garante: mascaramento de dados pessoais antes da IA e do banco; origem
+"simulador" fora do funil, do HubSpot e do Slack; limites por sessão e por endereço de internet; teto diário; limpeza
+de 7 dias; CORS só para o endereço do painel.

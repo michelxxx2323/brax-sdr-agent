@@ -52,7 +52,7 @@
 | 044 | Programa pronto para a nuvem: porta do Railway, só modo meta no ar, aprovação pendente sem Slack | Aceita | 2026-10-03 |
 | 045 | Só dados fictícios no que é público; página aberta com aviso, mascaramento e guarda curta | Aceita | 2026-10-09 |
 | 046 | Painel no Lovable lê visões somente leitura, com login sem cadastro e proibição de mexer no banco | Aceita (revista pela 047) | 2026-10-09 |
-| 047 | Revisão do acesso ao painel: tabela fechada ao usuário logado, conta demo não publicada, página pública só via servidor | Aceita | 2026-10-09 |
+| 047 | Revisão do acesso ao painel: tabela fechada ao usuário logado, conta demo não publicada, página pública só via servidor | Aceita (conta demo revista pela 058) | 2026-10-09 |
 | 048 | Dados para o painel em três colunas: horário por mensagem, resumo curto, temperatura, IDs do HubSpot e última mensagem | Aceita | 2026-10-09 |
 | 049 | Roteamento automático assim que os dados de qualificação ficam completos | Aceita | 2026-10-10 |
 | 050 | Resultados dos evals também no Supabase, para a aba "Qualidade" do painel | Aceita | 2026-10-10 |
@@ -63,6 +63,7 @@
 | 055 | Dados de demonstração gerados por simulação (12 leads, script reproduzível) e parágrafos de bastidor removidos | Aceita | 2026-10-11 |
 | 056 | Experimento revertido: "uma pergunta por vez" pelo editor e empresa obrigatória para rotear pioraram os evals | Rejeitada (revertida) | 2026-10-11 |
 | 057 | Etapa "Com vendedor": transferência acima de qualificado, no painel e no HubSpot | Aceita | 2026-10-11 |
+| 058 | Login da conta demo publicado no README, com restauração automática de senha e e-mail | Aceita | 2026-10-11 |
 
 ---
 
@@ -1309,3 +1310,24 @@ ressincronizados: os 4 transferidos ou de análise humana estão em "Com vendedo
 
 **Motivo:** painel e CRM precisam contar a mesma história; um lead que um vendedor assumiu não está mais esperando abrir a
 conta pelo app.
+
+---
+
+## 058: Login da conta demo publicado, com restauração automática
+
+**Contexto:** a decisão 047 criou a conta demo do painel sem publicar a senha. Sem login público, um recrutador que abre o
+painel só vê a tela de entrada, e o painel deixa de funcionar como vitrine. O risco anotado na 047: com a senha pública,
+qualquer visitante pode trocá-la (ou o e-mail) e trancar a conta para os outros.
+
+**Decisão:**
+- Login publicado no README (`demo@brax-sdr.dev`, senha `BraxDemo2026!`).
+- **Restauração automática:** junto do sinal de vida do banco (a cada 6 horas), o servidor do P.H. devolve à conta demo o
+  e-mail e a senha publicados, pela API de administração. A conta é achada por uma marca em `app_metadata`, que só a API
+  de administração altera: funciona mesmo se o visitante trocar o e-mail.
+- Os valores ficam no `.env` e nas variáveis do Railway (`SUPABASE_DEMO_EMAIL`, `SUPABASE_DEMO_SENHA`).
+
+**Por que o risco é aceitável:** a conta só lê as cinco visões, com dados fictícios (045); não lê as tabelas, não grava
+e não cria contas (`verificar_acesso_painel.py`, 17/17). O pior caso é a vitrine ficar trancada por até 6 horas.
+
+**Opções descartadas:** manter sem publicar (o painel não serve de vitrine) e publicar sem proteção (um visitante
+trancaria a conta para todos, sem prazo).

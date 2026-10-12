@@ -105,6 +105,9 @@ PASTA_WHATSAPP = RAIZ / "data" / "local" / "whatsapp"  # saída simulada e ids j
 # --- Supabase (Fase 5b, decisão 043): com as duas variáveis, os leads ficam no banco; sem elas, em PASTA_LEADS ---
 SUPABASE_URL = os.getenv("SUPABASE_URL", "")  # ex.: https://abcdefgh.supabase.co
 SUPABASE_SECRET_KEY = os.getenv("SUPABASE_SECRET_KEY", "")  # chave secreta (sb_secret_...), só no servidor
+# Conta demo do painel (somente leitura, decisão 058): login público no README; o servidor restaura senha e e-mail a cada 6 h.
+SUPABASE_DEMO_EMAIL = os.getenv("SUPABASE_DEMO_EMAIL", "")
+SUPABASE_DEMO_SENHA = os.getenv("SUPABASE_DEMO_SENHA", "")
 
 # --- HubSpot (Fase 5, decisão 033) ---
 HUBSPOT_ACCESS_TOKEN = os.getenv("HUBSPOT_ACCESS_TOKEN", "")  # chave de serviço (Service key) da conta

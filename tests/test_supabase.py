@@ -89,3 +89,25 @@ def test_sinal_de_vida_consulta_o_banco_e_sobrevive_a_falhas():
     parar = threading.Event()
     supabase_leads.manter_ativo(BancoInstavel(), parar=parar, intervalo=0)
     assert len(chamadas) == 2
+
+
+def test_restaura_a_conta_demo_mesmo_com_o_email_trocado():
+    # Decisão 058: o login da demo é público; um visitante pode trocar senha ou e-mail. A conta é achada pela marca
+    # nos metadados (app_metadata, que o usuário não altera) e volta ao e-mail e à senha publicados.
+    pedidos = []
+
+    def servidor(pedido: httpx.Request) -> httpx.Response:
+        pedidos.append(pedido)
+        if pedido.method == "GET":
+            return httpx.Response(200, json={"users": [
+                {"id": "u1", "email": "time@brax.example", "app_metadata": {}},
+                {"id": "u2", "email": "trocado@invasor.example", "app_metadata": {"papel": "demonstracao"}},
+            ]})
+        return httpx.Response(200, json={})
+
+    banco = SupabaseLeads("https://exemplo.supabase.co", "sb_secret_teste", transport=httpx.MockTransport(servidor))
+    assert banco.restaurar_conta_demo("demo@brax-sdr.dev", "BraxDemo2026!") is True
+    put = pedidos[-1]
+    assert put.method == "PUT" and str(put.url).endswith("/auth/v1/admin/users/u2")
+    assert json.loads(put.content)["email"] == "demo@brax-sdr.dev"
+    assert put.headers["Authorization"] == "Bearer sb_secret_teste"

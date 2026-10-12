@@ -46,6 +46,28 @@ class SupabaseLeads:
         self.http = httpx.Client(
             base_url=f"{url.rstrip('/')}/rest/v1", headers=cabecalhos, timeout=15, transport=transport
         )
+        # API de administração de usuários (decisão 058): só para restaurar a conta demo do painel.
+        self.auth = httpx.Client(
+            base_url=f"{url.rstrip('/')}/auth/v1", headers={"apikey": chave, "Authorization": f"Bearer {chave}"},
+            timeout=15, transport=transport,
+        )
+
+    def restaurar_conta_demo(self, email: str, senha: str) -> bool:
+        """Devolve à conta demo o e-mail e a senha publicados no README (um visitante pode tê-los trocado).
+
+        A conta é achada pela marca `papel: demonstracao` em `app_metadata`, que só a API de administração altera (o
+        próprio usuário não consegue, nem logado); na falta da marca, pelo e-mail. Devolve False se a conta não existir.
+        """
+        usuarios = self.auth.get("/admin/users", params={"per_page": 1000}).json().get("users", [])
+        conta = next((u for u in usuarios if (u.get("app_metadata") or {}).get("papel") == "demonstracao"), None) or next(
+            (u for u in usuarios if u.get("email") == email), None)
+        if not conta:
+            return False
+        resposta = self.auth.put(f"/admin/users/{conta['id']}", json={
+            "email": email, "password": senha, "email_confirm": True, "app_metadata": {"papel": "demonstracao"},
+        })
+        resposta.raise_for_status()
+        return True
 
     def ler(self, lead_id: str) -> dict | None:
         """O lead completo (coluna estado), ou None se ainda não existe."""
@@ -96,5 +118,10 @@ def manter_ativo(banco: SupabaseLeads, parar: threading.Event | None = None,
             banco.listar_ids()
         except Exception as erro:
             print(f"[Supabase] sinal de vida falhou: {type(erro).__name__}: {erro}", flush=True)
+        if config.SUPABASE_DEMO_EMAIL and config.SUPABASE_DEMO_SENHA:
+            try:  # decisão 058: a vitrine não fica trancada se um visitante trocar a senha publicada
+                banco.restaurar_conta_demo(config.SUPABASE_DEMO_EMAIL, config.SUPABASE_DEMO_SENHA)
+            except Exception as erro:
+                print(f"[Supabase] restaurar a conta demo falhou: {type(erro).__name__}: {erro}", flush=True)
         if parar.wait(intervalo):
             return

@@ -43,7 +43,7 @@ Identidade visual própria da BRAX: inspirar-se no layout, não copiar marcas, c
 > Crie o projeto no Lovable conectado ao **projeto Supabase existente** (`brax-sdr`) e ao GitHub.
 > Confirme a conexão antes (pergunte ao Lovable qual projeto Supabase está conectado; o ID deve ser o do `.env`).
 > Cole o **Prompt 1** e, logo abaixo, o conteúdo inteiro de `lovable/esquema-banco.md`.
-> Só envie o Prompt 2 quando o 1 estiver funcionando, e o 3 depois do 2. No Prompt 3, cole de novo o esquema atualizado
+> Envie um prompt de cada vez, na ordem, só depois que o anterior estiver funcionando (o 6 foi incorporado ao 7). No Prompt 3, cole de novo o esquema atualizado
 > logo abaixo do texto.
 > Quando o Lovable for montar os botões do HubSpot, informe a ele o **ID da conta do HubSpot** (o número depois de
 > `/contacts/` na barra de endereço do HubSpot). Ele não fica no repositório.
@@ -273,6 +273,9 @@ Três ajustes, sem criar nem alterar nada no banco:
 
 ### Prompt 6: verificar a aba Qualidade
 
+> **Não enviado: incorporado ao Prompt 7.** A aba já foi conferida pelo dono do projeto (abre sem erros, verde ok,
+> testada com a conta demo); o único item que restava (chaves sem par no "esperado × obtido") passou para o item 1 do 7.
+
 Verifique a aba "Qualidade" e corrija o que aparecer, sem criar nem alterar nada no banco:
 
 1. Confirme que a aba abre sem erros (rode a checagem de código) e que o verde dos cartões e do selo "Passou" existe nas
@@ -295,7 +298,9 @@ Quatro ajustes na aba "Qualidade", sem criar nem alterar nada no banco:
    item. Junte `motivo_faixa` e `motivo_faixa_um_de` numa linha só, "Motivo da faixa"; quando vier a lista, mostre "um
    destes: Pessoa física, Sem CNPJ". Use os rótulos de motivo do esquema (`mei` → "MEI", `pessoa_fisica` → "Pessoa
    física", `sem_cnpj` → "Sem CNPJ", `so_credito` → "Só quer crédito", `setor_analise_especial` → "Setor de análise
-   especial") também dentro de listas.
+   especial") também dentro de listas. E siga a seção "Esperado × obtido" do esquema: as duas colunas não têm as mesmas
+   chaves, e quatro verificações (`motivo_faixa_um_de`, `sem_alertas`, `sem_vazamento`, `textos_proibidos`) tiram o
+   resultado da coluna `falhas`, não de `obtido`.
 2. **Eixo do gráfico de evolução:** várias baterias rodaram no mesmo dia, e "03/10" aparece quatro vezes. Use o número
    da bateria em ordem de `data` ("#1", "#2"...) no eixo e mostre data e hora ("03/10 01:49", fuso America/Sao_Paulo) e o
    modelo na dica ao passar o mouse.

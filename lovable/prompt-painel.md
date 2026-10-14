@@ -342,7 +342,9 @@ A resposta tem:
 - `assunto` (só no e-mail): o assunto da resposta, ex.: "Re: Cartões para o time".
 - `bastidores`: `dados` (campos de qualificação), `faixa`, `motivo_faixa`, `etapa`, `temperatura`, `prioridade` (0 a 16),
   `aprovacao`, `transferido_para_vendedor`, `resumo` e `eventos` (só os desta resposta: `[{tipo, detalhe}]`).
-- `bloqueado` (às vezes) com um `texto` de aviso: `teto_diario`, `limite_ip`, `limite_sessao` ou `texto_vazio`. Mostre o
+- `bloqueado` (às vezes): um **texto simples** no próprio campo, não um objeto, com o aviso em `texto`. Exemplo:
+  `{"bloqueado": "teto_diario", "texto": "A demonstração atingiu o limite..."}`. Valores: `teto_diario`, `limite_ip`,
+  `limite_sessao` ou `texto_vazio`. Mostre o
   aviso como mensagem do sistema; nos três primeiros, desabilite o envio (no `limite_sessao`, deixe só o "Reiniciar").
 Tempo limite de 60 segundos; em erro, "Não consegui falar com o P.H. agora. Tente de novo." com botão de tentar de novo.
 

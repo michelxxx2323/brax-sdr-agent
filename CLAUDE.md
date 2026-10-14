@@ -86,7 +86,7 @@ Texto completo: `cerebro/regras/guardrails.md`.
 5b. **Hospedagem + Supabase**: ✅ concluída e aprovada (Railway Hobby + Supabase, Gmail em produção; `docs/validacao-fase5b.md`)
 7. Painel do time comercial no Lovable (decisões 041, 045 a 059) ← em andamento: banco pronto (`supabase/painel.sql`,
    `evals.sql`, verificação `verificar_acesso_painel.py` 17/17); conversas, métricas e aba Qualidade feitas; conta demo
-   pública (`demo@brax-sdr.dev`, restaurada pelo servidor). Prompts em `lovable/prompt-painel.md`: faltam colar o 5 e o 7 (o 6 foi incorporado ao 7).
+   pública (`demo@brax-sdr.dev`, restaurada pelo servidor). Prompts em `lovable/prompt-painel.md`: 5 e 7 aplicados (o 6 foi incorporado ao 7); falta o 8.
 8. Página pública "Converse com o P.H." (decisão 060, desenho em `docs/fase8-desenho.md`) ← em andamento: servidor no ar
    (`POST /simulador/mensagem`, `src/brax_sdr/simulador_publico.py`); falta a página no Lovable (Prompt 8), a variável
    `BRAX_SIMULADOR_ORIGENS` no Railway e a validação (`docs/validacao-fase8.md`).

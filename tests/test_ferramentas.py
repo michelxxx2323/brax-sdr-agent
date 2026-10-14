@@ -4,7 +4,7 @@ import json
 
 from brax_sdr import config
 from brax_sdr.ferramentas import executar
-from brax_sdr.guardrails import checar_confiabilidade, checar_resposta, parece_texto_interno
+from brax_sdr.guardrails import checar_confiabilidade, checar_resposta, parece_texto_interno, sem_frases_de_registro
 from brax_sdr.memoria import Lead
 
 
@@ -285,3 +285,16 @@ def test_bastidor_em_ingles_e_texto_interno():
     # Palavras estrangeiras comuns numa fala em português continuam passando.
     assert not parece_texto_interno("Você pode pagar o software em dólar com o cartão internacional, e o app faz o resto.")
     assert not parece_texto_interno("Os comprovantes ficam no app, inclusive de assinaturas como Google Workspace e Slack.")
+
+
+def test_frases_de_registro_saem_e_o_resto_fica():
+    # Decisão 061 (simulador): "Vou registrar o que você me contou" é bastidor narrado ao lead.
+    assert sem_frases_de_registro("Perfeito, Marina! Vou registrar o que você me contou. O caminho é o app.") == (
+        "Perfeito, Marina! O caminho é o app.")
+    assert sem_frases_de_registro("Registrei: 12 pessoas e R$ 15.000 por mês. Qual o setor?") == "Qual o setor?"
+    assert sem_frases_de_registro("Anotado! E quantas pessoas?") == "Anotado! E quantas pessoas?"  # reação natural
+    # Frase com link nunca sai; uso comum do verbo também não.
+    com_link = "Vou registrar e te mando o link: https://app.brax.example/abrir-conta"
+    assert sem_frases_de_registro(com_link) == com_link
+    comum = "Você pode registrar despesas pelo app. O cartão fica registrado no nome da empresa."
+    assert sem_frases_de_registro(comum) == comum

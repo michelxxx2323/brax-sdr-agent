@@ -20,6 +20,7 @@ from brax_sdr.guardrails import (
     parece_texto_interno,
     promete_retorno,
     sem_paragrafos_internos,
+    sem_frases_de_registro,
     tipo_de_evento,
 )
 from brax_sdr.crm import sincronizar_com_seguranca
@@ -421,7 +422,8 @@ class Agente:
 
         if not mensagem_do_codigo and texto_final:
             # Parágrafos de bastidor saem; o resto da resposta continua (decisão 055).
-            limpo = sem_paragrafos_internos(texto_final)
+            # Frases como "Vou registrar o que você me contou" também saem (decisão 061).
+            limpo = sem_frases_de_registro(sem_paragrafos_internos(texto_final))
             if limpo and limpo != texto_final:
                 lead.registrar_evento("bastidor_removido", texto_final[:300])
                 texto_final = limpo

@@ -121,6 +121,22 @@ def sem_paragrafos_internos(texto: str) -> str:
     return "\n\n".join(p for p in paragrafos if not _TEXTO_INTERNO.search(p))
 
 
+# Frase inteira de registro narrado, só quando ela COMEÇA assim (simulador, decisão 061: "Vou registrar o que você me
+# contou."). Aqui a remoção é por frase porque o resto do parágrafo costuma ser a resposta de verdade.
+_FRASE_DE_REGISTRO = re.compile(
+    r"(?:(?<=^)|(?<=[.!?]\s)|(?<=\n))[ \t]*"
+    r"(?:(?:vou|deixa eu|deixe-me|já|ja)\s+(?:registrar|anotar)|registrei)\b"  # "Anotado!" é reação natural e fica
+    r"[^\n]*?(?:[.!?]+(?=\s|$)[ \t]*|$)",  # "R$ 15.000" não termina a frase
+    re.IGNORECASE | re.MULTILINE,
+)
+
+
+def sem_frases_de_registro(texto: str) -> str:
+    """Tira frases como "Vou registrar o que você me contou." Nunca tira uma frase com link (o próximo passo do lead)."""
+    limpo = _FRASE_DE_REGISTRO.sub(lambda m: m.group(0) if "http" in m.group(0) else "", texto)
+    return re.sub(r"\n{3,}", "\n\n", limpo).strip()
+
+
 def parece_texto_interno(texto: str) -> bool:
     """Verdadeiro se a mensagem fala do sistema em vez de falar com o cliente (ex.: 'o lead se despediu')."""
     return bool(_TEXTO_INTERNO.search(texto))

@@ -378,6 +378,20 @@ def test_resumo_quando_a_faixa_e_definida(tmp_path, monkeypatch):
     assert len(cliente.chamadas) == 4
 
 
+def test_resumo_refeito_na_transferencia(tmp_path, monkeypatch):
+    # Decisão 061: no simulador, o resumo seguia dizendo "sem próximo passo com o time" depois da transferência.
+    monkeypatch.setattr(Agente, "_atualizar_resumo", ATUALIZAR_RESUMO_REAL)
+    _em_andamento(tmp_path, "res3", faixa="self_service", resumo="Sem próximo passo com o time comercial.")
+    cliente = ClienteFalso([
+        _msg([ToolUseBlock(id="t1", name="transferir_para_humano", input={"motivo": "Dúvida sobre IOF"}, type="tool_use")],
+             "tool_use"),
+        _msg([TextBlock(text="Um vendedor do nosso time vai entrar em contato em horário comercial.", type="text")], "end_turn"),
+        _msg([TextBlock(text="SaaS indicada ao app; transferida a um vendedor por dúvida sobre IOF.", type="text")], "end_turn"),
+    ])
+    Agente(client=cliente, pasta_leads=tmp_path).responder("res3", "E o IOF, como fica?")
+    assert memoria.carregar("res3", pasta=tmp_path).resumo == "SaaS indicada ao app; transferida a um vendedor por dúvida sobre IOF."
+
+
 def test_falha_no_resumo_nao_derruba_a_resposta(tmp_path, monkeypatch):
     monkeypatch.setattr(Agente, "_atualizar_resumo", ATUALIZAR_RESUMO_REAL)
     _em_andamento(tmp_path, "res2", dados={"tipo_empresa": "ltda", "funcionarios": 6, "setor": "SaaS", "gasto_mensal": 8000})

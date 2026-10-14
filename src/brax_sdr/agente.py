@@ -225,6 +225,7 @@ class Agente:
         lead.mensagens.append({"role": "assistant", "content": texto, "quando": memoria.agora()})
         lead.ultima_resposta_em = memoria.agora()
         lead.aguardando_lead = "?" in texto
+        self._atualizar_resumo(lead, uso)  # depois da aprovação, o resumo antigo dizia "sem horário" (decisão 061)
         lead.custo_total_usd += config.custo_estimado_usd(config.MODELO_CONVERSA, uso)
         memoria.salvar(lead, pasta=self.pasta_leads)
         return texto
@@ -271,6 +272,7 @@ class Agente:
         primeira = not any(m["role"] == "assistant" for m in lead.mensagens)
         recebida_em = memoria.agora()  # horário da mensagem do lead (decisão 048)
         faixa_inicial, encerrada_inicial = lead.faixa, lead.encerrada
+        momento_inicial = (lead.transferido_para_vendedor, lead.aprovacao)  # mudou? o resumo é refeito (decisão 061)
         encerramento_inicial = lead.dados.get("motivo_encerramento")
         conteudo_do_lead = texto
         if transferido_agora:
@@ -472,8 +474,11 @@ class Agente:
         for mensagem in mensagens[posicao_do_lead + 1:]:
             mensagem.setdefault("quando", respondida_em)
         lead.mensagens = mensagens
-        if (lead.faixa and lead.faixa != faixa_inicial) or (lead.encerrada and not encerrada_inicial):
-            self._atualizar_resumo(lead, resposta.uso)  # resumo curto para o painel (decisão 048)
+        if ((lead.faixa and lead.faixa != faixa_inicial) or (lead.encerrada and not encerrada_inicial)
+                or (lead.transferido_para_vendedor, lead.aprovacao) != momento_inicial):
+            # Resumo curto para o painel (decisão 048), refeito também na transferência e na aprovação (decisão 061:
+            # no simulador, o resumo ainda dizia "sem próximo passo com o time" depois da transferência).
+            self._atualizar_resumo(lead, resposta.uso)
         lead.custo_total_usd += resposta.custo_usd
         # Base do follow-up (decisão 028): o lead respondeu, então a contagem de lembretes recomeça.
         lead.followups_enviados, lead.sem_resposta = 0, False

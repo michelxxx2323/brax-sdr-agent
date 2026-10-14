@@ -162,14 +162,27 @@ class Agente:
             lead.registrar_evento("resumo_erro", f"{type(erro).__name__}: {erro}"[:200])
 
     def _encurtar(self, texto: str, uso: dict) -> str:
-        """Pede uma versão curta da mensagem. Na dúvida (erro ou reescrita não confiável), mantém a original."""
+        """Pede uma versão curta da mensagem. Na dúvida (erro ou reescrita não confiável), mantém a original.
+
+        Se a versão curta ainda passar do limite, tenta mais uma vez a partir dela (decisão 061: no simulador, uma
+        mensagem foi de 479 para 457 caracteres e seguiu longa demais para o WhatsApp).
+        """
+        curto = self._encurtar_uma_vez(texto, uso)
+        if curto != texto and len(curto) > LIMITE_CARACTERES_WHATSAPP:
+            curto = self._encurtar_uma_vez(curto, uso)
+        return curto
+
+    def _encurtar_uma_vez(self, texto: str, uso: dict) -> str:
         try:
             msg = self.client.messages.create(
                 model=config.MODELO_CONVERSA,
                 **config.parametros_conversa(),
                 max_tokens=1024,
                 system=INSTRUCOES_ENCURTAR,
-                messages=[{"role": "user", "content": f"<mensagem>\n{texto}\n</mensagem>"}],
+                messages=[{"role": "user", "content": (
+                    f"<mensagem>\n{texto}\n</mensagem>\n"
+                    f"A mensagem tem {len(texto)} caracteres. A nova deve ter no máximo 300."
+                )}],
             )
         except anthropic.APIError:
             return texto

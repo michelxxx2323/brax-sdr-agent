@@ -131,11 +131,29 @@ def test_mensagem_longa_no_whatsapp_e_encurtada(tmp_path):
     _em_andamento(tmp_path, "longo")
     resposta = Agente(client=cliente, pasta_leads=tmp_path).responder("longo", "Me passa uma estimativa")
     assert resposta.texto == curta
-    assert cliente.chamadas[1]["messages"] == [{"role": "user", "content": f"<mensagem>\n{LONGA}\n</mensagem>"}]
+    assert cliente.chamadas[1]["messages"] == [{"role": "user", "content": (
+        f"<mensagem>\n{LONGA}\n</mensagem>\nA mensagem tem {len(LONGA)} caracteres. A nova deve ter no máximo 300.")}]
     assert "tools" not in cliente.chamadas[1]  # a reescrita não usa ferramentas
     salvo = memoria.carregar("longo", pasta=tmp_path)
     assert salvo.mensagens[-1]["content"] == [{"type": "text", "text": curta}]  # histórico = o que o lead viu
     assert salvo.eventos[0]["tipo"] == "mensagem_encurtada"
+
+
+def test_reescrita_ainda_longa_ganha_segunda_tentativa(tmp_path):
+    # Decisão 061: no simulador, o encurtador foi de 479 para 457 caracteres, ainda acima do limite.
+    link = "https://app.brax.example/abrir-conta"
+    longa = "Paulo, no plano Start vocês têm conta PJ, cartões virtuais e gestão de despesas. " * 6 + link
+    quase = "Paulo, no plano Start vocês têm conta PJ, cartões virtuais e gestão de despesas. " * 5 + link
+    curta = "Paulo, no plano Start vocês têm conta PJ, cartões virtuais e gestão de despesas. Abre aqui: " + link
+    assert len(longa) > len(quase) > 400
+    cliente = ClienteFalso([
+        _msg([TextBlock(text=longa, type="text")], "end_turn"),
+        _msg([TextBlock(text=quase, type="text")], "end_turn"),  # 1ª reescrita: ainda longa
+        _msg([TextBlock(text=curta, type="text")], "end_turn"),  # 2ª reescrita
+    ])
+    _em_andamento(tmp_path, "longo3")
+    assert Agente(client=cliente, pasta_leads=tmp_path).responder("longo3", "Me passa uma estimativa").texto == curta
+    assert len(cliente.chamadas) == 3
 
 
 def test_reescrita_que_perde_o_link_e_descartada(tmp_path):

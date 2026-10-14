@@ -375,3 +375,41 @@ Visual igual ao do painel (mesmas cores, modo claro e escuro), e funcionando bem
 
 [COLE AQUI O CONTEÚDO DE lovable/esquema-banco.md]  (para os rótulos de faixa, etapa, temperatura e eventos)
 
+
+### Prompt 9: ajustes depois do primeiro teste do simulador (decisão 061)
+
+Ajustes de interface, sem criar nem alterar nada no banco. A página `/simular` continua sem usar o Supabase.
+
+1. **Porta de entrada.** A raiz `/` vira uma página curta de apresentação, pública: título "P.H., o SDR de IA da BRAX",
+   uma frase ("Um agente de pré-vendas que atende leads por WhatsApp e e-mail, qualifica, roteia e registra tudo no
+   CRM. A BRAX é uma fintech fictícia, criada para um projeto de portfólio.") e dois botões grandes:
+   **"Conversar com o P.H."** (vai para `/simular`) e **"Ver o painel do time comercial"** (vai para o login). O login
+   passa para `/login`, e as telas do painel continuam exigindo login.
+2. **Conta de demonstração visível.** Na tela de login, um quadro: "Conta de demonstração: `demo@brax-sdr.dev` /
+   `BraxDemo2026!`" com um botão "Entrar com a conta demo" que preenche os dois campos e entra. Ela é pública de
+   propósito (só leitura, dados fictícios).
+3. **Layout do `/simular` no computador.** A página ocupa a altura da tela (`100dvh`), sem rolar a página inteira:
+   a conversa e os bastidores rolam **cada um na sua coluna**, e o campo de mensagem fica **sempre fixo embaixo** da
+   conversa. Ao chegar uma resposta, a conversa rola até a última mensagem. No celular, mantenha as abas, com o campo
+   fixo embaixo na aba da conversa.
+4. **Sugestões enviam com um clique.** Clicar numa sugestão envia a mensagem na hora (no e-mail, com o assunto
+   "Quero conhecer a BRAX" se o campo estiver vazio). Acima delas: "Toque numa sugestão ou escreva a sua mensagem".
+5. **Assunto do e-mail.** Depois da primeira resposta, o campo de assunto some e os e-mails seguintes do visitante
+   mostram o último `assunto` recebido do servidor (ex.: "Re: Cartões para o time"). O servidor já mantém a conversa
+   no mesmo assunto mesmo sem receber `assunto` de novo.
+6. **Rótulos nos bastidores** (e nos dados do painel, onde aparecerem):
+   - `persona`: `founder_ceo` → "Founder / CEO", `financas_cfo` → "Finanças / CFO", `operacoes_people` →
+     "Operações / Pessoas", `outro` → "Outro".
+   - `tipo_empresa`: `ltda` → "LTDA", `sa` → "S.A.", `outro_cnpj` → "Outro tipo com CNPJ", `mei` → "MEI",
+     `sem_cnpj` → "Sem CNPJ", `pessoa_fisica` → "Pessoa física".
+   - `decisor`: "Sim" / "Não". `gasto_mensal`: em reais (ex.: "R$ 120.000/mês"). `funcionarios`: "60 pessoas".
+   - Textos livres (`setor`, `cargo`, `dor`, `solucao_atual`): primeira letra maiúscula (ex.: "Logística").
+   - `sinais_de_compra`: os mesmos rótulos do Prompt 3.
+7. **Sem selo duplicado.** Enquanto a `faixa` estiver vazia, mostre só o selo da etapa ("Em qualificação"); o selo da
+   faixa aparece quando ela for definida.
+8. **Prioridade de 0 a 19** (no `/simular` e no painel): a faixa executivo agora soma 3 pontos de porte. Faixas do
+   medidor: frio de 0 a 1, morno de 2 a 5, quente de 6 a 19. A temperatura continua vindo pronta do servidor e da visão:
+   não recalcule no front. Na legenda dos pontos, acrescente "Porte de executivo (mais de 20 pessoas ou mais de
+   R$ 50 mil/mês): +3".
+
+Não mude mais nada. No fim, abra `/`, `/simular` e `/login` e confirme que as três carregam.

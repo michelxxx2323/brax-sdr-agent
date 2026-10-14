@@ -1389,3 +1389,34 @@ painel ignoram `origem = simulador`. O fuso usa UTC-3 fixo, como o follow-up (o 
 **Desenho:** `docs/fase8-desenho.md`. O código garante: mascaramento de dados pessoais antes da IA e do banco; origem
 "simulador" fora do funil, do HubSpot e do Slack; limites por sessão e por endereço de internet; teto diário; limpeza
 de 7 dias; CORS só para o endereço do painel.
+
+## 061: Ajustes depois do primeiro teste do simulador público
+
+**Contexto:** com a página `/simular` no ar, um teste de ponta a ponta nos dois canais (uma founder de SaaS com 12
+pessoas no WhatsApp; um CFO de S.A. com 60 pessoas e R$ 120 mil/mês no e-mail) confirmou roteamento, tom por canal e
+honestidade (sem inventar IOF, cashback ou integração com ERP). Ele também achou falhas que nenhuma bateria de evals
+tinha mostrado, porque um visitante conversa de um jeito diferente do lead simulado.
+
+**Achados e o que foi feito:**
+
+| Achado | Correção | Onde |
+|---|---|---|
+| "Tipo de empresa: LTDA" registrado sem a lead dizer (é o campo que separa cliente de MEI) | Instrução da ferramenta: só o tipo que o lead disse, nunca deduzido; cenário de eval novo com a verificação `dados_ausentes` | `ferramentas.py`, `evals.py` |
+| CFO de 60 pessoas "morno" (4 pontos) e founder de 12 "quente" (9) | Faixa executivo soma 3 pontos de porte (máximo 19). O CFO foi para 7 (quente) | `roteamento.py`, `qualificacao.md` |
+| IOF e cashback transferidos a um vendedor num lead self-service | O P.H. seguiu a regra "na dúvida, transfira": faltava conteúdo. FAQ responde os dois (sem cashback, decisão do dono) | `faq.md` |
+| Resposta self-service sem ligar a oferta à dor do dólar | Regra do prompt: ligar o próximo passo à dor que o lead contou | `prompt.py` |
+| "Vou registrar o que você me contou" | Trava em código, por frase e só quando a frase começa assim (o prompt já proibia). "Anotado!" fica: é reação natural | `guardrails.py` |
+| Resumo desatualizado depois da transferência e da aprovação | Resumo refeito também quando muda a transferência ou a aprovação, e no retorno depois do Slack | `agente.py` |
+| ERP no campo "solução atual" | "Solução atual" é só banco e cartão; o ERP fica no resumo (um campo novo mexeria no HubSpot, na visão e no Lovable) | `ferramentas.py` |
+| Encurtador de 479 para 457 caracteres | Informa o tamanho atual e a meta, e tenta uma segunda vez se a versão curta ainda passar do limite | `agente.py` |
+| E-mail perdia o assunto na segunda mensagem | O servidor reaproveita o assunto gravado na primeira mensagem | `simulador_publico.py` |
+
+Na página (Prompt 9 do Lovable): raiz com apresentação e dois botões (simulador e painel), conta demo visível no login,
+campo de mensagem fixo, sugestões que enviam com um clique, rótulos legíveis, sem selo duplicado e medidor de 0 a 19.
+
+**Opções consideradas para a temperatura:** somar porte (escolhida: um indicador só, fácil de ler); dois indicadores,
+"encaixe" e "intenção" (mais correto, mas mais telas e créditos no Lovable); manter e explicar (o tamanho já aparece na
+faixa, mas o painel continuaria contraintuitivo para o time comercial).
+
+**Aprendizado:** o simulador público é também uma fonte de evals. Um visitante faz perguntas que o lead simulado não
+faz (IOF, cashback) e omite dados de um jeito diferente. O ciclo segue o mesmo: falha → cenário → correção.

@@ -91,6 +91,18 @@ def test_limites_e_teto(tmp_path):
     assert simulador.processar(SESSAO, "Mais uma", "whatsapp", "5.5.5.5")["bloqueado"] == "limite_sessao"
 
 
+def test_limite_conta_so_o_que_o_visitante_escreveu(tmp_path):
+    # Validação da Fase 8: resultados de ferramenta (papel "user" na API) contavam como mensagens do visitante.
+    simulador, _ = _simulador(tmp_path, [
+        _msg([ToolUseBlock(type="tool_use", id="t1", name="registrar_qualificacao", input={"empresa": "Vela"})], "tool_use"),
+        _msg([TextBlock(type="text", text="Oi! Aqui é o P.H., assistente virtual da BRAX. Quantas pessoas são?")]),
+        _msg([TextBlock(type="text", text="Legal! E o setor?")]),
+    ], limite_por_sessao=2)
+    assert "bloqueado" not in simulador.processar(SESSAO, "Sou da Vela", "whatsapp", "1.2.3.4")
+    assert "bloqueado" not in simulador.processar(SESSAO, "Somos 8", "whatsapp", "1.2.3.4")  # 2ª: ainda vale
+    assert simulador.processar(SESSAO, "Mais uma", "whatsapp", "1.2.3.4")["bloqueado"] == "limite_sessao"
+
+
 def test_entradas_invalidas(tmp_path):
     simulador, _ = _simulador(tmp_path, [])
     for sessao, canal in (("../../etc", "whatsapp"), (SESSAO, "sms")):

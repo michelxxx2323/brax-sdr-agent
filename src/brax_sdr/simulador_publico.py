@@ -137,7 +137,10 @@ class SimuladorPublico:
         pasta = self.agente.pasta_leads
         with trava_do_lead(lead_id):
             lead = memoria.carregar(lead_id, canal=canal, pasta=pasta)
-            if sum(1 for m in lead.mensagens if m["role"] == "user") >= self.limite_sessao:
+            # Só o que o visitante escreveu (texto). Resultados de ferramenta também têm o papel "user" na API: contá-los
+            # bloqueava a conversa na 16ª mensagem em vez da 21ª (validação da Fase 8).
+            escritas = sum(1 for m in lead.mensagens if m["role"] == "user" and isinstance(m["content"], str))
+            if escritas >= self.limite_sessao:
                 return {"bloqueado": "limite_sessao", "texto": AVISOS["limite_sessao"]}
             primeiro = not lead.mensagens
             if primeiro:

@@ -41,7 +41,7 @@ painel_leads (id) ──< painel_mensagens (lead_id)   uma conversa por lead, or
 | `faixa` | text | Resultado da qualificação, decidido pelo código | `self_service`, `executivo`, `fora_do_icp`, `humano`, vazio (ainda qualificando) |
 | `motivo_faixa` | text | Explicação da faixa | `22 funcionários (> 20)`, `mei` |
 | `aprovacao` | text | Pedido de reunião com executivo (aprovado pelo time no Slack) | `pendente`, `aprovada`, `novo_horario`, `recusada`, vazio |
-| `prioridade` | integer | Pontos por sinais de compra e de intenção (maior = mais quente) | `0` a `16` |
+| `prioridade` | integer | Pontos por sinais de compra, intenção e porte (maior = mais quente) | `0` a `19` |
 | `opt_out` | boolean | Pediu para não receber mais mensagens (LGPD) | `false` |
 | `encerrada` | boolean | Conversa encerrada | `true` |
 | `transferido_para_vendedor` | boolean | Passado para um vendedor humano | `false` |
@@ -71,7 +71,8 @@ painel_leads (id) ──< painel_mensagens (lead_id)   uma conversa por lead, or
 
 Pontos: rodada recente 3; contratando rápido 2; primeira pessoa de finanças 2; gastos em dólar 2; novo escritório 1;
 insatisfeito com o banco 1; quem conversa é quem decide 2; dor explícita com a forma atual de pagar despesas 2;
-urgência declarada 1 (decisão 053: os dois últimos medem intenção, os outros, potencial).
+urgência declarada 1 (decisão 053: esses dois medem intenção, os outros, potencial); porte de executivo 3
+(decisão 061: a faixa executivo, mais de 20 pessoas ou mais de R$ 50 mil/mês, soma 3 pontos). Máximo: 19.
 
 ### Links para o HubSpot
 

@@ -73,9 +73,11 @@ empresas com sede fora do Brasil.
 | Quem conversa é o decisor (founder/CFO) | +2 |
 | Descreveu a dor com a forma atual de pagar despesas (cartão pessoal, reembolso, planilha) | +2 |
 | Disse que quer resolver agora ou logo | +1 |
+| Porte de executivo (mais de 20 pessoas ou mais de R$ 50 mil/mês) | +3 |
 
-Os seis primeiros sinais medem o **potencial** da conta; os dois últimos, a **intenção** de resolver agora. No painel,
-a temperatura usa a soma: quente com 6 pontos ou mais, morno de 2 a 5, frio com 0 ou 1 (decisão 053).
+Os seis primeiros sinais medem o **potencial** da conta; os dois seguintes, a **intenção** de resolver agora; o porte
+entra quando a faixa é executivo (decisão 061). No painel, a temperatura usa a soma: quente com 6 pontos ou mais, morno
+de 2 a 5, frio com 0 ou 1 (decisão 053).
 
 A pontuação **não muda a faixa**, só a prioridade e o que vai no resumo para o executivo.
 

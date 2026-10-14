@@ -25,6 +25,9 @@ PONTOS_POR_SINAL = {
     "urgencia": 1,
 }
 PONTOS_DECISOR = 2
+# Porte (decisão 061): no simulador, um CFO de 60 pessoas e R$ 120 mil/mês ficou "morno" e uma founder de 12 pessoas,
+# "quente". A faixa executivo já resume o porte (mais de 20 pessoas ou mais de R$ 50 mil/mês), então ela soma pontos.
+PONTOS_PORTE_EXECUTIVO = 3
 
 # Setores de análise especial (cerebro/vendas/qualificacao.md). O modelo marca setor_especial, e o código confere
 # o texto do setor também (achado nos evals: uma corretora de cripto foi para o executivo).
@@ -102,9 +105,11 @@ def rotear(
     )
 
 
-def prioridade(sinais: list[str] | None, decisor: bool | None) -> int:
-    """Soma os pontos dos sinais de compra. Sinais desconhecidos são ignorados."""
+def prioridade(sinais: list[str] | None, decisor: bool | None, faixa: str | None = None) -> int:
+    """Soma os pontos dos sinais de compra, do decisor e do porte. Sinais desconhecidos são ignorados."""
     pontos = sum(PONTOS_POR_SINAL.get(s, 0) for s in set(sinais or []))
     if decisor:
         pontos += PONTOS_DECISOR
+    if faixa == "executivo":
+        pontos += PONTOS_PORTE_EXECUTIVO
     return pontos

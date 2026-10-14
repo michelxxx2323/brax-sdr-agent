@@ -199,7 +199,7 @@ def _registrar_qualificacao(lead: Lead, entrada: dict) -> dict:
     if "sinais_de_compra" in novos:
         novos["sinais_de_compra"] = sorted(set(lead.dados.get("sinais_de_compra", [])) | set(novos["sinais_de_compra"]))
     lead.dados.update(novos)
-    lead.prioridade = prioridade(lead.dados.get("sinais_de_compra"), lead.dados.get("decisor"))
+    lead.prioridade = _prioridade(lead)
     lead.registrar_evento("qualificacao", ", ".join(sorted(novos)))
     resultado = {"ok": True, "dados_coletados": lead.dados}
     # Assim que os dados permitem decidir a faixa, o código roteia na hora (decisões 023, 040 e 049): fora do perfil,
@@ -225,6 +225,10 @@ _PROXIMO_PASSO = {
 }
 
 
+def _prioridade(lead: Lead) -> int:
+    return prioridade(lead.dados.get("sinais_de_compra"), lead.dados.get("decisor"), lead.faixa)
+
+
 def _rotear_dados(lead: Lead):
     """Calcula a faixa com os dados atuais, sem gravar nada."""
     d = lead.dados
@@ -244,6 +248,7 @@ def _rotear_lead(lead: Lead) -> dict:
     if resultado.faixa != "dados_insuficientes" and (lead.faixa, lead.motivo_faixa) != (resultado.faixa, resultado.motivo):
         # Só registra quando muda: com o roteamento automático (decisão 049), a IA pode chamar rotear_lead logo depois.
         lead.faixa, lead.motivo_faixa = resultado.faixa, resultado.motivo
+        lead.prioridade = _prioridade(lead)  # a faixa executivo soma pontos de porte (decisão 061)
         lead.registrar_evento("roteamento", f"{resultado.faixa}: {resultado.motivo}")
     if lead.transferido_para_vendedor and resultado.faixa in ("self_service", "executivo"):
         # O vendedor já cuida do próximo passo: a faixa vai para o CRM, mas sem link nem agenda (achado na 2ª bateria:

@@ -64,3 +64,6 @@ def test_prioridade():
     assert prioridade(None, None) == 0
     # Decisão 053 (caso da Bianca): rodada + decide + dor explícita + urgência.
     assert prioridade(["rodada_recente", "dor_explicita", "urgencia"], decisor=True) == 8
+    # Decisão 061: a faixa executivo soma 3 pontos de porte; as outras faixas, nada.
+    assert prioridade(["dor_explicita"], decisor=True, faixa="executivo") == 7
+    assert prioridade(["dor_explicita"], decisor=True, faixa="self_service") == 4

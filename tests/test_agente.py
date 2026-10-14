@@ -390,10 +390,15 @@ def test_resumo_quando_a_faixa_e_definida(tmp_path, monkeypatch):
     assert salvo.faixa == "self_service"
     assert salvo.resumo == "Startup de SaaS com 6 pessoas e gasto de R$ 8 mil. Indicada ao app." and salvo.resumo_em
     assert cliente.chamadas[2]["max_tokens"] == 400  # a chamada do resumo, com o modelo leve
-    # Rodada sem mudança de faixa: nenhuma chamada de resumo a mais.
-    cliente.respostas.append(_msg([TextBlock(text="Qualquer dúvida, me chama!", type="text")], "end_turn"))
-    Agente(client=cliente, pasta_leads=tmp_path).responder("res", "Valeu, vou abrir agora mesmo")
-    assert len(cliente.chamadas) == 4
+    # A situação vai em palavras: com "self_service", o resumo disse "sem faixa comercial definida" (decisão 061).
+    pedido = cliente.chamadas[2]["messages"][0]["content"]
+    assert "Faixa: Self-service: indicado para abrir a conta sozinho pelo app" in pedido and "self_service" not in pedido.split("Conversa:")[0].split("Situação")[1]
+    # Depois da faixa, o resumo é refeito a cada resposta (decisão 061: faltava a resposta sobre IOF).
+    cliente.respostas += [_msg([TextBlock(text="O IOF é do governo, não da BRAX.", type="text")], "end_turn"),
+                          _msg([TextBlock(text="SaaS indicada ao app; perguntou do IOF.", type="text")], "end_turn")]
+    Agente(client=cliente, pasta_leads=tmp_path).responder("res", "E o IOF?")
+    assert len(cliente.chamadas) == 5
+    assert memoria.carregar("res", pasta=tmp_path).resumo == "SaaS indicada ao app; perguntou do IOF."
 
 
 def test_resumo_refeito_na_transferencia(tmp_path, monkeypatch):

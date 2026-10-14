@@ -68,8 +68,35 @@ INSTRUCOES_CURTAS = (
     "para o painel do time comercial. Escreva 2 a 4 frases curtas em português do Brasil, sem markdown e sem títulos: "
     "quem é e qual empresa, o que precisa e em que pé a conversa ficou (faixa, próximo passo ou motivo do encerramento). "
     "Use só fatos ditos na conversa ou registrados nos dados. Nunca suponha cargo, gênero, intenção ou qualquer dado "
-    "que não foi dito."
+    "que não foi dito. A situação no sistema (faixa, transferência, aprovação) é oficial: descreva-a como está, sem "
+    "contradizer e sem citar a expressão \"situação no sistema\", e inclua as últimas dúvidas que o lead fez e como foram respondidas."
 )
+
+# Rótulos em palavras: com o valor técnico ("self_service"), o resumo da Marina disse que a conversa não chegou a uma
+# faixa comercial definida, logo acima do selo "Self-service" no simulador (decisão 061).
+_FAIXAS = {
+    "self_service": "Self-service: indicado para abrir a conta sozinho pelo app",
+    "executivo": "Executivo: indicado para reunião com um executivo",
+    "fora_do_icp": "Fora do perfil da BRAX",
+    "humano": "Análise humana: um vendedor vai avaliar o caso",
+}
+_APROVACOES = {
+    "pendente": "reunião com executivo pedida, aguardando o time",
+    "aprovada": "reunião com executivo aprovada, link de agenda enviado",
+    "novo_horario": "reunião aprovada com outro horário, link de agenda enviado",
+    "recusada": "reunião com executivo não aprovada pelo time",
+}
+
+
+def _situacao(lead: Lead) -> str:
+    faixa = _FAIXAS.get(lead.faixa, "ainda não definida (qualificação em andamento)")
+    linhas = [f"Faixa: {faixa}" + (f" ({lead.motivo_faixa})" if lead.motivo_faixa else "")]
+    if lead.transferido_para_vendedor:
+        linhas.append("Transferido para um vendedor, que entra em contato em horário comercial")
+    if lead.aprovacao:
+        linhas.append(f"Aprovação: {_APROVACOES.get(lead.aprovacao, lead.aprovacao)}")
+    linhas.append(f"Conversa encerrada: {'sim' if lead.encerrada else 'não'}")
+    return "\n".join(linhas)
 
 
 def resumo_curto(client, lead: Lead):
@@ -80,8 +107,7 @@ def resumo_curto(client, lead: Lead):
         max_tokens=400,
         system=INSTRUCOES_CURTAS,
         messages=[{"role": "user", "content": (
-            f"Dados registrados: {lead.dados}\nFaixa: {lead.faixa or 'não definida'} ({lead.motivo_faixa or '-'})\n"
-            f"Conversa encerrada: {'sim' if lead.encerrada else 'não'}\n\nConversa:\n{_transcricao(lead)}"
+            f"Dados registrados: {lead.dados}\n\nSituação no sistema:\n{_situacao(lead)}\n\nConversa:\n{_transcricao(lead)}"
         )}],
     )
     return "\n".join(b.text for b in resposta.content if b.type == "text").strip(), resposta.usage

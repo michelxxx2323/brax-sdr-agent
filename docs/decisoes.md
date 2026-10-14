@@ -1407,6 +1407,7 @@ tinha mostrado, porque um visitante conversa de um jeito diferente do lead simul
 | Resposta self-service sem ligar a oferta à dor do dólar | Regra do prompt: ligar o próximo passo à dor que o lead contou | `prompt.py` |
 | "Vou registrar o que você me contou" | Trava em código, por frase e só quando a frase começa assim (o prompt já proibia). "Anotado!" fica: é reação natural | `guardrails.py` |
 | Resumo desatualizado depois da transferência e da aprovação | Resumo refeito também quando muda a transferência ou a aprovação, e no retorno depois do Slack | `agente.py` |
+| Resumo dizia "sem faixa comercial definida" ao lado do selo Self-service | O resumo recebia o valor técnico (`self_service`) e o Haiku o leu como "nenhuma faixa". Agora recebe a situação em palavras (faixa, transferência, aprovação) como dado oficial, e é refeito a cada resposta depois da faixa (~US$ 0,0002 cada), para incluir dúvidas como IOF | `resumo.py`, `agente.py` |
 | ERP no campo "solução atual" | "Solução atual" é só banco e cartão; o ERP fica no resumo (um campo novo mexeria no HubSpot, na visão e no Lovable) | `ferramentas.py` |
 | Encurtador de 479 para 457 caracteres | Informa o tamanho atual e a meta, e tenta uma segunda vez se a versão curta ainda passar do limite | `agente.py` |
 | E-mail perdia o assunto na segunda mensagem | O servidor reaproveita o assunto gravado na primeira mensagem | `simulador_publico.py` |

@@ -489,10 +489,10 @@ class Agente:
         for mensagem in mensagens[posicao_do_lead + 1:]:
             mensagem.setdefault("quando", respondida_em)
         lead.mensagens = mensagens
-        if ((lead.faixa and lead.faixa != faixa_inicial) or (lead.encerrada and not encerrada_inicial)
+        if (lead.faixa or (lead.encerrada and not encerrada_inicial)
                 or (lead.transferido_para_vendedor, lead.aprovacao) != momento_inicial):
-            # Resumo curto para o painel (decisão 048), refeito também na transferência e na aprovação (decisão 061:
-            # no simulador, o resumo ainda dizia "sem próximo passo com o time" depois da transferência).
+            # Resumo curto para o painel (decisão 048). Depois da faixa, é refeito a cada resposta (decisão 061: no
+            # simulador, ficou sem a transferência e sem a resposta sobre IOF). Custo: ~US$ 0,0002 por resposta.
             self._atualizar_resumo(lead, resposta.uso)
         lead.custo_total_usd += resposta.custo_usd
         # Base do follow-up (decisão 028): o lead respondeu, então a contagem de lembretes recomeça.

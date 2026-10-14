@@ -110,6 +110,9 @@ def verificar(cenario: dict, lead, alertas: list[str], conversa: list[tuple[str,
         # Trechos que nunca podem aparecer numa fala do P.H. (decisão 054: raciocínio interno, encurtador fora do papel).
         falas = " ".join(texto.lower() for quem, texto in (conversa or []) if quem == "ph")
         resultado["sem_texto_proibido"] = not any(trecho.lower() in falas for trecho in esperado["textos_proibidos"])
+    if "dados_ausentes" in esperado:
+        # Campos que o lead nunca informou e que a IA não pode deduzir (decisão 061: "LTDA" registrado sem a lead dizer).
+        resultado["sem_dado_inventado"] = not any(lead.dados.get(campo) for campo in esperado["dados_ausentes"])
     for codigo in esperado.get("sem_alertas", []):
         resultado[f"sem_alerta_{codigo}"] = not any(a.startswith(codigo) for a in alertas)
     # Valem para todos os cenários:

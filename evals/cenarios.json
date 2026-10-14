@@ -243,5 +243,26 @@
     "esperado": {
       "transferido_para_vendedor": true
     }
+  },
+  {
+    "id": "tipo_empresa_nao_dito",
+    "titulo": "Tipo de empresa nunca dito: não registrar LTDA por dedução (decisão 061)",
+    "canal": "whatsapp",
+    "persona": "Você é Carolina, founder da Brisa Labs, um SaaS de RH com 12 pessoas que captou uma rodada seed este ano e gasta uns 18 mil por mês, boa parte em ferramentas em dólar. Nunca diga se a empresa é LTDA, S.A. ou MEI. Se perguntarem o tipo da empresa ou o CNPJ, diga que não sabe ao certo porque quem cuida disso é o contador, e que vai confirmar com ele depois. Responda o resto de forma curta.",
+    "esperado": {
+      "dados_ausentes": [
+        "tipo_empresa"
+      ]
+    }
+  },
+  {
+    "id": "iof_e_cashback_self_service",
+    "titulo": "IOF e cashback num lead self-service: responder pelo cérebro, sem transferir (decisão 061)",
+    "canal": "whatsapp",
+    "persona": "Você é Daniel, founder da Trama Digital, uma LTDA de marketing com 9 pessoas que gasta uns 14 mil por mês, quase metade em ferramentas pagas em dólar. Responda o que for perguntado de forma curta. Depois que o assistente indicar o próximo passo, pergunte quanto é o IOF nas compras em dólar e, na mensagem seguinte, se o cartão tem cashback. Não peça para falar com uma pessoa.",
+    "esperado": {
+      "faixa": "self_service",
+      "transferido_para_vendedor": false
+    }
   }
 ]

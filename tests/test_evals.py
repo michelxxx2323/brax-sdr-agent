@@ -34,8 +34,8 @@ class ClaudeRoteirizado:
 
 def test_cenarios_sao_validos():
     cenarios = carregar_cenarios()
-    assert len(cenarios) == 23
-    assert len({c["id"] for c in cenarios}) == 23  # ids únicos
+    assert len(cenarios) == 25
+    assert len({c["id"] for c in cenarios}) == 25  # ids únicos
     for c in cenarios:
         assert c["canal"] in ("whatsapp", "email") and c["persona"] and c["esperado"]
 
@@ -111,3 +111,10 @@ def test_textos_proibidos_nas_falas_do_ph():
     assert verificar(cenario, lead, [], limpa)["sem_texto_proibido"] is True
     vazou = [("ph", "Conversa encerrada. Seguindo o protocolo.")]
     assert verificar(cenario, lead, [], vazou)["sem_texto_proibido"] is False
+
+
+def test_dados_ausentes_pega_dado_deduzido():
+    # Decisão 061: a lead nunca disse "LTDA", mas o tipo apareceu nos bastidores do simulador.
+    cenario = {"esperado": {"dados_ausentes": ["tipo_empresa"]}}
+    assert verificar(cenario, Lead(id="x", dados={"funcionarios": 12}), [], [])["sem_dado_inventado"] is True
+    assert verificar(cenario, Lead(id="x", dados={"tipo_empresa": "ltda"}), [], [])["sem_dado_inventado"] is False

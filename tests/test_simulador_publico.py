@@ -63,11 +63,17 @@ def test_whatsapp_grava_como_simulador_e_devolve_bastidores(tmp_path):
 
 
 def test_email_tem_assunto_e_assinatura_como_um_lead_real_receberia(tmp_path):
-    simulador, cliente = _simulador(tmp_path, [_msg([TextBlock(type="text", text="Olá! Aqui é o P.H., assistente virtual da BRAX.\n\nQual o tamanho do time?")])])
+    simulador, cliente = _simulador(tmp_path, [
+        _msg([TextBlock(type="text", text="Olá! Aqui é o P.H., assistente virtual da BRAX.\n\nQual o tamanho do time?")]),
+        _msg([TextBlock(type="text", text="Obrigado! E quanto vocês gastam por mês?")]),
+    ])
     saida = simulador.processar(SESSAO, "Quero saber dos cartões.", "email", "1.2.3.4", assunto="Cartões para o time")
     assert saida["assunto"] == "Re: Cartões para o time"
     assert saida["texto"].endswith(ASSINATURA)
     assert cliente.chamadas[0]["messages"][-1]["content"].startswith("[Assunto do e-mail: Cartões para o time]")
+    # Decisão 061: a página manda o assunto só no primeiro e-mail; a resposta segue na mesma conversa.
+    segunda = simulador.processar(SESSAO, "Somos 12 pessoas.", "email", "1.2.3.4")
+    assert segunda["assunto"] == "Re: Cartões para o time"
 
 
 def test_limites_e_teto(tmp_path):

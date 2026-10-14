@@ -94,6 +94,16 @@ AVISOS = {
 }
 
 
+_ASSUNTO_GRAVADO = re.compile(r"^\[Assunto do e-mail: (.+?)\]")
+
+
+def _assunto_da_conversa(lead: Lead) -> str | None:
+    """O assunto do primeiro e-mail, que fica gravado no começo da primeira mensagem do lead."""
+    primeira = next((m["content"] for m in lead.mensagens if m["role"] == "user"), None)
+    achado = _ASSUNTO_GRAVADO.match(primeira) if isinstance(primeira, str) else None
+    return achado.group(1) if achado else None
+
+
 class SimuladorPublico:
     def __init__(self, agente, custo_do_dia, teto_diario_usd: float = config.SIMULADOR_TETO_DIARIO_USD,
                  limite_por_sessao: int = config.SIMULADOR_LIMITE_POR_SESSAO,
@@ -135,6 +145,8 @@ class SimuladorPublico:
                 memoria.salvar(lead, pasta=pasta)
             limpo, removidos = mascarar_dados_pessoais(texto)
             assunto_limpo = mascarar_dados_pessoais(assunto)[0] if assunto else None
+            if canal == "email" and not assunto_limpo and not primeiro:
+                assunto_limpo = _assunto_da_conversa(lead)  # a página mandou só o primeiro (decisão 061)
             para_o_agente = limpo
             if canal == "email" and primeiro and assunto_limpo:
                 para_o_agente = f"[Assunto do e-mail: {assunto_limpo}]\n{limpo}"

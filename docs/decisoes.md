@@ -1420,3 +1420,11 @@ faixa, mas o painel continuaria contraintuitivo para o time comercial).
 
 **Aprendizado:** o simulador público é também uma fonte de evals. Um visitante faz perguntas que o lead simulado não
 faz (IOF, cashback) e omite dados de um jeito diferente. O ciclo segue o mesmo: falha → cenário → correção.
+
+**Resultado (bateria de 14/10, 25 cenários):** 23/25, nota 4,66. Os dois cenários novos passaram: o tipo de empresa
+não foi deduzido, e IOF e cashback foram respondidos sem transferência (nota 5). As duas falhas vieram de cenários
+antigos e não têm relação com estas mudanças. Na cripto, a IA narrou o planejamento em dois parágrafos, a trava
+bloqueou a mensagem e a transferência de segurança assumiu, que é o desenho da decisão 024. Na pergunta de rendimento,
+a IA não registrou o setor ("startup de tecnologia") e transferiu pela dúvida do ERP antes de rotear. Nas baterias
+do Haiku 5.5, as falhas mudam de cenário a cada rodada (1 ou 2 por bateria): é variação do modelo, e nenhum cenário
+falha de forma repetida.

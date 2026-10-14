@@ -260,3 +260,5 @@ Python · Anthropic SDK (Claude) · Supabase · HubSpot · Slack · Meta WhatsAp
 A portfolio project for **GTM Engineer / Revenue Operations** roles. The goal isn't only the code: it's to show how I
 think about a pre-sales operation (ICP, qualification, routing, metrics and governance) and how I turn that into a
 system that can be measured and improved.
+
+**One-page summary (in Portuguese):** [docs/case.md](docs/case.md): the problem, the decisions that mattered most, the numbers and the lessons learned.

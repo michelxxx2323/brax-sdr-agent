@@ -253,3 +253,5 @@ Python · Anthropic SDK (Claude) · Supabase · HubSpot · Slack · Meta WhatsAp
 Projeto de portfólio para vagas de **GTM Engineer / Operações de Receita**. O objetivo não é só o código:
 é mostrar como eu penso a operação de pré-vendas (ICP, qualificação, roteamento, métricas e governança)
 e como transformo isso em um sistema que dá para medir e melhorar.
+
+**Resumo de uma página:** [docs/case.md](docs/case.md) (problema, decisões que mais importaram, números e aprendizados).

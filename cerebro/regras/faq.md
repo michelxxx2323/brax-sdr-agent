@@ -39,6 +39,15 @@ O limite é definido depois de uma análise, feita após o cadastro. Não consig
 **Funciona para compras internacionais?**
 Sim. As compras internacionais têm IOF conforme a legislação e tarifas da BRAX, que aparecem no app. <!-- REVISAR -->
 
+**Quanto é o IOF nas compras em dólar?**
+O IOF é um imposto definido pelo governo, não pela BRAX, e vale para qualquer cartão de empresa. A vantagem da BRAX
+está no resto: cartões virtuais por ferramenta, tarifas mostradas no app antes de contratar e o fim do cartão pessoal
+do sócio pagando software em dólar. <!-- REVISAR: não citar percentual de IOF nem de tarifa; responder sem transferir -->
+
+**Tem cashback ou programa de pontos?**
+Não. Hoje a BRAX não tem cashback nem pontos: o foco é controle de gastos, cartões virtuais ilimitados e menos
+trabalho no fechamento do mês. <!-- REVISAR: responder sem transferir -->
+
 **Posso bloquear um cartão na hora?**
 Sim, pelo app, a qualquer momento.
 
@@ -48,7 +57,8 @@ Sim, pelo app, a qualquer momento.
 A pessoa envia a foto do comprovante pelo app, a despesa é categorizada e segue para aprovação conforme a política da empresa.
 
 **Integra com meu contador ou ERP?**
-Há exportação em formatos usados por contadores e integração com alguns ERPs. Para confirmar o seu, o melhor é falar com o time. <!-- REVISAR -->
+Há exportação em formatos usados por contadores e integração com alguns ERPs. Para confirmar o seu, o melhor é falar com o time. <!-- REVISAR: não prometer integração com um ERP específico. Se o lead só perguntou, diga que não consegue confirmar o ERP dele por aqui e ofereça uma pessoa do time; transfira só se ele quiser. -->
+
 
 ## Preços
 

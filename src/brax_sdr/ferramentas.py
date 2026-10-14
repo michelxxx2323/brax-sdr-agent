@@ -36,9 +36,10 @@ FERRAMENTAS = [
                     "type": "string",
                     "enum": list(TIPOS_EMPRESA),
                     "description": (
-                        "ltda, sa, outro_cnpj (outro tipo com CNPJ), mei, sem_cnpj ou pessoa_fisica. Use sem_cnpj sempre "
-                        "que a empresa ainda não tiver CNPJ, mesmo que vá abrir em breve ou que o tipo (LTDA ou S.A.) "
-                        "ainda não esteja definido."
+                        "ltda, sa, outro_cnpj (outro tipo com CNPJ), mei, sem_cnpj ou pessoa_fisica. Só envie o tipo que "
+                        "o lead disse: não deduza LTDA pelo tamanho, pela rodada ou pelo setor (o tipo separa cliente de "
+                        "MEI fora do perfil); se não souber, pergunte. Use sem_cnpj sempre que a empresa ainda não tiver "
+                        "CNPJ, mesmo que vá abrir em breve ou que o tipo (LTDA ou S.A.) ainda não esteja definido."
                     ),
                 },
                 "funcionarios": {"type": "integer", "description": "Número aproximado de pessoas na empresa."},
@@ -49,7 +50,10 @@ FERRAMENTAS = [
                 "decisor": {"type": "boolean", "description": "Se quem conversa decide sobre banco e cartões."},
                 "setor": {"type": "string"},
                 "dor": {"type": "string", "description": "Principal motivo do contato, em poucas palavras."},
-                "solucao_atual": {"type": "string", "description": "Banco, cartão ou ferramenta que usam hoje."},
+                "solucao_atual": {
+                    "type": "string",
+                    "description": "Banco e cartão que usam hoje para pagar despesas. ERP e sistema contábil não entram aqui.",
+                },
                 "sinais_de_compra": {
                     "type": "array",
                     "description": (

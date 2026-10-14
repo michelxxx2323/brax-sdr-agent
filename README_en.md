@@ -9,16 +9,10 @@
 > An AI agent that does inbound pre-sales (SDR) over WhatsApp and email for a B2B fintech:
 > it qualifies leads, routes each one to the right path and records everything in the CRM.
 
-**Status:** 🟢 Phases 1 to 6 and 5b complete, **live 24/7** (Railway + Supabase). P.H. qualifies and routes leads in the
-terminal, **over email** (Gmail, with automatic follow-up) and **over WhatsApp** (Meta webhook, validated with a simulator
-and with Meta's real test payloads), tested against the real Claude API
-([Phase 2](docs/validacao-fase2.md), [Phase 3](docs/validacao-fase3.md), [Phase 4](docs/validacao-fase4.md),
-[Phase 5](docs/validacao-fase5.md)). Everything lands in **HubSpot** (contact, company and deal in the "BRAX Inbound"
-pipeline), and human decisions happen in **Slack** (executive-meeting approval with buttons, handoff alerts).
-Quality is measured by **automated evals** ([Phase 6](docs/validacao-fase6.md)): 20 scenarios with a simulated lead,
-code-based checks and an LLM judge, going from 15/20 to **19/20** passing and zero guardrail alerts
-([dashboard](https://michelxxx2323.github.io/brax-sdr-agent/)). In progress: Phase 7 (sales-team dashboard built in
-Lovable; the database layer is ready and its access rules are verified).
+**Status:** 🟢 **Live 24/7** (Railway + Supabase). P.H. serves leads **over email** (Gmail, with automatic follow-up)
+and **over WhatsApp** (Meta webhook), records everything in **HubSpot** (the "BRAX Inbound" pipeline) and asks for human
+decisions in **Slack**. The sales team follows along in a **dashboard** (Lovable), and anyone can **chat with P.H.** on
+a public page. Quality is measured by **automated evals**: 25 scenarios, from 15/20 to **23/25** passing.
 
 > ⚠️ **BRAX is a fictional company**, created for this case study and **inspired by [Brex](https://www.brex.com/)**.
 > Its name, plans, prices and features are made up. There is no relationship with Brex or any real company.
@@ -26,6 +20,19 @@ Lovable; the database layer is ready and its access rules are verified).
 
 > 🇧🇷 **Language note:** the agent talks to Brazilian leads, so the code, prompts, knowledge base and detailed docs
 > (decision log, validation diaries) are written in **Portuguese**. This page is the English overview.
+
+## Try it
+
+| What | Where | Access |
+|---|---|---|
+| 💬 **Chat with P.H.** as if you were a lead, over WhatsApp or email, with the backstage view live (data, routing tier, lead temperature, events). The conversation is in Portuguese | [sdr-brax.lovable.app/simular](https://sdr-brax.lovable.app/simular) | Open. Use fictional data only |
+| 📊 **Sales dashboard**: conversations, pipeline, metrics and the Quality tab | [sdr-brax.lovable.app](https://sdr-brax.lovable.app/) | `demo@brax-sdr.dev` / `BraxDemo2026!` (read-only, fictional data) |
+| 🧪 **Evals dashboard**: every test battery, scenario by scenario | [GitHub Pages](https://michelxxx2323.github.io/brax-sdr-agent/) | Open |
+
+In the simulator, personal data (Brazilian tax IDs, phone, email, card numbers) is replaced with `[removido]` before it
+reaches the AI. The conversations stay out of the pipeline and HubSpot and are deleted after 7 days, and there are
+per-conversation limits and a daily cost cap ([validation](docs/validacao-fase8.md)). The demo account is public on
+purpose, and the server restores its password every 6 hours.
 
 ---
 
@@ -73,12 +80,13 @@ scratch, with every decision documented.
 WhatsApp (Meta Cloud API) ─┐
                            ├──> SDR agent "P.H." (Claude API + tools) ── runs 24/7 on Railway
 Email (Gmail API) ─────────┘            │
+Public simulator (Lovable) ─────────────┤
                                         ├── Brain (Markdown knowledge base, versioned on GitHub)
                                         ├── Memory per lead (Supabase)
                                         ├── CRM (HubSpot, free tier)
                                         └── Human approval (Slack)
 
-Supabase ── read-only views ──▶ Sales dashboard (Lovable, Phase 7)
+Supabase ── read-only views ──▶ Sales dashboard (Lovable)
 Evals ──▶ JSON results ──▶ GitHub Pages dashboard (+ a copy in Supabase)
 ```
 
@@ -91,13 +99,32 @@ Evals ──▶ JSON results ──▶ GitHub Pages dashboard (+ a copy in Supab
 - **Three-layer brain:** concepts (versioned Markdown), data (Supabase) and memory per lead.
 
 Details in [docs/arquitetura.md](docs/arquitetura.md). The reasoning behind every choice is in
-[docs/decisoes.md](docs/decisoes.md) (about 50 decisions, each with context, options and rationale; in Portuguese).
+[docs/decisoes.md](docs/decisoes.md) (60+ decisions, each with context, options and rationale; in Portuguese).
 
 ## Guardrails (financial sector)
 
 P.H. **never** promises account approval, card limits or credit; **never** asks for passwords, codes, card data or
 documents by message; **never** presents returns as guaranteed; respects opt-out requests (LGPD, Brazil's data
 protection law); and, when in doubt, hands off to a human. See [cerebro/regras/guardrails.md](cerebro/regras/guardrails.md).
+
+## Quality: how P.H. is measured
+
+Every change goes through an **eval battery**: a simulated lead (another model, playing a persona) talks to P.H., code
+checks the outcome (routing tier, handoff, opt-out, invented data, forbidden text) and a stronger model scores the
+conversation as a judge. Every real failure becomes a new scenario first, and only then gets fixed:
+**failure → scenario → fix**.
+
+| Battery | P.H. model | Passing | Correct routing | Cost per conversation | What changed |
+|---|---|---|---|---|---|
+| 1st | Haiku 4.5 | 15/20 | 73% | US$ 0.026 | Baseline |
+| 2nd and 3rd | Haiku 4.5 | 19/20 | 93% | US$ 0.03 | Required industry field, layered guardrails |
+| 4th | **Haiku 5.5** | 20/20 | 100% | **US$ 0.0035** | Model switch: 9x cheaper (decision 051) |
+| 5th to 7th | Haiku 5.5 | 21/23 → 22/23 | 100% | US$ 0.0035 | 3 new scenarios from real failures; one experiment made things worse and was reverted (056) |
+| 8th | Haiku 5.5 | 23/25 | 94% | US$ 0.004 | 2 scenarios that came from the public simulator (061) |
+
+The remaining failures move to a different scenario in each battery (model variance, not a fixed defect), and the code
+guardrails catch the worst case: when the AI narrates its own planning to the lead, the message is blocked and a human
+takes over. Details: [Phase 6 validation](docs/validacao-fase6.md) and the dashboard's Quality tab.
 
 ## Phases
 
@@ -108,10 +135,10 @@ protection law); and, when in doubt, hands off to a human. See [cerebro/regras/g
 | 3 | Email channel | Gmail API, replies in the same thread, follow-up | ✅ Done |
 | 4 | WhatsApp channel | Meta Cloud API webhook, validated with a simulator (decision 030) | ✅ Done |
 | 5 | CRM and human approval | HubSpot (CRM) + Slack (async approval and alerts) | ✅ Done |
-| 6 | Evals and metrics | 20 scenarios with a simulated lead, code checks, LLM as a judge and a [dashboard](https://michelxxx2323.github.io/brax-sdr-agent/) | ✅ Done |
+| 6 | Evals and metrics | Scenarios with a simulated lead, code checks, LLM as a judge and a [dashboard](https://michelxxx2323.github.io/brax-sdr-agent/) | ✅ Done |
 | 5b | Hosting | Railway (Hobby) + Supabase, everything integrated (decisions 043 and 044, [validation](docs/validacao-fase5b.md)) | ✅ Done |
-| 7 | Sales dashboard | Lovable front end for the sales team: leads, conversations, pipeline and metrics, reading Supabase (decisions 041 and 045 to 050; [validation](docs/validacao-fase7.md)) | 🟡 In progress: database ready, screens in Lovable |
-| 8 | Public simulator | A web page where anyone can chat with P.H. (design to be defined, decision 041) | ⚪ |
+| 7 | Sales dashboard | Lovable front end for the sales team: conversations, pipeline, metrics and Quality, reading read-only Supabase views (decisions 041, 045 to 059; [validation](docs/validacao-fase7.md)) | 🟡 Wrapping up |
+| 8 | Public simulator | A page where anyone can chat with P.H., with a live backstage view (decisions 060 and 061; [validation](docs/validacao-fase8.md)) | 🟡 Wrapping up |
 
 ## How to run it (Windows)
 
@@ -142,7 +169,7 @@ an open session keeps running the old code.
 
 ### Live: Railway + Supabase (Phase 5b)
 
-P.H. runs 24/7 on **Railway** (`https://brax-sdr-agent-production.up.railway.app`, routes `/webhook` and `/saude`,
+P.H. runs 24/7 on **Railway** (`https://brax-sdr-agent-production.up.railway.app`, routes `/webhook`, `/simulador/mensagem` and `/saude`,
 the health check), with leads stored in **Supabase**. Every push to `main` deploys the new version automatically.
 Keys live in Railway's variables (the same as in `.env`, plus `WHATSAPP_MODO=meta`, `PORT=8080` and
 `PYTHONUNBUFFERED=1`). Details: decisions 043 and 044 and the [Phase 5b validation](docs/validacao-fase5b.md).

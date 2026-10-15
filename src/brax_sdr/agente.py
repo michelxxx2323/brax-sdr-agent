@@ -424,22 +424,25 @@ class Agente:
             fixar_texto(texto_final)
 
         if not mensagem_do_codigo and texto_final:
+            # Frases como "Vou registrar o que você me contou" saem primeiro (decisão 061), depois os parágrafos de
+            # bastidor (decisão 055): assim um parágrafo "Oi! Aqui é o P.H., assistente virtual. Vou registrar os dados..."
+            # perde só a frase de bastidor e mantém a apresentação.
+            limpo = sem_paragrafos_internos(sem_frases_de_registro(texto_final))
+            if limpo and limpo != texto_final:
+                lead.registrar_evento("bastidor_removido", texto_final[:300])
+                texto_final = limpo
+                fixar_texto(texto_final)
+
+        if not mensagem_do_codigo and texto_final:
             ajustado = texto_final
             if primeira:
-                ajustado = garantir_identificacao(ajustado)  # guardrail G4 (achado nos evals: 2 de 20 sem identificação)
+                # Guardrail G4 (achado nos evals: 2 de 20 sem identificação). Depois da limpeza de bastidor, nunca antes:
+                # na bateria de 14/10, a limpeza removeu o parágrafo que tinha a apresentação (decisão 063).
+                ajustado = garantir_identificacao(ajustado)
             if lead.canal == "whatsapp":
                 ajustado = ajustado.replace("**", "")  # o WhatsApp mostraria os asteriscos (evals: cenário de preço)
             if ajustado != texto_final:
                 texto_final = ajustado
-                fixar_texto(texto_final)
-
-        if not mensagem_do_codigo and texto_final:
-            # Parágrafos de bastidor saem; o resto da resposta continua (decisão 055).
-            # Frases como "Vou registrar o que você me contou" também saem (decisão 061).
-            limpo = sem_frases_de_registro(sem_paragrafos_internos(texto_final))
-            if limpo and limpo != texto_final:
-                lead.registrar_evento("bastidor_removido", texto_final[:300])
-                texto_final = limpo
                 fixar_texto(texto_final)
 
         if not mensagem_do_codigo and texto_final and parece_texto_interno(texto_final):

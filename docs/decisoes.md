@@ -1450,3 +1450,26 @@ pela restauração. A conta demo continua só leitura: nem logada ela lê as tab
 dúvidas do lead, os resumos passaram de 600 caracteres; a instrução ganhou limite (4 frases, 600 caracteres) e deixou de
 usar "sistema" e "oficial". A Patrícia tinha "LTDA" deduzido, de antes da correção: o dado saiu do banco e do HubSpot (a
 faixa executivo continua, pelas 60 pessoas). Os outros 11 leads tinham o tipo dito na conversa.
+
+## 063: A identificação como assistente virtual é a última trava a rodar
+
+**Contexto:** a bateria de 14/10 teve 1 alerta de guardrail, e as quatro anteriores do Haiku 5.5 tinham zero. Como
+guardrail é o critério mais sensível num agente de fintech, o alerta foi investigado: era **G4** (primeira mensagem sem
+identificação como assistente virtual), no cenário `lead_completo_na_primeira_mensagem`. **Problema real, não falso
+positivo:** o lead recebeu "Falta o setor da Seletax para eu concluir o roteamento..." sem a apresentação.
+
+**Causa:** duas travas em código em ordem errada. A IA escreveu "Oi, Ricardo! Aqui é o P.H., assistente virtual da
+BRAX. Vou registrar os dados da Seletax e já verifico o melhor caminho." A garantia de identificação (G4) rodou primeiro
+e viu a apresentação; depois, a limpeza de bastidor (055) removeu o parágrafo inteiro por causa de "registrar os dados",
+levando a apresentação junto. Cada trava funcionava sozinha; juntas, a segunda desfazia a primeira.
+
+**Opções:** reforçar o prompt (descartada: a IA já se apresentou, o erro era do código); deixar a limpeza de bastidor
+não remover parágrafos com a apresentação (descartada: o parágrafo também pode conter bastidor de verdade); reordenar
+(escolhida).
+
+**Decisão:** primeiro sai só a frase de registro narrado (061), depois os parágrafos de bastidor (055) e, **por último**,
+a garantia de identificação. Assim, o que quer que a limpeza remova, a apresentação é recolocada antes do envio. Dois
+testes reproduzem o caso: a frase sai e a apresentação fica; e, se o parágrafo inteiro for bastidor, a apresentação volta.
+
+**Aprendizado:** travas em camadas precisam de ordem definida, e a trava de um guardrail inegociável roda por último.
+Um alerta isolado numa bateria aprovada (o cenário passou nas verificações objetivas) ainda vale ser investigado.

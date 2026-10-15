@@ -134,6 +134,7 @@ _FRASE_DE_REGISTRO = re.compile(
 def sem_frases_de_registro(texto: str) -> str:
     """Tira frases como "Vou registrar o que você me contou." Nunca tira uma frase com link (o próximo passo do lead)."""
     limpo = _FRASE_DE_REGISTRO.sub(lambda m: m.group(0) if "http" in m.group(0) else "", texto)
+    limpo = re.sub(r"[ \t]+\n", "\n", limpo)  # o espaço que sobra no fim da linha quando a última frase sai
     return re.sub(r"\n{3,}", "\n\n", limpo).strip()
 
 

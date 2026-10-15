@@ -524,3 +524,22 @@ def test_paragrafo_de_bastidor_sai_e_a_resposta_fica(tmp_path):
     resposta = Agente(client=cliente, pasta_leads=tmp_path).responder("bast", "Gastamos bastante em dólar com nuvem.")
     assert resposta.texto == "Na prática, cada pessoa do time pode ter o próprio cartão. A empresa já tem CNPJ? É LTDA ou S.A.?"
     assert "bastidor_removido" in [e["tipo"] for e in memoria.carregar("bast", pasta=tmp_path).eventos]
+
+
+def test_limpeza_de_bastidor_nao_apaga_a_identificacao(tmp_path):
+    # Decisão 063 (bateria de 14/10, alerta G4): a apresentação estava no mesmo parágrafo de uma frase de bastidor; a
+    # limpeza rodava depois da garantia de identificação e o lead recebeu a 1ª mensagem sem "assistente virtual".
+    texto = ("Oi, Ricardo! Aqui é o P.H., assistente virtual da BRAX. Vou registrar os dados da Seletax e já verifico "
+             "o melhor caminho para vocês.\n\nO que a Seletax faz?")
+    cliente = ClienteFalso([_msg([TextBlock(text=texto, type="text")], "end_turn")])
+    resposta = Agente(client=cliente, pasta_leads=tmp_path).responder("g4", "Oi, aqui é o Ricardo da Seletax")
+    assert resposta.texto == "Oi, Ricardo! Aqui é o P.H., assistente virtual da BRAX.\n\nO que a Seletax faz?"
+    assert not any(a.startswith("G4") for a in resposta.alertas)
+
+
+def test_identificacao_volta_se_o_paragrafo_inteiro_for_bastidor(tmp_path):
+    texto = "Oi! Aqui é o P.H., assistente virtual da BRAX. Preciso do setor para rotear.\n\nO que a empresa faz?"
+    cliente = ClienteFalso([_msg([TextBlock(text=texto, type="text")], "end_turn")])
+    resposta = Agente(client=cliente, pasta_leads=tmp_path).responder("g4b", "Oi")
+    assert "assistente virtual" in resposta.texto and "rotear" not in resposta.texto
+    assert resposta.texto.endswith("O que a empresa faz?")

@@ -1473,3 +1473,15 @@ testes reproduzem o caso: a frase sai e a apresentação fica; e, se o parágraf
 
 **Aprendizado:** travas em camadas precisam de ordem definida, e a trava de um guardrail inegociável roda por último.
 Um alerta isolado numa bateria aprovada (o cenário passou nas verificações objetivas) ainda vale ser investigado.
+
+**Resultado (bateria de 14/10, à noite):** 23/25, roteamento 100%, nota 4,7 e **zero alertas de guardrail**; o cenário
+do G4 passou com nota 5. As duas falhas foram investigadas:
+- **Rendimento (`sem_vazamento`):** depois da despedida, a IA tentou mandar "(Conversa encerrada.)". A trava bloqueou e
+  o lead não recebeu nada, que é o silêncio correto. A verificação conta qualquer bloqueio como falha, mesmo quando ele
+  protegeu o lead; é o mesmo padrão já visto na cripto e no MEI.
+- **IOF e cashback (`transferência`):** problema real. A IA transferiu o IOF com o motivo "percentual exato não
+  disponível no cérebro": leu a orientação "não citar percentual" como resposta incompleta e caiu na regra "se não
+  estiver no cérebro, transfira". O prompt passou a dizer que, quando o cérebro tem a pergunta e manda não citar um
+  número, a resposta dele já é a completa. Conferido com o modelo real sem salvar no painel: o cenário de IOF passou 4
+  de 4 vezes sem transferir, e o caso oposto (outro CNPJ do grupo, que o cérebro não responde) continuou transferindo
+  3 de 3.

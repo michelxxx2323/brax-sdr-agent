@@ -94,6 +94,9 @@ banco = supabase_leads.cliente()
 if banco:
     # Sinal de vida a cada 6 h: o Supabase gratuito pausa projetos sem uso (achado na Fase 5b).
     threading.Thread(target=supabase_leads.manter_ativo, args=(banco,), daemon=True, name="supabase").start()
+    if config.SUPABASE_DEMO_EMAIL and config.SUPABASE_DEMO_SENHA:
+        # Conta demo pública: senha restaurada a cada 5 minutos, caso um visitante a troque (decisão 062).
+        threading.Thread(target=supabase_leads.proteger_conta_demo, args=(banco,), daemon=True, name="demo").start()
 print(f"  Supabase: {'ligado' if banco else 'desligado (leads em data/local/leads)'}")
 print(f"  WhatsApp: modo {config.WHATSAPP_MODO} em http://{config.SERVIDOR_HOST}:{config.WHATSAPP_PORTA}/webhook", flush=True)
 if config.WHATSAPP_MODO == "meta" and not config.WHATSAPP_ENVIO_HABILITADO:

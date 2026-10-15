@@ -1,6 +1,7 @@
 """Testes dos leads no Supabase com um servidor FALSO (httpx.MockTransport): nenhuma chamada à internet."""
 
 import json
+import threading
 from dataclasses import asdict
 
 import httpx
@@ -111,3 +112,22 @@ def test_restaura_a_conta_demo_mesmo_com_o_email_trocado():
     assert put.method == "PUT" and str(put.url).endswith("/auth/v1/admin/users/u2")
     assert json.loads(put.content)["email"] == "demo@brax-sdr.dev"
     assert put.headers["Authorization"] == "Bearer sb_secret_teste"
+
+
+def test_conta_demo_protegida_em_ciclo_proprio(monkeypatch):
+    # Decisão 062: a cada 5 minutos, separado do sinal de vida de 6 horas; uma falha não derruba o ciclo.
+    monkeypatch.setattr(supabase_leads.config, "SUPABASE_DEMO_EMAIL", "demo@brax-sdr.dev")
+    monkeypatch.setattr(supabase_leads.config, "SUPABASE_DEMO_SENHA", "BraxDemo2026!")
+    chamadas, parar = [], threading.Event()
+
+    class Banco:
+        def restaurar_conta_demo(self, email, senha):
+            chamadas.append((email, senha))
+            if len(chamadas) == 1:
+                raise httpx.ConnectError("fora do ar")
+            parar.set()
+            return True
+
+    supabase_leads.proteger_conta_demo(Banco(), parar=parar, intervalo=0)
+    assert chamadas == [("demo@brax-sdr.dev", "BraxDemo2026!")] * 2
+    assert supabase_leads.INTERVALO_CONTA_DEMO_S == 300

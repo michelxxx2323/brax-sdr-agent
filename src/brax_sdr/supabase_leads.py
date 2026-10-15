@@ -126,10 +126,23 @@ def manter_ativo(banco: SupabaseLeads, parar: threading.Event | None = None,
                 print(f"[Supabase] {apagadas} conversa(s) do simulador com mais de 7 dias apagada(s)", flush=True)
         except Exception as erro:
             print(f"[Supabase] limpeza do simulador falhou: {type(erro).__name__}: {erro}", flush=True)
-        if config.SUPABASE_DEMO_EMAIL and config.SUPABASE_DEMO_SENHA:
-            try:  # decisão 058: a vitrine não fica trancada se um visitante trocar a senha publicada
-                banco.restaurar_conta_demo(config.SUPABASE_DEMO_EMAIL, config.SUPABASE_DEMO_SENHA)
-            except Exception as erro:
-                print(f"[Supabase] restaurar a conta demo falhou: {type(erro).__name__}: {erro}", flush=True)
+        if parar.wait(intervalo):
+            return
+
+
+# Decisão 062: com a senha publicada, qualquer visitante logado pode trocá-la pela API do Supabase e trancar a demo para
+# todos. A cada 6 horas (058) era tempo demais (ex.: no meio de um processo seletivo); a cada 5 minutos, a demo volta logo.
+INTERVALO_CONTA_DEMO_S = 5 * 60
+
+
+def proteger_conta_demo(banco: SupabaseLeads, parar: threading.Event | None = None,
+                        intervalo: float = INTERVALO_CONTA_DEMO_S) -> None:
+    """Restaura o e-mail, a senha e o papel da conta demo a cada `intervalo` segundos (decisões 058 e 062)."""
+    parar = parar or threading.Event()
+    while True:
+        try:
+            banco.restaurar_conta_demo(config.SUPABASE_DEMO_EMAIL, config.SUPABASE_DEMO_SENHA)
+        except Exception as erro:
+            print(f"[Supabase] restaurar a conta demo falhou: {type(erro).__name__}: {erro}", flush=True)
         if parar.wait(intervalo):
             return

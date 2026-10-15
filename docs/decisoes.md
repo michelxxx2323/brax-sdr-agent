@@ -1429,3 +1429,18 @@ bloqueou a mensagem e a transferência de segurança assumiu, que é o desenho d
 a IA não registrou o setor ("startup de tecnologia") e transferiu pela dúvida do ERP antes de rotear. Nas baterias
 do Haiku 5.5, as falhas mudam de cenário a cada rodada (1 ou 2 por bateria): é variação do modelo, e nenhum cenário
 falha de forma repetida.
+
+## 062: Conta demo restaurada a cada 5 minutos
+
+**Contexto:** a senha da conta demo é pública (058) e o Supabase deixa qualquer usuário logado trocar a própria senha
+pela API. Um visitante pode trancar a demo para todos, por exemplo no meio de um processo seletivo. O servidor já
+restaurava a conta, mas só a cada 6 horas, junto com o sinal de vida. O risco foi apontado no teste final das Fases 7 e 8.
+
+**Opções:** bloquear a troca de senha só dessa conta no Supabase (descartada: a restauração do servidor e a troca do
+visitante passam pelo mesmo serviço de autenticação, e um bloqueio no banco travaria as duas); restaurar com mais
+frequência (escolhida); trocar a conta pública por um acesso sem login (descartada: o painel exige login por desenho, 047).
+
+**Decisão:** a restauração (e-mail, senha e papel da conta) ganhou um ciclo próprio, a cada **5 minutos**. O sinal de
+vida e a limpeza do simulador seguem a cada 6 horas. O pior caso passa de 6 horas para 5 minutos de demo trancada, com
+uma chamada leve ao Supabase por vez. A troca de e-mail já exigia confirmação nos dois endereços e também é desfeita
+pela restauração. A conta demo continua só leitura: nem logada ela lê as tabelas ou grava (`verificar_acesso_painel.py`).

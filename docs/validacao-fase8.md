@@ -96,7 +96,9 @@ chegou ao limite de mensagens da demonstração. Use "Reiniciar" para começar o
 
 **Resultado: aprovado.** Conferido pelo dono do projeto no telefone: conversa e aba de bastidores funcionando.
 
-## Pendências da fase
+## Teste 8: Prompt 9 publicado
 
-- Prompt 9 no Lovable (entrada com dois botões, conta demo no login, campo de mensagem fixo, rótulos legíveis, medidor de
-  0 a 19). Até lá, a página funciona e o README aponta direto para `/simular` e traz o login da demo.
+**Resultado: aprovado.** O site publicado tem as três rotas (`/`, `/login`, `/simular`) e os ajustes da decisão 061:
+página de entrada com os dois botões, conta demo com o botão "Entrar com a conta demo", escala de prioridade de 0 a 19,
+rótulos legíveis e sugestões que enviam com um clique. A conta demo entra e lê o painel, sem acesso às tabelas
+(`verificar_acesso_painel.py`: 17/17).

@@ -22,7 +22,7 @@ página pública. A qualidade é medida por **evals automáticos**: 25 cenários
 | O quê | Onde | Acesso |
 |---|---|---|
 | 💬 **Converse com o P.H.** como se fosse um lead, por WhatsApp ou e-mail, vendo os bastidores ao vivo (dados, faixa, temperatura, eventos) | [sdr-brax.lovable.app/simular](https://sdr-brax.lovable.app/simular) | Aberto. Use só dados fictícios |
-| 📊 **Painel do time comercial**: conversas, funil, métricas e a aba Qualidade | [sdr-brax.lovable.app](https://sdr-brax.lovable.app/) | `demo@brax-sdr.dev` / `BraxDemo2026!` (só leitura, dados fictícios) |
+| 📊 **Painel do time comercial**: conversas, funil, métricas e a aba Qualidade | [sdr-brax.lovable.app/login](https://sdr-brax.lovable.app/login) | Botão "Entrar com a conta demo" (`demo@brax-sdr.dev` / `BraxDemo2026!`, só leitura, dados fictícios) |
 | 🧪 **Painel dos evals**: cada bateria, cenário a cenário | [GitHub Pages](https://michelxxx2323.github.io/brax-sdr-agent/) | Aberto |
 
 No simulador, dados pessoais (CPF, CNPJ, telefone, e-mail, cartão) são trocados por `[removido]` antes de chegar à IA,

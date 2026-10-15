@@ -26,7 +26,7 @@ a public page. Quality is measured by **automated evals**: 25 scenarios, from 15
 | What | Where | Access |
 |---|---|---|
 | 💬 **Chat with P.H.** as if you were a lead, over WhatsApp or email, with the backstage view live (data, routing tier, lead temperature, events). The conversation is in Portuguese | [sdr-brax.lovable.app/simular](https://sdr-brax.lovable.app/simular) | Open. Use fictional data only |
-| 📊 **Sales dashboard**: conversations, pipeline, metrics and the Quality tab | [sdr-brax.lovable.app](https://sdr-brax.lovable.app/) | `demo@brax-sdr.dev` / `BraxDemo2026!` (read-only, fictional data) |
+| 📊 **Sales dashboard**: conversations, pipeline, metrics and the Quality tab | [sdr-brax.lovable.app/login](https://sdr-brax.lovable.app/login) | "Entrar com a conta demo" button (`demo@brax-sdr.dev` / `BraxDemo2026!`, read-only, fictional data) |
 | 🧪 **Evals dashboard**: every test battery, scenario by scenario | [GitHub Pages](https://michelxxx2323.github.io/brax-sdr-agent/) | Open |
 
 In the simulator, personal data (Brazilian tax IDs, phone, email, card numbers) is replaced with `[removido]` before it

@@ -146,6 +146,7 @@ conversation as a judge. Every real failure becomes a new scenario first, and on
 | 4th | **Haiku 5.5** | 20/20 | 100% | **US$ 0.0035** | Model switch: 9x cheaper (decision 051) |
 | 5th to 7th | Haiku 5.5 | 21/23 → 22/23 | 100% | US$ 0.0035 | 3 new scenarios from real failures; one experiment made things worse and was reverted (056) |
 | 8th | Haiku 5.5 | 23/25 | 94% | US$ 0.004 | 2 scenarios that came from the public simulator (061) |
+| 9th | Haiku 5.5 | 23/25 | 100% | US$ 0.004 | A guardrail alert investigated and fixed: zero alerts (063) |
 
 The remaining failures move to a different scenario in each battery (model variance, not a fixed defect), and the code
 guardrails catch the worst case: when the AI narrates its own planning to the lead, the message is blocked and a human

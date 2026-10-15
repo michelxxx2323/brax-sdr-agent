@@ -139,6 +139,7 @@ notas como juiz. Toda falha real vira um cenário novo, e só então é corrigid
 | 4ª | **Haiku 5.5** | 20/20 | 100% | **US$ 0,0035** | Troca de modelo: 9x mais barato (decisão 051) |
 | 5ª a 7ª | Haiku 5.5 | 21/23 → 22/23 | 100% | US$ 0,0035 | 3 cenários novos de falhas reais; um experimento piorou e foi revertido (056) |
 | 8ª | Haiku 5.5 | 23/25 | 94% | US$ 0,004 | 2 cenários vindos do simulador público (061) |
+| 9ª | Haiku 5.5 | 23/25 | 100% | US$ 0,004 | Alerta de guardrail investigado e corrigido: zero alertas (063) |
 
 As falhas restantes mudam de cenário a cada bateria (variação do modelo, não um defeito fixo), e as travas em código
 seguram o pior caso: quando a IA narra o próprio planejamento, a mensagem é bloqueada e uma pessoa assume. Detalhes:

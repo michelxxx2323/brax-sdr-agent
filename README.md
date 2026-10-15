@@ -131,8 +131,8 @@ seguram o pior caso: quando a IA narra o próprio planejamento, a mensagem é bl
 | 5 | CRM e aprovação humana | HubSpot (CRM) + Slack (aprovação assíncrona e alertas) | ✅ Concluída |
 | 6 | Evals e métricas | Cenários com lead simulado, verificações em código, LLM como juiz e [painel](https://michelxxx2323.github.io/brax-sdr-agent/) | ✅ Concluída |
 | 5b | Hospedagem | Railway (Hobby) + Supabase, com tudo integrado (decisões 043 e 044, [validação](docs/validacao-fase5b.md)) | ✅ Concluída |
-| 7 | Painel comercial | Front end no Lovable para o time comercial: conversas, funil, métricas e Qualidade, lendo visões somente leitura do Supabase (decisões 041, 045 a 059; [validação](docs/validacao-fase7.md)) | 🟡 Em encerramento |
-| 8 | Simulador público | Página para qualquer pessoa conversar com o P.H., com bastidores ao vivo (decisões 060 e 061; [validação](docs/validacao-fase8.md)) | 🟡 Em encerramento |
+| 7 | Painel comercial | Front end no Lovable para o time comercial: conversas, funil, métricas e Qualidade, lendo visões somente leitura do Supabase (decisões 041, 045 a 059 e 062; [validação](docs/validacao-fase7.md)) | ✅ Concluída |
+| 8 | Simulador público | Página para qualquer pessoa conversar com o P.H., com bastidores ao vivo (decisões 060 e 061; [validação](docs/validacao-fase8.md)) | ✅ Concluída |
 
 ## Como rodar (Windows)
 

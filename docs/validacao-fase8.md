@@ -102,3 +102,8 @@ chegou ao limite de mensagens da demonstração. Use "Reiniciar" para começar o
 página de entrada com os dois botões, conta demo com o botão "Entrar com a conta demo", escala de prioridade de 0 a 19,
 rótulos legíveis e sugestões que enviam com um clique. A conta demo entra e lê o painel, sem acesso às tabelas
 (`verificar_acesso_painel.py`: 17/17).
+
+## Encerramento
+
+**Fase aprovada pelo dono do projeto em 14/10/2026**, junto com a Fase 7, depois do teste final das três páginas
+(`/`, `/login`, `/simular`) e dos ajustes dos Prompts 9 e 10.

@@ -111,3 +111,8 @@ tempo e HubSpot sincronizado. A Bianca foi de 5 para 7 pontos (quente pela dor, 
   parágrafos de bastidor. As duas conversas foram geradas de novo; nenhum parágrafo de bastidor nos 12 leads.
   Verificação de acesso: 17/17.
 
+## Encerramento
+
+**Fase aprovada pelo dono do projeto em 14/10/2026**, junto com a Fase 8. Painel publicado em
+`https://sdr-brax.lovable.app` (conta demo no `/login`), com os prompts 1 a 10 aplicados e a conta demo protegida
+(decisão 062).

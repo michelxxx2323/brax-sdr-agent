@@ -84,13 +84,14 @@ Texto completo: `cerebro/regras/guardrails.md`.
 6. **Evals e métricas**: ✅ concluída e aprovada (3 baterias, 15/20 → 19/20, zero alertas de guardrail;
    `docs/validacao-fase6.md`, painel em GitHub Pages). Rodar: `.venv\Scripts\python.exe rodar_evals.py`.
 5b. **Hospedagem + Supabase**: ✅ concluída e aprovada (Railway Hobby + Supabase, Gmail em produção; `docs/validacao-fase5b.md`)
-7. Painel do time comercial no Lovable (decisões 041, 045 a 059) ← em encerramento: banco pronto (`supabase/painel.sql`,
-   `evals.sql`, verificação `verificar_acesso_painel.py` 17/17); conversas, métricas e aba Qualidade feitas; conta demo
-   pública (`demo@brax-sdr.dev`, restaurada pelo servidor). Prompts 1 a 8 aplicados; falta o **Prompt 9** (decisão 061).
-8. Página pública "Converse com o P.H." (decisões 060 e 061) ← em encerramento: página `https://sdr-brax.lovable.app/simular`,
-   servidor `POST /simulador/mensagem` com `BRAX_SIMULADOR_ORIGENS` no Railway; validação em `docs/validacao-fase8.md`.
-   Falta: Prompt 9 no Lovable, conferir a página e a aprovação do dono para encerrar as Fases 7 e 8.
-   README pt/en e `docs/case.md` (para recrutadores) prontos.
+7. **Painel do time comercial** (Lovable): ✅ concluída e aprovada em 14/10/2026 (visões somente leitura, 17/17;
+   conversas, métricas, funil e aba Qualidade; conta demo pública restaurada a cada 5 min, decisões 058 e 062;
+   prompts 1 a 10 em `lovable/prompt-painel.md`; `docs/validacao-fase7.md`).
+8. **Simulador público** "Converse com o P.H.": ✅ concluída e aprovada em 14/10/2026 (`https://sdr-brax.lovable.app/simular`,
+   `POST /simulador/mensagem`, decisões 060 e 061; `docs/validacao-fase8.md`).
+
+**Projeto finalizado.** README pt/en e `docs/case.md` (para recrutadores) prontos. Opcionais: plano Hobby do Railway
+ao fim do teste gratuito e alerta de saldo na Anthropic.
 
 ## Ambiente local
 

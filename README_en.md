@@ -137,8 +137,8 @@ takes over. Details: [Phase 6 validation](docs/validacao-fase6.md) and the dashb
 | 5 | CRM and human approval | HubSpot (CRM) + Slack (async approval and alerts) | ✅ Done |
 | 6 | Evals and metrics | Scenarios with a simulated lead, code checks, LLM as a judge and a [dashboard](https://michelxxx2323.github.io/brax-sdr-agent/) | ✅ Done |
 | 5b | Hosting | Railway (Hobby) + Supabase, everything integrated (decisions 043 and 044, [validation](docs/validacao-fase5b.md)) | ✅ Done |
-| 7 | Sales dashboard | Lovable front end for the sales team: conversations, pipeline, metrics and Quality, reading read-only Supabase views (decisions 041, 045 to 059; [validation](docs/validacao-fase7.md)) | 🟡 Wrapping up |
-| 8 | Public simulator | A page where anyone can chat with P.H., with a live backstage view (decisions 060 and 061; [validation](docs/validacao-fase8.md)) | 🟡 Wrapping up |
+| 7 | Sales dashboard | Lovable front end for the sales team: conversations, pipeline, metrics and Quality, reading read-only Supabase views (decisions 041, 045 to 059 and 062; [validation](docs/validacao-fase7.md)) | ✅ Done |
+| 8 | Public simulator | A page where anyone can chat with P.H., with a live backstage view (decisions 060 and 061; [validation](docs/validacao-fase8.md)) | ✅ Done |
 
 ## How to run it (Windows)
 

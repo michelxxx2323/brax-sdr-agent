@@ -68,8 +68,10 @@ INSTRUCOES_CURTAS = (
     "para o painel do time comercial. Escreva 2 a 4 frases curtas em português do Brasil, sem markdown e sem títulos: "
     "quem é e qual empresa, o que precisa e em que pé a conversa ficou (faixa, próximo passo ou motivo do encerramento). "
     "Use só fatos ditos na conversa ou registrados nos dados. Nunca suponha cargo, gênero, intenção ou qualquer dado "
-    "que não foi dito. A situação no sistema (faixa, transferência, aprovação) é oficial: descreva-a como está, sem "
-    "contradizer e sem citar a expressão \"situação no sistema\", e inclua as últimas dúvidas que o lead fez e como foram respondidas."
+    "que não foi dito. A situação (faixa, transferência, aprovação) é oficial: descreva-a como está, sem contradizer, "
+    "sem as palavras \"sistema\" ou \"oficial\" e sem explicar os critérios da faixa. Se o lead fez uma dúvida que importa para o time "
+    "(ex.: IOF, ERP, outra empresa do grupo), diga em poucas palavras se foi respondida ou ficou para o vendedor. "
+    "No máximo 4 frases e 600 caracteres."
 )
 
 # Rótulos em palavras: com o valor técnico ("self_service"), o resumo da Marina disse que a conversa não chegou a uma

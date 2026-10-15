@@ -1444,3 +1444,9 @@ frequência (escolhida); trocar a conta pública por um acesso sem login (descar
 vida e a limpeza do simulador seguem a cada 6 horas. O pior caso passa de 6 horas para 5 minutos de demo trancada, com
 uma chamada leve ao Supabase por vez. A troca de e-mail já exigia confirmação nos dois endereços e também é desfeita
 pela restauração. A conta demo continua só leitura: nem logada ela lê as tabelas ou grava (`verificar_acesso_painel.py`).
+
+**Complemento da 061 (teste final das Fases 7 e 8):** os resumos dos 12 leads do painel foram refeitos com o código novo
+(a Patrícia aparecia com "Reunião aprovada" e um resumo de "aguardando a Patrícia indicar manhã ou tarde"). Ao incluir as
+dúvidas do lead, os resumos passaram de 600 caracteres; a instrução ganhou limite (4 frases, 600 caracteres) e deixou de
+usar "sistema" e "oficial". A Patrícia tinha "LTDA" deduzido, de antes da correção: o dado saiu do banco e do HubSpot (a
+faixa executivo continua, pelas 60 pessoas). Os outros 11 leads tinham o tipo dito na conversa.

@@ -74,6 +74,31 @@ scratch, with every decision documented.
 
 - records everything in the **CRM** and runs **follow-ups**.
 
+### How the lead score works (temperature)
+
+Besides the routing tier, every lead gets a **priority score from 0 to 19**, adding up signals that **the lead actually
+said** in the conversation (the AI may not infer them). The score becomes the **temperature** the sales team sees in the
+dashboard and in the simulator.
+
+| Signal | Points | | Signal | Points |
+|---|---|---|---|---|
+| Raised a funding round in the last 12 months | +3 | | Pays for a lot of software in US dollars | +2 |
+| Executive-tier size (more than 20 people or more than R$ 50k/month) | +3 | | Described a concrete pain (personal card, reimbursements, spreadsheets) | +2 |
+| The person talking is the decision-maker | +2 | | Opened a new office or city | +1 |
+| Hiring fast | +2 | | Complained about their current bank | +1 |
+| Hired their first finance person | +2 | | Wants to solve it now (with a deadline) | +1 |
+
+| Temperature | Rule |
+|---|---|
+| 🔥 Hot | 6 points or more |
+| 🌤 Warm | 2 to 5 points |
+| ❄️ Cold | 0 or 1 point, **or** the lead is not a fit, opted out, ignored the follow-ups or is not interested |
+
+Example: a founder (decision-maker, +2) who raised a seed round (+3) and pays expenses on a personal card (pain, +2)
+scores 7 and is **hot**. The weights are a hypothesis, to be calibrated with real conversion data. The rule lives in
+[cerebro/vendas/qualificacao.md](cerebro/vendas/qualificacao.md) and in the code (`roteamento.py` and
+`supabase/painel.sql`); the changes are in decisions 053 and 061.
+
 ## Architecture
 
 ```

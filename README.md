@@ -69,6 +69,30 @@ desenharia essa operação do zero, com as decisões documentadas.
 
 - registra tudo no **CRM** e faz **follow-up**.
 
+### Como a nota do lead é dada (temperatura)
+
+Além da faixa, cada lead recebe uma **nota de prioridade de 0 a 19**, somando os sinais que **o próprio lead disse** na
+conversa (a IA não pode deduzir). A nota vira a **temperatura** que o time comercial vê no painel e no simulador.
+
+| Sinal | Pontos | | Sinal | Pontos |
+|---|---|---|---|---|
+| Captou rodada nos últimos 12 meses | +3 | | Paga muito software em dólar | +2 |
+| Porte de executivo (mais de 20 pessoas ou mais de R$ 50 mil/mês) | +3 | | Descreveu uma dor concreta (cartão pessoal, reembolso, planilha) | +2 |
+| Quem conversa é quem decide | +2 | | Abriu escritório ou cidade nova | +1 |
+| Está contratando rápido | +2 | | Reclamou do banco atual | +1 |
+| Contratou a 1ª pessoa de finanças | +2 | | Quer resolver agora (com prazo) | +1 |
+
+| Temperatura | Regra |
+|---|---|
+| 🔥 Quente | 6 pontos ou mais |
+| 🌤 Morno | 2 a 5 pontos |
+| ❄️ Frio | 0 ou 1 ponto, **ou** lead fora do perfil, que pediu para parar, sem resposta aos lembretes ou sem interesse |
+
+Exemplo: uma founder (decide, +2) que captou uma seed (+3) e paga as despesas no cartão pessoal (dor, +2) soma 7 e fica
+**quente**. Os pesos são uma hipótese, para calibrar com dados reais de conversão. A regra fica em
+[cerebro/vendas/qualificacao.md](cerebro/vendas/qualificacao.md) e no código (`roteamento.py` e `supabase/painel.sql`);
+as mudanças estão nas decisões 053 e 061.
+
 ## Arquitetura
 
 ```

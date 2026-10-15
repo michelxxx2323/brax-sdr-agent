@@ -413,3 +413,18 @@ Ajustes de interface, sem criar nem alterar nada no banco. A página `/simular` 
    R$ 50 mil/mês): +3".
 
 Não mude mais nada. No fim, abra `/`, `/simular` e `/login` e confirme que as três carregam.
+
+### Prompt 10: acabamento final (teste das Fases 7 e 8)
+
+Dois ajustes de interface, sem criar nem alterar nada no banco:
+
+1. **Sem selo repetido.** Quando a etapa e a faixa tiverem o mesmo rótulo (ex.: "Fora do perfil" nas duas), mostre um
+   selo só. Vale no `/simular` e no painel.
+2. **A página inicial (`/`) mostra o case em 5 segundos.** Abaixo da frase de apresentação e acima dos dois botões,
+   acrescente uma linha de números, em destaque discreto:
+   "23 de 25 cenários aprovados nos evals · custo de US$ 0,004 por conversa · no ar 24h por WhatsApp e e-mail".
+   Abaixo dos botões, dois links pequenos: "Código e decisões no GitHub" →
+   `https://github.com/michelxxx2323/brax-sdr-agent` e "Como o P.H. é avaliado" →
+   `https://michelxxx2323.github.io/brax-sdr-agent/`. Os números são texto fixo (a página é pública e não lê o banco).
+
+Não mude mais nada. No fim, abra `/` e `/simular` e confirme que carregam.

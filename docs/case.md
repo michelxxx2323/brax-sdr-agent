@@ -1,7 +1,7 @@
 # Case: um SDR de IA para inbound B2B, do desenho à operação
 
 > Resumo de uma página para quem avalia o projeto. Detalhes no [README](../README.md) e no
-> [diário de decisões](decisoes.md) (61 decisões, cada uma com contexto, opções e motivo).
+> [diário de decisões](decisoes.md) (63 decisões, cada uma com contexto, opções e motivo).
 
 **Experimente:** [converse com o P.H.](https://sdr-brax.lovable.app/simular) como se fosse um lead · [painel do time
 comercial](https://sdr-brax.lovable.app/login) (`demo@brax-sdr.dev` / `BraxDemo2026!`) · [painel dos evals](https://michelxxx2323.github.io/brax-sdr-agent/)
